@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import HrCalculateSalaryView from '../views/HrCalculateSalaryView';
 import HrAddWorkTimeView from '../views/HrAddWorkTimeView.vue';
+import TaskCalendarView from '../views/TaskCalendarView.vue'
 
 Vue.use(VueRouter);
 
@@ -22,6 +23,12 @@ const routes = [
       path: '/hr/AddWorkTime',
       name: 'AddWorkTime',
       component: HrAddWorkTimeView,
+      props: true
+  },
+  {
+      path: '/tasks/TaskCalendar',
+      name: 'TaskCalendar',
+      component: TaskCalendarView,
       props: true
   }
 

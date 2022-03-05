@@ -18,7 +18,7 @@
                         <b-dropdown-item href="#" disabled>Wpisywanie dodatków</b-dropdown-item>
                         <b-dropdown-item href="#" disabled>Wpisywanie zaliczek</b-dropdown-item>
                         <b-dropdown-item href="#" disabled>Wpisywanie pożyczek</b-dropdown-item>
-                        <b-dropdown-item href="/hr/CalculateSalary">Oblicznie wypłat</b-dropdown-item>
+                        <b-dropdown-item href="/hr/CalculateSalary" disabled>Oblicznie wypłat</b-dropdown-item>
                         <b-dropdown-item href="#" disabled>Lista pożyczek</b-dropdown-item>
                     </b-nav-item-dropdown>
 
@@ -30,7 +30,7 @@
                         <b-dropdown-item href="#" disabled>Przyłącze</b-dropdown-item>
                         <b-dropdown-item href="#" disabled>Wewnętrzna</b-dropdown-item>
                         <b-dropdown-item href="#" disabled>Terminarz</b-dropdown-item>
-                        <b-dropdown-item href="../TaskCalendar" >Kalendarz</b-dropdown-item>
+                        <b-dropdown-item href="/tasks/TaskCalendar" >Kalendarz</b-dropdown-item>
                         <b-dropdown-item href="#" disabled>Koordynator</b-dropdown-item>
                         <b-dropdown-item href="#" disabled>Geodeta</b-dropdown-item>
                         <b-dropdown-item href="#" disabled>Projektant</b-dropdown-item>

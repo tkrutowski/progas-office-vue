@@ -156,7 +156,7 @@
           </b-row>
 
           <a
-            class="btn btn-warning form-button mt-3"
+            class="btn btn-warning form-button mt-3 button-view "
             style="width: 100px"
             @click="addWorkTime"
             >Dodaj</a
@@ -195,6 +195,7 @@ export default {
   name: "AddWorkTime",
   data() {
     return {
+      url: "http://focikhome.no-ip.org:9090",
       fields: [
         {
           key: "date",
@@ -273,7 +274,7 @@ export default {
     // this.workTimeDate = new Date();
     this.workTimeDateString = this.workTimeDate.format("YYYY-MM-DD");
     this.isWork = true;
-    this.selectedEmployee = 1;
+    this.selectedEmployee = 0;
     this.selectedDayOffType = 2;
     this.selectedIllnessType = 1;
     this.getWorkTimeAll();
@@ -319,7 +320,7 @@ export default {
       // axios.get(`http://77.55.210.35:9090/api/teams`)
       // axios.get(`http://localhost:9090/api/teams`)
       axios
-        .get(`http://192.168.1.10:8082/api/employee/query?status=HIRED`)
+        .get(this.url+`/api/employee/query?status=HIRED`)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.employees = response.data;
@@ -339,7 +340,7 @@ export default {
       // axios.get(`http://77.55.210.35:9090/api/teams`)
       // axios.get(`http://localhost:9090/api/teams`)
       axios
-        .get(`http://192.168.1.10:8082/api/worktime/dayofftype`)
+        .get(this.url+`/api/worktime/dayofftype`)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.dayOffTypes = response.data;
@@ -359,7 +360,7 @@ export default {
       // axios.get(`http://77.55.210.35:9090/api/teams`)
       // axios.get(`http://localhost:9090/api/teams`)
       axios
-        .get(`http://192.168.1.10:8082/api/worktime/illnesstype`)
+        .get(this.url+`/api/worktime/illnesstype`)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.illnessTypes = response.data;
@@ -380,7 +381,7 @@ export default {
       this.isBusy = true;
       // let url = "http://localhost:8082/api/worktime/" + this.selectedEmployee + "?date=" + this.workTimeDate.year() + "-" + (this.workTimeDate.month() + 1) + "-01";
       let url =
-        "http://localhost:8082/api/worktime/" +
+        this.url+"/api/worktime/" +
         this.selectedEmployee +
         "?date=" +
         this.workTimeDate.format("YYYY-MM-DD");
@@ -405,7 +406,6 @@ export default {
 
       if (this.isDayOff) this.addDayOff();
 
-      //TODO nie dodawać dnia jeżęli jest to ostatni dzień miesiąca
       this.addCalendarDay();
     },
     addWork() {
@@ -415,7 +415,7 @@ export default {
       this.work.startTime = this.timeFrom;
       this.work.stopTime = this.timeTo;
       console.log(this.work);
-      let url = "http://localhost:8082/api/worktime?workType=WORK";
+      let url = this.url+ "/api/worktime?workType=WORK";
       // // axios.get(`http://77.55.210.35:9090/api/teams`)
       // // axios.get(`http://localhost:9090/api/teams`)
       axios
@@ -434,7 +434,7 @@ export default {
       this.illness.date = this.workTimeDate.format("YYYY-MM-DD");
       this.illness.idIllnessType = this.selectedIllnessType;
       console.log(this.illness);
-      let url = "http://localhost:8082/api/worktime?workType=ILLNESS";
+      let url = this.url+ "/api/worktime?workType=ILLNESS";
       // // axios.get(`http://77.55.210.35:9090/api/teams`)
       // // axios.get(`http://localhost:9090/api/teams`)
       axios
@@ -453,7 +453,7 @@ export default {
       this.dayOff.date = this.workTimeDate.format("YYYY-MM-DD");
       this.dayOff.idDayOffType = this.selectedDayOffType;
       console.log(this.dayOff);
-      let url = "http://localhost:8082/api/worktime?workType=DAY_OFF";
+      let url = this.url+"/api/worktime?workType=DAY_OFF";
       // // axios.get(`http://77.55.210.35:9090/api/teams`)
       // // axios.get(`http://localhost:9090/api/teams`)
       axios
@@ -469,7 +469,11 @@ export default {
     addCalendarDay() {
       console.log("addCalendarDay()");
       console.log("przed dodaniem dnia: " + this.workTimeDate.format("YYYY-MM-DD"));
+
+      //if this is the last day of the month, don't add day and don't switch to nexzt month
+      if( this.workTimeDate.format('D')!=this.workTimeDate.daysInMonth() ){
       this.workTimeDate.add(1, "day"); // setDate(day+1);
+      }
       console.log("po dodaniu dnia: " + this.workTimeDate.format("YYYY-MM-DD"));
 
       this.workTimeDateString = this.workTimeDate.format("YYYY-MM-DD");
@@ -540,5 +544,19 @@ export default {
 
 .max-width {
   width: -webkit-fill-available;
+}
+
+ .button-view {
+        background-color: rgba(255, 245, 0, 0.8);
+        color: #2c3e50 ;
+        border-color:  rgb(108, 117, 125);
+        /* font-weight: bold; */
+    }
+
+
+.button-view:hover {
+  color: white;
+  background-color:  rgb(108, 117, 125);
+  /* text-decoration: underline; */
 }
 </style>
