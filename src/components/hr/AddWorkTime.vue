@@ -341,7 +341,7 @@ export default {
       // axios.get(`http://77.55.210.35:9090/api/teams`)
       // axios.get(`http://localhost:9090/api/teams`)
       axios
-        .get(this.url+`/api/worktime/dayofftype`)
+        .get(this.url+`/api/employee/worktime/dayofftype`)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.dayOffTypes = response.data;
@@ -361,7 +361,7 @@ export default {
       // axios.get(`http://77.55.210.35:9090/api/teams`)
       // axios.get(`http://localhost:9090/api/teams`)
       axios
-        .get(this.url+`/api/worktime/illnesstype`)
+        .get(this.url+`/api/employee/worktime/illnesstype`)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.illnessTypes = response.data;
@@ -382,7 +382,7 @@ export default {
       this.isBusy = true;
       // let url = "http://localhost:8082/api/worktime/" + this.selectedEmployee + "?date=" + this.workTimeDate.year() + "-" + (this.workTimeDate.month() + 1) + "-01";
       let url =
-        this.url+"/api/worktime/" +
+        this.url+"/api/employee/worktime/" +
         this.selectedEmployee +
         "?date=" +
         this.workTimeDate.format("YYYY-MM-DD");
@@ -416,7 +416,7 @@ export default {
       this.work.startTime = this.timeFrom;
       this.work.stopTime = this.timeTo;
       console.log(this.work);
-      let url = this.url+ "/api/worktime?workType=WORK";
+      let url = this.url+ "/api/employee/worktime?workType=WORK";
       // // axios.get(`http://77.55.210.35:9090/api/teams`)
       // // axios.get(`http://localhost:9090/api/teams`)
       axios
@@ -435,7 +435,7 @@ export default {
       this.illness.date = this.workTimeDate.format("YYYY-MM-DD");
       this.illness.idIllnessType = this.selectedIllnessType;
       console.log(this.illness);
-      let url = this.url+ "/api/worktime?workType=ILLNESS";
+      let url = this.url+ "/api/employee/worktime?workType=ILLNESS";
       // // axios.get(`http://77.55.210.35:9090/api/teams`)
       // // axios.get(`http://localhost:9090/api/teams`)
       axios
@@ -454,7 +454,7 @@ export default {
       this.dayOff.date = this.workTimeDate.format("YYYY-MM-DD");
       this.dayOff.idDayOffType = this.selectedDayOffType;
       console.log(this.dayOff);
-      let url = this.url+"/api/worktime?workType=DAY_OFF";
+      let url = this.url+"/api/employee/worktime?workType=DAY_OFF";
       // // axios.get(`http://77.55.210.35:9090/api/teams`)
       // // axios.get(`http://localhost:9090/api/teams`)
       axios
