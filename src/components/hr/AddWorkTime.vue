@@ -19,11 +19,11 @@
                 required
               >
                 <!-- This slot appears above the options from 'options' prop -->
-                <template #first>
+                <!-- <template #first>
                   <b-form-select-option :value="null" disabled
                     >-- Wybierz pracownika --
                   </b-form-select-option>
-                </template>
+                </template> -->
               </b-form-select>
             </label>
           </div>
@@ -110,11 +110,11 @@
                     id="dayOffTypeSelect"
                   >
                     <!-- This slot appears above the options from 'options' prop -->
-                    <template #first>
+                    <!-- <template #first>
                       <b-form-select-option :value="null" disabled
                         >-- Wybierz rodzaj urlopu --
                       </b-form-select-option>
-                    </template>
+                    </template> -->
                   </b-form-select>
                 </label>
               </div>
@@ -144,11 +144,11 @@
                     id="illnessTypeSelect"
                   >
                     <!-- This slot appears above the options from 'options' prop -->
-                    <template #first>
+                    <!-- <template #first>
                       <b-form-select-option :value="null" disabled>
                         -- Wybierz rodzaj zasiłku --
                       </b-form-select-option>
-                    </template>
+                    </template> -->
                   </b-form-select>
                 </label>
               </div>
@@ -196,6 +196,7 @@ export default {
   data() {
     return {
       // url: "http://focikhome.no-ip.org:9090",
+      // url: "http://localhost:8082",
         url: "https://docker.focikhome.synology.me",
       fields: [
         {
@@ -291,6 +292,7 @@ export default {
       // }
     },
     onEmployeeChange() {
+      console.log("onEmployeeChange()");
       this.getWorkTimeAll();
     },
     rbWork_click() {
@@ -381,7 +383,8 @@ export default {
       console.log("getWorkTimeAll()");
       this.isBusy = true;
       // let url = "http://localhost:8082/api/worktime/" + this.selectedEmployee + "?date=" + this.workTimeDate.year() + "-" + (this.workTimeDate.month() + 1) + "-01";
-      let url =
+     console.log("selected employee: " + this.selectedEmployee);
+     let url =
         this.url+"/api/employee/worktime/" +
         this.selectedEmployee +
         "?date=" +
