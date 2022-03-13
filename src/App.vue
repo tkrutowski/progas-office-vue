@@ -14,6 +14,6 @@
   /* background-color: rgb(29,29,29); */
   background-color: #252525;
   color: #2c3e50;
-  margin-top: 60px;
+  /* margin-top: 60px; */
 }
 </style>

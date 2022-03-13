@@ -2,11 +2,11 @@
     <div id="container" class="container-fluid ">
         <div id="title" >
             <h6  align="center" style="padding-top: 10px"><strong>PRZYLĄCZE</strong></h6>
-<!--            <h6 class="subText"><strong>Nr zad.:</strong> {{taskNo}}</h6>-->
             <span class="mainText" ><strong>Nr zad.: </strong></span>
             <span class="subText" >{{taskNo}}</span>
         </div>
 
+<!--                      Adres -->
         <div id="address">
             <p class="mainText" ><strong>Adres:</strong>
 
@@ -14,15 +14,12 @@
             v-if="latitude != null && longitude != null">
                 <img id="map_ico"  src="../../assets/google_map.png">
             </router-link>
-
-
             </p>
             <p class="subText" >{{address}}</p>
         </div>
         <div id="cabinet">
             <span class="mainText" style="margin-bottom: 0"><strong>Szafa: </strong></span>
             <span class="subText" style="margin-bottom: 0">{{cabinet}}</span>
-<!--            <b-button v-b-toggle.collapse-3 class="m-1">...</b-button>-->
         </div>
         <div id="msg">
             <b-form-textarea v-b-modal="'info'+taskNo" class="form-control" rows="3" v-bind:value="msg" readonly></b-form-textarea>
@@ -112,10 +109,6 @@
                 //  url: "http://focikhome.no-ip.org:9090"
                 url: "https://docker.focikhome.synology.me",
 
-                isGeo: false,
-
-                // lat: "50.082388888888888888888888888889",
-                // long: "16.621972222222222222222222222222"
             }
         },
         props: {
