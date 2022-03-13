@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue';
 import HrCalculateSalaryView from '../views/HrCalculateSalaryView';
 import HrAddWorkTimeView from '../views/HrAddWorkTimeView.vue';
 import TaskCalendarView from '../views/TaskCalendarView.vue'
+import MapsView from '@/views/MapsView.vue';
 
 Vue.use(VueRouter);
 
@@ -30,7 +31,13 @@ const routes = [
       name: 'TaskCalendar',
       component: TaskCalendarView,
       props: true
-  }
+  },
+  {
+    path: '/tasks/maps',
+    name: 'Maps',
+    component: MapsView,
+    props: true
+}
 
 ];
 

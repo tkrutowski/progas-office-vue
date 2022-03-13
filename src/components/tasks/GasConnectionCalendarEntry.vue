@@ -8,7 +8,15 @@
         </div>
 
         <div id="address">
-            <p class="mainText" ><strong>Adres:</strong></p>
+            <p class="mainText" ><strong>Adres:</strong>
+
+            <router-link :to="{ name: 'Maps', params: { lat: latitude, long: longitude }}" 
+            v-if="latitude != null && longitude != null">
+                <img id="map_ico"  src="../../assets/google_map.png">
+            </router-link>
+
+
+            </p>
             <p class="subText" >{{address}}</p>
         </div>
         <div id="cabinet">
@@ -96,12 +104,18 @@
 
     export default {
         components: {
+            
         },
         name: "GasConnectionCalendarEntry",
         data(){
             return {
                 //  url: "http://focikhome.no-ip.org:9090"
-                url: "https://docker.focikhome.synology.me"
+                url: "https://docker.focikhome.synology.me",
+
+                isGeo: false,
+
+                // lat: "50.082388888888888888888888888889",
+                // long: "16.621972222222222222222222222222"
             }
         },
         props: {
@@ -119,9 +133,17 @@
             mailPgnDate: String,
             isPgn: Boolean,
             tempDate: String,
-            tempInfo: String
+            tempInfo: String,
+            //szer
+            latitude: String,
+            //dł
+            longitude: String
         },
-        methods:{
+           created() {
+            // if(this.latitude!=null && this.longitude!=null)
+            // this.isGeo=true;
+        },
+        methods:{      
             putCustomer() {
                 console.log("putCustomer() - start");
                 // axios.put(`http://localhost:8088/api/taskcalendar/change_status/customer/`+ this.idEntry+`?date=` + this.mailCustomerDate+'&status='+this.mailStatusCustomer)
@@ -301,5 +323,11 @@
 
     .subText{
         color: rgb(154,154,154);
+    }
+
+    #map_ico{
+        margin-left: 10px;
+        height: 16px;
+        margin-bottom: 5px;
     }
 </style>
