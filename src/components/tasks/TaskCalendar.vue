@@ -306,8 +306,8 @@
         data() {
             return {
                 // url: "http://focikhome.no-ip.org:9090",
-                url: "http://localhost:8088",
-                //   url: "https://docker.focikhome.synology.me",
+                // url: "http://localhost:8088",
+                  url: "https://docker.focikhome.synology.me",
                 calendarEntries: [],
                 errors: [],
                 allTeams: [],
@@ -357,8 +357,8 @@
             getTeamsFromDb() {
                 console.log("getTeamsFromDb() - start");
                 // axios.get(`http://77.55.210.35:9090/api/teams`)
-                // axios.get(this.url+`/api/teams`)
-                axios.get(`http://localhost:8082/api/teams`)
+                axios.get(this.url+`/api/teams`)
+                // axios.get(`http://localhost:8082/api/teams`)
                     .then(response => {
                         // JSON responses are automatically parsed.
                         this.allTeams = response.data;

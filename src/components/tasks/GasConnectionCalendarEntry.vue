@@ -79,7 +79,6 @@
                 </div>
             </b-modal>
 
-
             <!-- The modal  PGN-->
             <b-modal :id="'pgn'+taskNo" centered title="Powiadomienie gazownii"
                      @show="resetIfNullPgn"
@@ -107,8 +106,7 @@
         data(){
             return {
                 //  url: "http://focikhome.no-ip.org:9090"
-                url: "https://docker.focikhome.synology.me",
-
+                url: "https://docker.focikhome.synology.me"
             }
         },
         props: {
