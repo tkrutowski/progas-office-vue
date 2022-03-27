@@ -1,23 +1,19 @@
 <template>
-    <div>
-        <Menu />
-        <AddWorkTime/>
-    </div>
+  <div>
+    <AddWorkTime />
+  </div>
 </template>
 
 <script>
-    import Menu from "@/components/Menu";
-    import AddWorkTime from "@/components/hr/AddWorkTime";
+import AddWorkTime from "@/components/hr/AddWorkTime";
 
-    export default {
-        name: "HrAddWorkTime",
-        components: {
-            AddWorkTime,
-            Menu,
-        }
-    }
+export default {
+  name: "HrAddWorkTime",
+  components: {
+    AddWorkTime,
+  },
+};
 </script>
 
 <style scoped>
-
 </style>

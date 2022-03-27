@@ -196,8 +196,9 @@ export default {
   data() {
     return {
       // url: "http://focikhome.no-ip.org:9090",
+      url: "http://localhost:9090",
       // url: "http://localhost:8082",
-        url: "https://docker.focikhome.synology.me",
+        // url: "https://docker.focikhome.synology.me",
       fields: [
         {
           key: "date",
@@ -290,6 +291,7 @@ export default {
       //     classes: 'worktime-table',
       //     css: {"color": "blue"}
       // }
+      
     },
     onEmployeeChange() {
       console.log("onEmployeeChange()");
@@ -327,6 +329,7 @@ export default {
         .then((response) => {
           // JSON responses are automatically parsed.
           this.employees = response.data;
+          console.log('Odpowiedz HTTP: ${response.status}, ${response.statusText}');
           console.log(
             "getEmployeesFromDb() - Ilosc employees[]: " + this.employees.length
           );

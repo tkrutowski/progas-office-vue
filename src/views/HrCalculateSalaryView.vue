@@ -1,24 +1,19 @@
 <template>
-    <div>
-
-        <Menu />
-        <CalculateSalary/>
-    </div>
+  <div>
+    <CalculateSalary />
+  </div>
 </template>
 
 <script>
-    import Menu from "@/components/Menu";
-    import CalculateSalary from "@/components/hr/CalculateSalary";
+import CalculateSalary from "@/components/hr/CalculateSalary";
 
-    export default {
-        name: "HrCalculateSalary",
-        components: {
-            CalculateSalary,
-            Menu,
-        }
-    }
+export default {
+  name: "HrCalculateSalary",
+  components: {
+    CalculateSalary,
+  },
+};
 </script>
 
 <style scoped>
-
 </style>

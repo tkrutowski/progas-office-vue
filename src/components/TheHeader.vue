@@ -7,7 +7,6 @@
         <b-navbar toggleable="lg" type="dark" variant="dark">
             <b-navbar-brand href="/">Home</b-navbar-brand>
 
-            <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav id="test">
@@ -51,15 +50,22 @@
                         <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
                     </b-nav-form>
 
+                    <div v-if="!userState.isAuthenticated">
+                        <router-link :to="{name: 'Login'}" >
+                        <b-button size="sm" class="my-2 ml-2 my-sm-0 btn-login" 
+                         >
+                        Zaloguj się
+                        </b-button></router-link> 
+                    </div>
 
 
-                    <b-nav-item-dropdown right>
+                    <b-nav-item-dropdown right v-else>
                         <!-- Using 'button-content' slot -->
                         <template #button-content>
-                            <em>{{userName}}</em>
+                            <em>{{userState.userFirstName}}</em>
                         </template>
                         <b-dropdown-item href="#">Profil użytkownika</b-dropdown-item>
-                        <b-dropdown-item href="#">Wyloguj</b-dropdown-item>
+                        <b-dropdown-item @click="logout"  href="#">Wyloguj</b-dropdown-item>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
             </b-collapse>
@@ -70,17 +76,33 @@
 
 <script>
     export default {
-        name: "MainMenu",
+        name: "TheHeader",
         data(){
             return{
-                userName: "zaloguj się",
                 isHrActive: false,
                 isCustomerActive: false,
                 isFinanceActive: false,
                 isTaskActive: false,
                 isVehiclesActive: false,
-                isSettingActive: false
+                isSettingActive: false,
+  userState: {
+                    isAuthenticated: false,
+                    userName: "",
+                    userFirstName: ""
+                }
+              
+
             }
+        },
+        computed:{
+            // jeżeli coś sięzmieni w tych polach to strona się odświerzy
+            
+        },
+        created(){
+            console.log("Czy zalogowano: " + this.userState.isAuthenticated);
+            this.userState = this.$store.getters.getAuthenticationState;
+            console.log("Czy zalogowano: " + this.userState.isAuthenticated);
+            // this.isAuthenticated = this.state.userState.isAuthenticated;
         },
         methods:{
             changeHrActive(){
@@ -90,6 +112,13 @@
                 this.isTaskActive = false;
                 this.isVehiclesActive = false;
                 this.isSettingActive = false;
+                
+            },
+            logout(){
+                 this.userState.isAuthenticated = false;
+            console.log("Czy zalogowano: " + this.userState.isAuthenticated);
+                this.$store.commit("updateAuthenticateState", this.userState)
+            console.log("Po wulogowaniu store: " + this.$store.state.userState.isAuthenticated);
             }
         }
     }
@@ -114,5 +143,9 @@
         color: rgba(255,245,0,0.8);
         padding-top: 50px;
         padding-right: 50px;
+    }
+    .btn-login{
+        background-color: rgba(255,245,0,0.8);
+        color: rgb(97,93,92);
     }
 </style>

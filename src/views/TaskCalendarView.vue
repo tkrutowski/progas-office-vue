@@ -1,23 +1,19 @@
 <template>
-    <div>
-        <Menu />
-        <TaskCalendar/>
-    </div>
+  <div>
+    <TaskCalendar />
+  </div>
 </template>
 
 <script>
-    import Menu from "@/components/Menu";
-    import TaskCalendar from "@/components/tasks/TaskCalendar";
+import TaskCalendar from "@/components/tasks/TaskCalendar";
 
-    export default {
-        name: "TASKTaskCalendar",
-        components: {
-          TaskCalendar,
-            Menu,
-        }
-    }
+export default {
+  name: "TASKTaskCalendar",
+  components: {
+    TaskCalendar,
+  },
+};
 </script>
 
 <style scoped>
-
 </style>
