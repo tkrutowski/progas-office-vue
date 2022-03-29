@@ -1,18 +1,22 @@
 const authorizations = {
     state: {
         token: "",
-        userState: {
-            isAuthenticated: true,
-            username: "focik",
-            userFirstName: "Tomek"
+        isAuthenticated: false,
+        user: {
+            id:0,
+            username: "test",
+            firstName: "Test"
         }
     },
     mutations: {
         updateToken(state, newToken){
             state.token = newToken;
         },
-        updateAuthenticateState(state, userState){
-            state.userState = userState;
+        updateAuthenticateState(state, isAuth){
+            state.isAuthenticated = isAuth;
+        },
+        updateUser(state, u){
+            state.user = u;
         }
     },
     getters:{
@@ -20,7 +24,13 @@ const authorizations = {
             return state.token;
         },
         getAuthenticationState(state){
-            return state.userState;
+            return state.isAuthenticated;
+        },  
+        getUser(state){
+            return state.user;
+        },  
+        getUserFirstName(state){
+            return state.user.firstName;
         }
     }
 };
