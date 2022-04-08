@@ -54,7 +54,14 @@
 
           <!--                    <b-nav-item href="#" :active="isTaskActive">Zadania</b-nav-item>-->
           <b-nav-item href="#" disabled>Pojazdy</b-nav-item>
-          <b-nav-item href="#" disabled>Ustawienia</b-nav-item>
+         <b-nav-item href="#" disabled>UStawienia</b-nav-item>
+
+<!-- ADMINISTRACJA -->
+            <b-nav-item-dropdown text="Administracja">
+            <b-dropdown-item href="/user/all" >Użytkownicy</b-dropdown-item>
+            <b-dropdown-item href="#" disabled>Uprawnienia</b-dropdown-item>
+          </b-nav-item-dropdown>
+
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
@@ -83,7 +90,7 @@
             <template #button-content>
               <em>{{ getUserFirstName }}</em>
             </template>
-            <b-dropdown-item href="#">Profil użytkownika</b-dropdown-item>
+            <b-dropdown-item href="/user/profile">Profil użytkownika</b-dropdown-item>
             <b-dropdown-item @click="logout" href="#">Wyloguj</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -163,6 +170,6 @@ export default {
 }
 .btn-login {
   background-color: rgba(255, 245, 0, 0.8);
-  color: rgb(97, 93, 92);
+  color: #252525;
 }
 </style>

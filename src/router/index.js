@@ -6,6 +6,8 @@ import HrAddWorkTimeView from '../views/HrAddWorkTimeView.vue';
 import TaskCalendarView from '../views/TaskCalendarView.vue'
 import MapsView from '@/views/MapsView.vue';
 import LoginView from '@/views/LoginView.vue';
+import UsersView from '@/views/UsersView.vue'
+import UsersProfileView from '@/views/UserProfileView.vue'
 Vue.use(VueRouter);
 
 const routes = [
@@ -42,6 +44,18 @@ const routes = [
   path: '/login',
   name: 'Login',
   component: LoginView,
+  props: true
+},
+{
+  path: '/user/all',
+  name: 'Users',
+  component: UsersView,
+  props: true
+},
+{
+  path: '/user/profile',
+  name: 'UserProfile',
+  component: UsersProfileView,
   props: true
 }
 // ,
