@@ -40,6 +40,7 @@
           >
             <b-form-input
               id="input-firstname"
+              autocomplete="first-name"
               v-model="user.firstName"
               type="text"
               placeholder="wprowadź imię"
@@ -56,6 +57,7 @@
           >
             <b-form-input
               id="input-lastname"
+              autocomplete="last-name"
               v-model="user.lastName"
               type="text"
               placeholder="wprowadź nazwisako"
@@ -73,6 +75,7 @@
             <b-form-input
               id="input-username"
               v-model="user.username"
+              autocomplete="username"
               type="text"
               placeholder="wprowadź login"
               required
@@ -88,6 +91,7 @@
           >
             <b-form-input
               id="input-email"
+              autocomplete="email"
               v-model="user.email"
               type="email"
               placeholder="example@org.com"
@@ -102,21 +106,35 @@
       <!-- ZAKŁADKA ZMIANA HASŁA -->
       <b-tab title="Zmiana hasła">
         <h4>Zmiana hasła</h4>
+        <b-form @submit="updatePassword">
+          <div class="form-group">
+            <label class="form-label">Bierzące hasło</label>
+            <input
+              type="password"
+              autocomplete="current-password"
+              class="form-control"
+            />
+          </div>
 
-        <div class="form-group">
-          <label class="form-label">Bierzące hasło</label>
-          <input type="password" class="form-control" />
-        </div>
+          <div class="form-group">
+            <label class="form-label">Nowe hasło</label>
+            <input
+              type="password"
+              autocomplete="new-password"
+              class="form-control"
+            />
+          </div>
 
-        <div class="form-group">
-          <label class="form-label">Nowe hasło</label>
-          <input type="password" class="form-control" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Powtórz nowe hasło</label>
-          <input type="password" class="form-control" />
-        </div>
+          <div class="form-group">
+            <label class="form-label">Powtórz nowe hasło</label>
+            <input
+              type="password"
+              autocomplete="new-password"
+              class="form-control"
+            />
+          </div>
+          <b-button type="submit" variant="primary">Zapisz zmiany</b-button>
+        </b-form>
       </b-tab>
 
       <!-- ZAKŁADKA UPRAWNIENIA -->
@@ -133,122 +151,120 @@
               @change="onUserChange"
               required
             >
-              <!-- This slot appears above the options from 'options' prop -->
-              <!-- <template #first>
-                  <b-form-select-option :value="null" disabled
-                    >-- Wybierz pracownika --
-                  </b-form-select-option>
-                </template> -->
             </b-form-select>
           </label>
-          Selected user: <strong>{{ selectedUserID }}</strong>
         </div>
 
         <h4>Uprawnienia użytkownika</h4>
+        <!-- ------------------- CARD ROLES ------------------------>
         <b-card-group deck class="roles-group">
           <!-- <b-form @submit="addRoleToUser"> -->
-          <b-card title="Title" header-tag="header" footer-tag="footer">
+          <b-card header-tag="header" footer-tag="footer">
             <template #header>
-              <h6 class="mb-0">Header Slot</h6>
+              <h4 class="mb-0">Role</h4>
             </template>
-            <b-card-text>Header and footers using slots.</b-card-text>
+            <b-card-text>Wybierz role do edycji lub dodaj nową.</b-card-text>
             <div>
               <b-form-select
                 v-model="selectedRole"
                 :options="optionsUserRoles"
-                :select-size="4"
+                :select-size="20"
                 @change="onRoleChange"
               ></b-form-select>
-              <div class="mt-3">
-                Selected: <strong>{{ selectedRole }}</strong>
-              </div>
+              <div class="mt-3"></div>
             </div>
             <!-- <b-button @click="showRoleModal" variant="primary">Dodaj role</b-button> -->
-              <!-- v-b-modal="'role' + selectedUserID" -->
-            <b-button
-              :disabled="selectedUserID > 0 ? false : true"
-              variant="primary"
-               @click="showRoleModal"
-              >Dodaj role</b-button
-            >
+            <!-- v-b-modal="'role' + selectedUserID" -->
+
             <template #footer>
-              <em>Footer Slot</em>
+              <!-- <b-form @submit.prevent="deleteRoleFromUser" > -->
+
+              <b-button
+                :disabled="selectedRole > 0 ? false : true"
+                variant="danger"
+                @click="deleteRoleFromUser"
+                >Usuń role</b-button
+              >
+              <!-- @click="deleteRoleFromUser" -->
+              <!-- </b-form> -->
+              <b-button class="button-my"
+                :disabled="selectedUserID > 0 ? false : true"
+                variant="warning"
+                @click="showRoleModal"
+                >Dodaj role</b-button
+              >
             </template>
           </b-card>
-          <!-- </b-form> -->
 
-          <!-- <b-form @submit="updatePrivilegeToUserRole"> -->
-            <!-- CARD READ -->
-            <b-card header-tag="header" footer-tag="footer">
-              <template #header>
-                <h4 class="mb-0">Uprawnienia dla roli ...</h4>
-              </template>
-              <b-card-text><h3>Odczyt</h3></b-card-text>
-              <!-- <b-card-text>Uprawnienia do odczytu</b-card-text> -->
-              <b-form-group label="Uprawnienia do odczytu">
-                <b-form-radio v-model="selectedRead" value="NULL"
+          <!-- ------------------- CARD PRIVILEGES ------------------------>
+          <b-card header-tag="header" footer-tag="footer">
+            <template #header>
+              <h4 class="mb-0">Uprawnienia dla roli</h4>
+            </template>
+            <b-card-text><h3>Odczyt</h3></b-card-text>
+            <!-- <b-card-text>Uprawnienia do odczytu</b-card-text> -->
+            <b-form-group label="Uprawnienia do odczytu">
+              <b-form-radio
+                v-model="selectedRead"
+                value="NULL"
                 checked="checkReadNull"
-                  >None</b-form-radio
-                >
-                <b-form-radio v-model="selectedRead" value="READ"
-                  >Read</b-form-radio
-                >
-                <b-form-radio v-model="selectedRead" value="READ_ALL"
-                  >Read all</b-form-radio
-                >
-              </b-form-group>
-              <hr />
-              <!-- <b-card-text>Uprawnienia do zapisu</b-card-text> -->
-              <b-card-text><h3>Zapis</h3></b-card-text>
-              <b-form-group label="Uprawnienia do odczytu">
-                <b-form-radio v-model="selectedWrite" value="NULL"
-                  >None</b-form-radio
-                >
-                <b-form-radio v-model="selectedWrite" value="WRITE"
-                  >Write</b-form-radio
-                >
-                <b-form-radio v-model="selectedWrite" value="WRITE_ALL"
-                  >Write all</b-form-radio
-                >
-              </b-form-group>
+                >None
+              </b-form-radio>
+              <b-form-radio v-model="selectedRead" value="READ"
+                >Read .</b-form-radio
+              >
+              <b-form-radio v-model="selectedRead" value="READ_ALL"
+                >Read all</b-form-radio
+              >
+            </b-form-group>
+            <hr />
+            <!-- <b-card-text>Uprawnienia do zapisu</b-card-text> -->
+            <b-card-text><h3>Zapis</h3></b-card-text>
+            <b-form-group label="Uprawnienia do odczytu">
+              <b-form-radio v-model="selectedWrite" value="NULL"
+                >None</b-form-radio
+              >
+              <b-form-radio v-model="selectedWrite" value="WRITE"
+                >Write</b-form-radio
+              >
+              <b-form-radio v-model="selectedWrite" value="WRITE_ALL"
+                >Write all</b-form-radio
+              >
+            </b-form-group>
+            <hr />
 
-              <!-- <b-card-text>Uprawnienia do zapisu</b-card-text> -->
-              <b-card-text><h3>Usuwanie</h3></b-card-text>
-              <b-form-group label="Uprawnienia do usuwania">
-                <b-form-radio v-model="selectedDelete" value="NULL"
-                  >None</b-form-radio
-                >
-                <b-form-radio v-model="selectedDelete" value="DELETE"
-                  >Delete</b-form-radio
-                >
-                <b-form-radio v-model="selectedDelete" value="DELETE_ALL"
-                  >Delete all</b-form-radio
-                >
-              </b-form-group>
-              <hr />
+            <!-- <b-card-text>Uprawnienia do usuwania</b-card-text> -->
+            <b-card-text><h3>Usuwanie</h3></b-card-text>
+            <b-form-group label="Uprawnienia do usuwania">
+              <b-form-radio v-model="selectedDelete" value="NULL"
+                >None</b-form-radio
+              >
+              <b-form-radio v-model="selectedDelete" value="DELETE"
+                >Delete</b-form-radio
+              >
+              <b-form-radio v-model="selectedDelete" value="DELETE_ALL"
+                >Delete all</b-form-radio
+              >
+            </b-form-group>
 
-              <div class="mt-3">
-                Selected read: <strong>{{ selectedRead }}</strong> Selected
-                write: <strong>{{ selectedWrite }}</strong> Selected delete:
-                <strong>{{ selectedDelete }}</strong>
-              </div>
+            <div class="mt-3"></div>
 
-              <template #footer>
-                <em>Footer Slot</em>
-                <b-button
-                  href="#"
-                  :disabled="selectedRole > 0 ? false : true"
-                  variant="primary"
-                 @click="updatePrivilegeToUserRole"
-                  >Zapisz zmiany</b-button
-                >
-              </template>
-            </b-card>
+            <template #footer>
+              <b-button
+                class="button-my"
+                :disabled="selectedRole > 0 ? false : true"
+                @click="updatePrivilegeToUserRole"
+                >Zapisz zmiany</b-button
+              >
+            </template>
+          </b-card>
           <!-- </b-form> -->
         </b-card-group>
       </b-tab>
       <b-tab title="Disabled" disabled><p>I'm a disabled tab!</p></b-tab>
     </b-tabs>
+
+    <!-- TEMP////////////////// -->
 
     <!-- ERROR -->
     <ul v-if="errors && errors.length">
@@ -257,15 +273,9 @@
       </li>
     </ul>
 
-    <div>
-      <b-button @click="showAlertSuccess" variant="info" class="m-1">
-        Show alert with count-down timer
-      </b-button>
-    </div>
-
     <!-- The modal  ADD NEW ROLE-->
-      <!-- :id="'role' + selectedUserID" -->
-      <!-- @show="getRemainingRoles" -->
+    <!-- :id="'role' + selectedUserID" -->
+    <!-- @show="getRemainingRoles" -->
     <b-modal
       ref="roleModal"
       centered
@@ -333,13 +343,18 @@ export default {
 
   created() {
     this.idUser = this.$store.getters.getUserId;
-    this.getUserFromDb();
+    this.getUserFromDb(this.idUser);
     this.getUsersFromDb();
     this.getAllRolesFromDb();
   },
+  // watch:{
+  //   optionsUserRoles(newOptionsUserRoles, oldOptionsUserRoles){
+  //     return this.optionsUserRoles;
+  //   }
+  // },
   methods: {
     //
-    //TOAST MESSAGE
+    //------------------------------------------ MESSAGE ------------------------------------------
     //
     displaySmallMessage(variant = null, msg) {
       this.$bvToast.toast(`${msg}`, {
@@ -348,15 +363,15 @@ export default {
         solid: true,
       });
     },
-      displayLargeMessage(variant = null, msg) {
+    displayLargeMessage(variant = null, msg) {
       this.$bvToast.toast(`${msg}`, {
         title: "Informacja",
         variant: variant,
         solid: true,
-        toaster: "b-toaster-top-full"
+        toaster: "b-toaster-top-full",
       });
     },
-    
+
     //messages
     countDownChangedSuccess(dismissCountDown) {
       this.dismissCountDownSuccess = dismissCountDown;
@@ -371,20 +386,24 @@ export default {
       // this.dismissSec = time;
       this.dismissCountDownError = time;
     },
+    //-----------------------------------         ROLE  -------------------------------------
     //
-    //role
+    //otwiera okno w którym można wybrać nową rolę
     //
-      showRoleModal() {
-        this.getRemainingRoles();
-        if(this.optionsRemainingRoles.length > 0){
-        this.$refs['roleModal'].show()
-        }else{
-           this.displayLargeMessage("warning", "W chwili obecnej nie ma więcej ról do dodania.")
-        }
-      },
-      //
+    showRoleModal() {
+      this.getRemainingRoles();
+      if (this.optionsRemainingRoles.length > 0) {
+        this.$refs["roleModal"].show();
+      } else {
+        this.displayLargeMessage(
+          "warning",
+          "W chwili obecnej nie ma więcej ról do dodania."
+        );
+      }
+    },
+    //
     // Pobiera pozostałe role czyli wsszystkie - role które użytkownik już ma
-      //
+    //
     getRemainingRoles() {
       console.log("getRemainingRoles()");
 
@@ -415,8 +434,8 @@ export default {
       });
 
       //wybranie pierwszej z brzegu roli
-      if( this.optionsRemainingRoles.length >0){
-      this.selectedRemainingRole = this.optionsRemainingRoles[0].value;
+      if (this.optionsRemainingRoles.length > 0) {
+        this.selectedRemainingRole = this.optionsRemainingRoles[0].value;
       }
     },
     //
@@ -424,58 +443,84 @@ export default {
     //
     onRoleChange() {
       console.log("onRoleChange()");
-      console.log("userID: "+this.selectedUserID);
-      console.log("roleID: "+this.selectedRole);
+      console.log("userID: " + this.selectedUserID);
+      console.log("roleID: " + this.selectedRole);
       this.getPrivilegesByUserRoleDB(this.selectedUserID, this.selectedRole);
     },
     //
-    //Podczas zmiany urzytkownika pobierane są z bazy jego role
+    //Podczas zmiany uzytkownika pobierane są z bazy jego role
     //
     onUserChange() {
       console.log("onUserChange()");
-      this.getUserRolesFromDb(this.selectedUserID);
+      if (this.selectedUserID > 0) {
+        this.getUserRolesFromDb(this.selectedUserID);
+        this.resetToRoleDefault();
+      }
     },
     //
     //DOdanie nowej roli do użytkownika
     //
     addRoleToUser() {
-       console.log("selectedUserID: "+this.selectedUserID);
+      console.log("selectedUserID: " + this.selectedUserID);
       this.addRoleToUserDB(this.selectedUserID, this.selectedRemainingRole);
       //odświerzenie ról
-       console.log("ilość ról przed odświerzaniem: "+this.optionsUserRoles.length);
+      console.log(
+        "ilość ról przed odświerzaniem: " + this.optionsUserRoles.length
+      );
 
       //       this.getUserRolesFromDb(this.selectedUserID);
-       console.log("ilość ról po odświerzaniu: "+this.optionsUserRoles.length);
-       console.log("ilość optionsRemainingRoles: "+this.optionsRemainingRoles.length);
+      console.log("ilość ról po odświerzaniu: " + this.optionsUserRoles.length);
+      console.log(
+        "ilość optionsRemainingRoles: " + this.optionsRemainingRoles.length
+      );
 
- this.optionsRemainingRoles.forEach((roleOpt) => {
-          if (roleOpt.value == this.selectedRemainingRole) {
-              this.optionsUserRoles.push(roleOpt);
-          }
-        });
+      this.optionsRemainingRoles.forEach((roleOpt) => {
+        if (roleOpt.value == this.selectedRemainingRole) {
+          this.optionsUserRoles.push(roleOpt);
+        }
+      });
+    },
+    //
+    //usuwanie roli użytkownika
+    //
+    deleteRoleFromUser() {
+      console.log("deleteRoleFromUser(): start");
+      this.deleteRoleFromUserDB(this.selectedUserID, this.selectedRole);
+      //odswierzenie
+      // this.optionsUserRoles=[];
+      // this.onUserChange()
+      // this.optionsUserRoles.push({
+      //     value: 100,
+      //     text: "test",
+      //   })
     },
     //
     //aktualizacja uprawnień dla roli
     //
-    updatePrivilegeToUserRole(){
-             console.log("updatePrivilegeToUserRole(): start");
+    updatePrivilegeToUserRole() {
+      console.log("updatePrivilegeToUserRole(): start");
       let privileges = [
-       {
-          name : "read",
-       value : this.selectedRead
-       },
-         {
-          name : "write",
-       value : this.selectedWrite
-       },
-         {
-          name : "delete",
-       value : this.selectedDelete
-       }
-      ]
-       this.updatePrivilegeToUserRoleDB(this.selectedUserID, this.selectedRole,privileges)
+        {
+          name: "read",
+          value: this.selectedRead,
+        },
+        {
+          name: "write",
+          value: this.selectedWrite,
+        },
+        {
+          name: "delete",
+          value: this.selectedDelete,
+        },
+      ];
+      this.updatePrivilegeToUserRoleDB(
+        this.selectedUserID,
+        this.selectedRole,
+        privileges
+      );
     },
-
+    //------------------------------   USER  ------------------------------------------------
+    updatePassword() {},
     ////////////////////////////////////POBIERANIE Z BAZY////////////////////////////////////
     //
     ////////////////////////////////////privileges////////////////////////////////////
@@ -483,67 +528,97 @@ export default {
     //Pobieranie uprawnień dla konkretnej roli użytkownika
     //
     getPrivilegesByUserRoleDB(userID, roleID) {
-        console.log("getPrivilegesByUserRoleDB() - start");
-          console.log("userID: "+userID);
-      console.log("roleID: "+roleID);
+      console.log("getPrivilegesByUserRoleDB() - start");
+      console.log("userID: " + userID);
+      console.log("roleID: " + roleID);
       // const token=this.$store.getters.getToken;
       let displayedPrivleges = [];
-      const 
-        headers = {
-          "Content-type": "application/json; charset=UTF-8",
-          //   'Authorization': `Bearer ${token}`
-        };
-      
-        const params = {
-          userID: userID,
-          roleID: roleID        
-        }    ;
+      const headers = {
+        "Content-type": "application/json; charset=UTF-8",
+        //   'Authorization': `Bearer ${token}`
+      };
+
+      const params = {
+        userID: userID,
+        roleID: roleID,
+      };
       axios
-        .get(this.url + `/api/user/role/details`, {params, headers})
-        .then((response) => {displayedPrivleges = response.data;
-         displayedPrivleges.forEach((priv) => {
-          if (priv.name == "read") {
-            this.selectedRead=priv.value;
-          };
-               if (priv.name == "write") {
-            this.selectedWrite=priv.value;
-          };
-               if (priv.name == "delete") {
-            this.selectedDelete=priv.value;
-          }
-        })
+        .get(this.url + `/api/user/role/details`, { params, headers })
+        .then((response) => {
+          displayedPrivleges = response.data;
+          displayedPrivleges.forEach((priv) => {
+            if (priv.name == "read") {
+              this.selectedRead = priv.value;
+            }
+            if (priv.name == "write") {
+              this.selectedWrite = priv.value;
+            }
+            if (priv.name == "delete") {
+              this.selectedDelete = priv.value;
+            }
+          });
         })
         .catch((e) => {
-             this.errors.push(e);
-             this.validateError(e);
+          this.errors.push(e);
+          this.validateError(e);
         });
     },
     //
     //zmiana uprawnień roli użytkownika
     //
-     updatePrivilegeToUserRoleDB(userID, roleID, privileges) {
+    updatePrivilegeToUserRoleDB(userID, roleID, privileges) {
       console.log("updatePrivilegeToUserRoleDB() - start");
       // const token=this.$store.getters.getToken;
-      const 
-        headers = {
-          "Content-type": "application/json; charset=UTF-8",
-          //   'Authorization': `Bearer ${token}`
-        };
-      
-      const params = 
-         {
-          userID: userID,
-          roleID: roleID,
+      const headers = {
+        "Content-type": "application/json; charset=UTF-8",
+        //   'Authorization': `Bearer ${token}`
+      };
+
+      const params = {
+        userID: userID,
+        roleID: roleID,
       };
       axios
-        .put(this.url + `/api/user/role/details`, privileges, {params, headers})
-        .then((response) => this.displaySmallMessage('success', "Zapisano uprawnienia dla roli."))
+        .put(this.url + `/api/user/role/details`, privileges, {
+          params,
+          headers,
+        })
+        .then((response) =>
+          this.displaySmallMessage("success", "Zapisano uprawnienia dla roli.")
+        )
         .catch((e) => {
-             this.errors.push(e);
-             this.validateError(e);
+          this.errors.push(e);
+          this.validateError(e);
         });
     },
-     //
+    deleteRoleFromUserDB(userID, roleID) {
+      console.log("deleteRoleFromUserDB() - start");
+      // const token=this.$store.getters.getToken;
+      const headers = {
+        "Content-type": "application/json; charset=UTF-8",
+        //   'Authorization': `Bearer ${token}`
+      };
+
+      const params = {
+        userID: userID,
+        roleID: roleID,
+      };
+      axios
+        .delete(this.url + `/api/user/role`, {
+          params,
+          headers,
+        })
+        .then((response) => {
+          this.displaySmallMessage("success", "Usunięto rolę użytkownika.");
+          this.resetToRoleDefault();
+          this.getUserRolesFromDb(userID);
+        })
+        .catch((e) => {
+          this.errors.push(e);
+          this.validateError(e);
+        });
+    },
+    //
     //get ALL ROLES from DB
     //
     getAllRolesFromDb() {
@@ -568,7 +643,7 @@ export default {
           this.errors.push(e);
         });
     },
-      //
+    //
     //get user roles DB
     //
     getUserRolesFromDb(userID) {
@@ -586,7 +661,9 @@ export default {
           // JSON responses are automatically parsed.
           console.log("getUserRolesFromDb(): " + response.data.length);
           if (response.data.length > 0)
-            console.log("convert "+response.data.length+" roles to options...");
+            console.log(
+              "convert " + response.data.length + " roles to options..."
+            );
           response.data.forEach((e) => {
             let opt = {
               value: e.id,
@@ -599,31 +676,36 @@ export default {
           this.errors.push(e);
         });
     },
-     //
+    //
     //add roles to user
     //
     addRoleToUserDB(userID, roleID) {
       console.log("addRoleToUserDB() - start");
       // const token=this.$store.getters.getToken;
-      const 
-        headers = {
-          "Content-type": "application/json; charset=UTF-8",
-          //   'Authorization': `Bearer ${token}`
-        };
-      
-      const params = 
-         {
-          userID: userID,
-          roleID: roleID,
-        
+      const headers = {
+        "Content-type": "application/json; charset=UTF-8",
+        //   'Authorization': `Bearer ${token}`
+      };
+
+      const params = {
+        userID: userID,
+        roleID: roleID,
       };
       axios
-        .post(this.url + `/api/user/role/add`, null, {params, headers})
-        .then((response) => this.displaySmallMessage('success', "Dodano rolę do użytkownika."))
+        .post(this.url + `/api/user/role/add`, null, { params, headers })
+        .then((response) =>
+          this.displaySmallMessage("success", "Dodano rolę do użytkownika.")
+        )
         .catch((e) => {
-             this.errors.push(e);
-             this.validateError(e);
+          this.errors.push(e);
+          this.validateError(e);
         });
+    },
+    resetToRoleDefault() {
+      this.selectedRole = "";
+      this.selectedRead = "NULL";
+      this.selectedWrite = "NULL";
+      this.selectedDelete = "NULL";
     },
     /////////////////////////////////UŻYTKOWNIK//////////////////////////////////////
     //
@@ -669,12 +751,12 @@ export default {
         "error: " + e.response.status + ";    " + e.response.data.message;
       this.showAlertError(10);
     },
-   
+
     //
     //get user from DB
     //
-    getUserFromDb() {
-      console.log("getUserFromDb() - start");
+    getUserFromDb(userID) {
+      console.log("getUserFromDb() - start, ID = " + userID);
       // axios.get(`http://77.55.210.35:9090/api/teams`)
       // axios.get(`http://localhost:9090/api/teams`)
       const header = {
@@ -684,7 +766,7 @@ export default {
         },
       };
       axios
-        .get(this.url + `/api/user/` + this.idUser, header)
+        .get(this.url + `/api/user/` + userID, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.user = response.data;
@@ -738,9 +820,6 @@ export default {
         console.log(e.id + " " + e.lastName);
       });
     },
-  
-   
-
   },
 };
 </script>
@@ -750,67 +829,36 @@ export default {
   color: #000;
 }
 
-.read-group {
+.col-form-label {
+  text-align-last: center;
+}
+.form-group {
+  text-align-last: left;
+}
+
+/* .read-group {
   background-color: #26b4ff;
-}
-
-.read-chb-group {
-  border-style: solid;
-  color: #000;
-}
-
-body {
-  background: #f5f5f5;
-  margin-top: 20px;
-}
-
-.ui-w-80 {
-  width: 80px !important;
-  height: auto;
-}
-
-.btn-default {
-  border-color: rgba(24, 28, 33, 0.1);
-  background: rgba(0, 0, 0, 0);
-  color: #4e5155;
-}
-
-label.btn {
-  margin-bottom: 0;
-}
-
-.btn-outline-primary {
-  border-color: #26b4ff;
-  background: transparent;
-  color: #26b4ff;
-}
+} */
 
 .btn {
   cursor: pointer;
 }
 
-.text-light {
-  color: #babbbc !important;
+.button-my {
+     background-color: rgba(255, 245, 0, 0.8) !important;
+  color: #2c3e50 !important;
+  border-color: rgb(108, 117, 125) !important;
+  /* font-weight: bold; */
 }
 
-.btn-facebook {
-  border-color: rgba(0, 0, 0, 0);
-  background: #3b5998;
-  color: #fff;
+.button-my:hover {
+  color: white  ;
+  background-color: rgb(108, 117, 125) ;
+ background-color: rgba(229, 230, 0, 0.883)!important;
 }
 
-.btn-instagram {
-  border-color: rgba(0, 0, 0, 0);
-  background: #000;
-  color: #fff;
-}
-
-.card {
-  background-clip: padding-box;
-  box-shadow: 0 1px 4px rgba(24, 28, 33, 0.012);
-}
-
-.row-bordered {
-  overflow: hidden;
+.button-my:focus {
+  outline: none  !important;
+  box-shadow: none  !important;
 }
 </style>
