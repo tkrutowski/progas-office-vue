@@ -6,7 +6,8 @@ const authorizations = {
             id:0,
             username: "test",
             firstName: "Test"
-        }
+        },
+        userPrivileges: []
     },
     mutations: {
         updateToken(state, newToken){
@@ -17,6 +18,9 @@ const authorizations = {
         },
         updateUser(state, u){
             state.user = u;
+        },
+        updateUserPrivileges(state, priv){
+            state.userPrivileges = priv;
         }
     },
     getters:{
@@ -31,6 +35,12 @@ const authorizations = {
         },  
         getUserFirstName(state){
             return state.user.firstName;
+        },
+        getUserId(state){
+            return state.user.id;
+        },
+        getUserPrivileges(state){
+            return state.userPrivileges;
         }
     }
 };
