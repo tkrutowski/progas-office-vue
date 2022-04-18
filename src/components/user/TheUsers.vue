@@ -2,6 +2,8 @@
   <b-container fluid id="container">
     <b-row>
       <b-col class="mt-5">
+
+        <!-- --------------------------------- TABELA ---------------------------------- -->
         <b-table
           :busy="isBusy"
           :items="usersList"
@@ -10,7 +12,9 @@
           id="table"
         >
           <template #cell(status)="row">
+            <!-- ---------------------------- Status icons -------------------------------- -->
             <div>
+              <!-- Enabled -->
               <b-button
                 v-if="row.item.enabled"
                 size="sm"
@@ -18,7 +22,7 @@
                 @click="setActiveUser(row.item, row.index, $event.target)"
               >
                 <b-icon
-                  class="pr-4"
+                  class="pr-4 pt-1"
                   scale="1.3"
                   icon="toggle-on"
                   variant="success"
@@ -39,15 +43,33 @@
                   aria-hidden="true"
                 ></b-icon>
               </b-button>
-              <!-- <b-button size="sm" variant="outline" @click="deleteUser(row.item, row.index, $event.target)" class="mr-2"> -->
-              <b-icon
-                class="pl-3"
-                scale="1.3"
+              <!-- Lock -->
+               <b-button
+               v-if="row.item.notLocked"
+                size="sm"
+                variant="outline"
+                @click="setLockUser(row.item, row.index, $event.target)"
+              >
+                <b-icon
+                scale="1.1"
+                icon="unlock-fill"
+                variant="success"
+                aria-hidden="true"
+              ></b-icon>
+              </b-button>
+              <b-button
+              v-else
+                size="sm"
+                variant="outline"
+                @click="setLockUser(row.item, row.index, $event.target)"
+              >
+                <b-icon
+                scale="1.1"
                 icon="lock-fill"
                 variant="danger"
                 aria-hidden="true"
               ></b-icon>
-              <!-- </b-button> -->
+              </b-button>
             </div>
           </template>
           <template #cell(action)="row">
@@ -369,6 +391,38 @@ export default {
           // An error occurred
         });
     },
+      //
+    //set user lock/unlock
+    //
+    setLockUser(item, index, button) {
+      console.log("user id: " + item.id + ", isLock: " + item.notLocked);
+      let lock = item.notLocked ? "zablokować" : "odblokować";
+      
+      this.$bvModal
+        .msgBoxConfirm(
+          `Czy chcesz  ${lock} konto użytkownika: 
+        ${item.firstName} ${item.lastName}?`,
+          {
+            title: "Potwierdzenie",
+            size: "sm",
+            buttonSize: "sm",
+            okVariant: "danger",
+            okTitle: "TAK",
+            cancelTitle: "NIE",
+            footerClass: "p-2",
+            hideHeaderClose: false,
+            centered: true,
+          }
+        )
+        .then((value) => {
+          if (value) {
+           this.setLockUserDb(item.id, !item.notLocked);
+          }
+        })
+        .catch((err) => {
+          // An error occurred
+        });
+    },
     //---------------------------------------------DB---------------------------------------
     //
     //get users
@@ -439,6 +493,40 @@ export default {
           // JSON responses are automatically parsed.
           this.user = response.data;
           this.displaySmallMessage("success", "Zaaktualizowano użytkownika.");
+          console.log(
+            "Odpowiedz HTTP: " + response.status + ", " + response.statusText
+          );
+          this.getUsersFromDb();
+        })
+        .catch((e) => {
+          this.validateError(e);
+        });
+    },
+     //
+    //update IsLock
+    //
+    setLockUserDb(userID, isLock) {
+      console.log("setLockUserDb() - start");
+      let lock = isLock ? "Odblokowano" : "Zablokowano";
+      console.log("user id: " + userID + ", isLock: " + isLock);
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          // Authorization: `Bearer ` + this.$store.getters.getToken,
+        },
+      };
+      const params = {
+        lock: isLock,
+      };
+      axios
+        .put(this.url + `/api/user/update/lock/` + userID, null, {
+          params,
+          header,
+        })
+        .then((response) => {
+          // JSON responses are automatically parsed.
+          this.user = response.data;
+          this.displaySmallMessage("success", lock +" konto użytkownika.");
           console.log(
             "Odpowiedz HTTP: " + response.status + ", " + response.statusText
           );
