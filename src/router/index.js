@@ -8,6 +8,7 @@ import MapsView from '@/views/MapsView.vue';
 import LoginView from '@/views/LoginView.vue';
 import UsersView from '@/views/UsersView.vue';
 import UsersProfileView from '@/views/UserProfileView.vue';
+import UserRolesView from '@/views/UserRolesView.vue';
 import UserView from '@/views/UserView';
 Vue.use(VueRouter);
 
@@ -64,7 +65,13 @@ const routes = [
   name: 'User',
   component: UserView,
   props: true
-}
+},
+{
+  path: '/user/roles',
+  name: 'UserRoles',
+  component: UserRolesView,
+  props: true
+},
 // ,
 // {
 //   łapie tu wszystkie zapytania nie złapane wyżej
