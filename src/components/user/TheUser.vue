@@ -1,115 +1,53 @@
 <template>
   <b-container id="container">
-    <b-card
-      :title="
-        isEdit == false ? 'Dodawanie nowego użytkownika' : 'Edycja użytkownia'
-      "
-      bg-variant="dark"
-      header-tag="header"
-      footer-tag="footer"
-    >
-      <!-- "selectedUserID > 0 ? false : true" -->
-      <template #header>
-        <!-- <h6 class="mb-0">Header Slot</h6> -->
-      </template>
-      <!-- <b-card-text>Header and footers using slots.</b-card-text> -->
+    <b-card :title="
+      isEdit == false ? 'Dodawanie nowego użytkownika' : 'Edycja użytkownia'
+    " bg-variant="dark">
 
       <b-form @submit.stop.prevent="saveUser" autocomplete="off">
         <div class="row">
           <!-- FIRSTNAME -->
           <b-form-group class="col" label="Imię:" label-for="input-firstname">
-            <b-form-input
-              id="input-firstname"
-              v-model="user.firstName"
-              :state="validationUserFirstName"
-              placeholder=""
-              required
-              autofocus
-            ></b-form-input>
+            <b-form-input id="input-firstname" v-model="user.firstName" :state="validationUserFirstName" placeholder=""
+              required autofocus></b-form-input>
             <b-form-invalid-feedback :state="validationUserFirstName">
               Imię nie może być puste i nie może mieć więcej niż 50 znaków.
             </b-form-invalid-feedback>
-            <!-- <b-form-valid-feedback :state="validationUserFirstName">
-              OK.
-            </b-form-valid-feedback> -->
           </b-form-group>
 
           <!-- LASTNAME -->
-          <b-form-group
-            class="col"
-            label="Nazwisko:"
-            label-for="input-lastname"
-          >
-            <b-form-input
-              id="input-lastname"
-              v-model="user.lastName"
-              :state="validationUserLastName"
-              placeholder=""
-              required
-            ></b-form-input>
+          <b-form-group class="col" label="Nazwisko:" label-for="input-lastname">
+            <b-form-input id="input-lastname" v-model="user.lastName" :state="validationUserLastName" placeholder=""
+              required></b-form-input>
             <b-form-invalid-feedback :state="validationUserLastName">
               Nazwisko nie może być puste i nie może mieć więcej niż 50 znaków.
             </b-form-invalid-feedback>
-            <!-- <b-form-valid-feedback :state="validationUserLastName">
-              OK.
-            </b-form-valid-feedback> -->
           </b-form-group>
         </div>
 
         <!-- EMAIL -->
         <b-form-group label="Email adres:" label-for="input-mail">
-          <b-form-input
-            id="input-mail"
-            v-model="user.email"
-            type="email"
-            placeholder="Enter email"
-            required
-            :state="validationEmail"
-          ></b-form-input>
+          <b-form-input id="input-mail" v-model="user.email" type="email" placeholder="Enter email" required
+            :state="validationEmail"></b-form-input>
           <b-form-invalid-feedback :state="validationEmail">
             Email nie może być puste i nie może mieć więcej niż 50 znaków.
           </b-form-invalid-feedback>
-          <!--
-          <b-form-valid-feedback :state="validationEmail">
-            OK.
-          </b-form-valid-feedback> -->
         </b-form-group>
 
         <div class="row">
           <!-- USERNAME -->
           <b-form-group class="col" label="Login:" label-for="input-username">
-            <b-form-input
-              id="input-username"
-              v-model="user.username"
-              :state="validationUserName"
-              placeholder=""
-              autocomplete="off"
-              required
-            ></b-form-input>
+            <b-form-input id="input-username" v-model="user.username" :state="validationUserName" placeholder=""
+              autocomplete="off" required></b-form-input>
             <b-form-invalid-feedback :state="validationUserName">
               Login nie może być puste i nie może mieć więcej niż 50 znaków.
             </b-form-invalid-feedback>
-            <!-- <b-form-valid-feedback :state="validationUserName">
-              OK.
-            </b-form-valid-feedback> -->
           </b-form-group>
 
           <!-- PASSWORD -->
-
-          <b-form-group
-            v-if="!isEdit"
-            class="col"
-            label="Hasło:"
-            label-for="input-pass"
-          >
-            <b-form-input
-              id="input-pass"
-              v-model="user.password"
-              :state="validationPassword"
-              placeholder=""
-              type="password"
-              required
-            ></b-form-input>
+          <b-form-group v-if="!isEdit" class="col" label="Hasło:" label-for="input-pass">
+            <b-form-input id="input-pass" v-model="user.password" :state="validationPassword" placeholder=""
+              type="password" required></b-form-input>
             <b-form-invalid-feedback :state="validationPassword">
               HAsło musi mieć powyżej 8 znaków.
             </b-form-invalid-feedback>
@@ -119,20 +57,9 @@
           </b-form-group>
 
           <!-- CONFIRM PASSWORD -->
-          <b-form-group
-            v-if="!isEdit"
-            class="col"
-            label="Potwierdź hasło:"
-            label-for="input-pass-confirm"
-          >
-            <b-form-input
-              id="input-pass-confirm"
-              v-model="confirmPassword"
-              :state="validationConfirmPassword"
-              placeholder=""
-              type="password"
-              required
-            ></b-form-input>
+          <b-form-group v-if="!isEdit" class="col" label="Potwierdź hasło:" label-for="input-pass-confirm">
+            <b-form-input id="input-pass-confirm" v-model="confirmPassword" :state="validationConfirmPassword"
+              placeholder="" type="password" required></b-form-input>
             <b-form-invalid-feedback :state="validationConfirmPassword">
               HAsła muszą być identyczne.
             </b-form-invalid-feedback>
@@ -143,22 +70,12 @@
         </div>
 
         <b-form-group label="Using sub-components:">
-          <b-form-checkbox
-            v-model="user.enabled"
-            name="checkbox-enabled"
-            checked="user.enabled"
-            switch
-          >
+          <b-form-checkbox v-model="user.enabled" name="checkbox-enabled" checked="user.enabled" switch>
             Aktywny
           </b-form-checkbox>
 
-          <b-form-checkbox
-            v-model="user.isNotLocked"
-            name="checkbox-isNotLocked"
-            value="false"
-            unchecked-value="true"
-            switch
-          >
+          <b-form-checkbox v-model="user.isNotLocked" name="checkbox-isNotLocked" value="false" unchecked-value="true"
+            switch>
             Zablokowany
           </b-form-checkbox>
         </b-form-group>
@@ -168,20 +85,8 @@
       <template #footer> </template>
     </b-card>
 
-    <!-- <router-link to="/user/profile">Do profilu</router-link> -->
-    <ul v-if="errors && errors.length">
-      <li v-for="error of errors" :key="error.ruleId">
-        {{ error.message }}
-      </li>
-    </ul>
-
     <!-- Info modal -->
-    <b-modal
-      :id="infoModal.id"
-      :title="infoModal.title"
-      ok-only
-      @hide="resetInfoModal"
-    >
+    <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
       <pre>{{ infoModal.content }}</pre>
     </b-modal>
   </b-container>
@@ -193,10 +98,6 @@ import axios from "axios";
 import router from "@/router";
 export default {
   name: "User",
-  props: {
-    //idUser: Number,
-    // isEdit: Boolean
-  },
   data() {
     return {
       url: "http://localhost:8089",
@@ -230,7 +131,7 @@ export default {
     this.idUser = idTemp;
     this.getUserifEdit();
   },
-  created() {},
+  created() { },
   computed: {
     validationUserFirstName() {
       return this.user.firstName.length > 0 && this.user.firstName.length < 50;
@@ -249,7 +150,7 @@ export default {
       );
     },
     validationPassword() {
-      return this.user.password.length > 7 && this.user.username.length < 250;
+      return this.user.password.length > 7 && this.user.password.length < 250;
     },
     validationConfirmPassword() {
       return (
@@ -284,7 +185,7 @@ export default {
     //
     saveUser() {
       if (this.isEdit) {
-         if (
+        if (
           this.validationUserFirstName &&
           this.validationUserLastName &&
           this.validationUserName &&
@@ -305,13 +206,11 @@ export default {
           this.validationConfirmPassword
         ) {
           this.addUserDB();
-          // router.push('/user/all')
         } else {
           this.displaySmallMessage("warning", "Niepoprawne dane użytkownika.");
         }
       }
     },
- 
     //
     //pobiera użytkownika do edycji
     //
@@ -340,18 +239,15 @@ export default {
     //
     getUserFromDb(userID) {
       console.log("getUserFromDb() - start, ID = " + userID);
-      // axios.get(`http://77.55.210.35:9090/api/teams`)
-      // axios.get(`http://localhost:9090/api/teams`)
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-          //  'Authorization': `Bearer `+ this.$store.getters.token
+          'Authorization': "Bearer "+ this.$store.getters.getToken
         },
       };
       axios
         .get(this.url + `/api/user/` + userID, header)
         .then((response) => {
-          // JSON responses are automatically parsed.
           this.user = response.data;
           console.log(
             "Odpowiedz HTTP: " + response.status + ", " + response.statusText
@@ -359,7 +255,6 @@ export default {
           console.log("getUserFromDb(): " + this.user);
         })
         .catch((e) => {
-          // this.errors.push(e);
           validateError(e);
         });
     },
@@ -368,19 +263,17 @@ export default {
     //
     addUserDB() {
       console.log("addUserDB() - start");
-      // const token=this.$store.getters.getToken;
       const headers = {
         "Content-type": "application/json; charset=UTF-8",
-        //   'Authorization': `Bearer ${token}`
+        'Authorization': "Bearer "+ this.$store.getters.getToken
       };
-
       axios
         .post(this.url + `/api/user`, this.user, {
           headers,
         })
         .then((response) => {
-            this.displaySmallMessage("success", "Dodano użytkownika.");
-            this.resetForm();
+          this.displaySmallMessage("success", "Dodano użytkownika.");
+          this.resetForm();
         })
         .catch((e) => {
           this.errors.push(e);
@@ -391,20 +284,18 @@ export default {
     //update user
     //
     updateUserDb() {
-      // alert(JSON.stringify(this.user))
       console.log("updateUser() - start");
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-          // Authorization: `Bearer ` + this.$store.getters.getToken,
+         'Authorization': "Bearer "+ this.$store.getters.getToken
         },
       };
       axios
         .put(this.url + `/api/user/update`, this.user, header)
         .then((response) => {
-          // JSON responses are automatically parsed.
           this.user = response.data;
-             this.displaySmallMessage("success", "Zaaktualizowano użytkownika.");
+          this.displaySmallMessage("success", "Zaaktualizowano użytkownika.");
           console.log(
             "Odpowiedz HTTP: " + response.status + ", " + response.statusText
           );
@@ -413,7 +304,6 @@ export default {
         .catch((e) => {
           this.validateError(e);
         });
-        
     },
     //
     //error
@@ -421,11 +311,11 @@ export default {
     validateError(e) {
       console.log(
         "validating error: " +
-          e.response.status +
-          ", status: " +
-          e.response.data.httpStatus +
-          ", message: " +
-          e.response.data.message
+        e.response.status +
+        ", status: " +
+        e.response.data.httpStatus +
+        ", message: " +
+        e.response.data.message
       );
 
       let msgError =
@@ -436,7 +326,9 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+@import '@/assets/css/main.css';
+
 #container {
   color: rgba(255, 245, 0, 0.8);
   margin-top: 20px;

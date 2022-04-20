@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import UserProfile from "../components/user/UserProfile.vue";
+import UserProfile from "../components/user/TheUserProfile.vue";
 export default {
   name: 'UserProfileView',
   components: {

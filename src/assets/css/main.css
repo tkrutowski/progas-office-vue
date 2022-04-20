@@ -1,0 +1,47 @@
+
+.btn-progas {
+    background-color: rgba(255, 245, 0, 0.8) !important;
+ color: #2c3e50 !important;
+ border-color: rgb(108, 117, 125) !important;
+ /* font-weight: bold; */
+}
+
+.btn-progas:hover {
+ color: white  ;
+ background-color: rgb(108, 117, 125) ;
+background-color: rgba(229, 200, 0, 0.883)!important;
+}
+
+.btn-progas:focus {
+ outline: none  !important;
+ box-shadow: none  !important;
+}
+
+.text-left{
+    text-align: left;
+}
+.color-green{
+    color: #28a745;
+}
+
+.color-red{
+    color:  #dc3545;
+}
+
+.color-progas-yellow {
+    color: rgba(255, 245, 0, 0.8);
+    
+}
+
+.text-progas {
+    color: rgba(255, 245, 0, 0.8)!important;
+    
+}
+.bg-progas {
+    /* color: white  ; */
+    background-color: rgb(97, 93, 92) !important;
+   }
+
+.select-text-color {
+    color: rgba(255, 245, 0, 0.8);
+}

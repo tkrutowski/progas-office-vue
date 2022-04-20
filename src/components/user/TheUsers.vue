@@ -1,224 +1,85 @@
 <template>
   <b-container fluid id="container">
-    <b-row>
-      <b-col class="mt-5">
+    <b-row class="mt-5">
+      <b-col>
 
         <!-- --------------------------------- TABELA ---------------------------------- -->
-        <b-table
-          :busy="isBusy"
-          :items="usersList"
-          :fields="fields"
-          :tbody-tr-class="rowClass"
-          id="table"
-        >
+        <b-table :busy="isBusy" :items="usersListDisplay" :fields="fields" :tbody-tr-class="rowClass" id="table"
+          responsive="sm" thead-tr-class="table-bg text-dark">
           <template #cell(status)="row">
             <!-- ---------------------------- Status icons -------------------------------- -->
             <div>
               <!-- Enabled -->
-              <b-button
-                v-if="row.item.enabled"
-                size="sm"
-                variant="outline"
-                @click="setActiveUser(row.item, row.index, $event.target)"
-              >
-                <b-icon
-                  class="pr-4 pt-1"
-                  scale="1.3"
-                  icon="toggle-on"
-                  variant="success"
-                  aria-hidden="true"
-                ></b-icon>
+              <b-button v-if="row.item.enabled" size="sm" variant="outline"
+                @click="setActiveUser(row.item, row.index, $event.target)">
+                <b-icon class="pr-4 pt-1" scale="1.3" icon="toggle-on" variant="success" aria-hidden="true"></b-icon>
               </b-button>
-              <b-button
-                v-else
-                size="sm"
-                variant="outline"
-                @click="setActiveUser(row.item, row.index, $event.target)"
-              >
-                <b-icon
-                  class="pr-4"
-                  scale="1.3"
-                  icon="toggle-off"
-                  variant="danger"
-                  aria-hidden="true"
-                ></b-icon>
+              <b-button v-else size="sm" variant="outline" @click="setActiveUser(row.item, row.index, $event.target)">
+                <b-icon class="pr-4" scale="1.3" icon="toggle-off" variant="danger" aria-hidden="true"></b-icon>
               </b-button>
               <!-- Lock -->
-               <b-button
-               v-if="row.item.notLocked"
-                size="sm"
-                variant="outline"
-                @click="setLockUser(row.item, row.index, $event.target)"
-              >
-                <b-icon
-                scale="1.1"
-                icon="unlock-fill"
-                variant="success"
-                aria-hidden="true"
-              ></b-icon>
+              <b-button v-if="row.item.notLocked" size="sm" variant="outline"
+                @click="setLockUser(row.item, row.index, $event.target)">
+                <b-icon scale="1.1" icon="unlock-fill" variant="success" aria-hidden="true"></b-icon>
               </b-button>
-              <b-button
-              v-else
-                size="sm"
-                variant="outline"
-                @click="setLockUser(row.item, row.index, $event.target)"
-              >
-                <b-icon
-                scale="1.1"
-                icon="lock-fill"
-                variant="danger"
-                aria-hidden="true"
-              ></b-icon>
+              <b-button v-else size="sm" variant="outline" @click="setLockUser(row.item, row.index, $event.target)">
+                <b-icon scale="1.1" icon="lock-fill" variant="danger" aria-hidden="true"></b-icon>
               </b-button>
             </div>
           </template>
+
+          <!-- ----------------------------------AKCJA --------------------------------- -->
           <template #cell(action)="row">
             <b-button-group>
-              <b-button
-                size="sm"
-                @click="editUser(row.item, row.index, $event.target)"
-                class="mr-2"
-              >
+              <!-- EDIT -->
+              <b-button size="sm" @click="editUser(row.item, row.index, $event.target)" class="mr-2" variant="progas">
                 Edit
               </b-button>
-
-              <b-button
-                size="sm"
-                @click="deleteUser(row.item, row.index, $event.target)"
-                class="mr-2 bg-danger"
-              >
+              <!-- DELETE -->
+              <b-button size="sm" @click="deleteUser(row.item, row.index, $event.target)" class="mr-2 bg-danger">
                 <b-icon icon="trash" aria-hidden="true"></b-icon>
               </b-button>
             </b-button-group>
           </template>
         </b-table>
       </b-col>
-      <b-col cols="12" md="auto" class="mb-3" co>
-        <div class="card" id="card-info">
-          <div class="card-body">
-            <div class="text-center px-xl-3">
-              <b-button href="/user/add">Nowy użytkownik</b-button>
-              <button
-                class="btn btn-success btn-block"
-                type="button"
-                data-toggle="modal"
-                data-target="#user-form-modal"
-              >
-                New User
-              </button>
-            </div>
-            <hr class="my-3" />
-            <div class="e-navlist e-navlist--active-bold">
-              <ul class="nav">
-                <li class="nav-item active">
-                  <a href="" class="nav-link"
-                    ><span>All</span>&nbsp;<small>/&nbsp;32</small></a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a href="" class="nav-link"
-                    ><span>Active</span>&nbsp;<small>/&nbsp;16</small></a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a href="" class="nav-link"
-                    ><span>Selected</span>&nbsp;<small>/&nbsp;0</small></a
-                  >
-                </li>
-              </ul>
-            </div>
-            <hr class="my-3" />
-            <div>
-              <div class="form-group">
-                <label>Date from - to:</label>
-                <div>
-                  <input
-                    id="dates-range"
-                    class="form-control flatpickr-input"
-                    placeholder="01 Dec 17 - 27 Jan 18"
-                    type="text"
-                    readonly="readonly"
-                  />
-                </div>
-              </div>
-              <div class="form-group">
-                <label>Search by Name:</label>
-                <div>
-                  <input
-                    class="form-control w-100"
-                    type="text"
-                    placeholder="Name"
-                    value=""
-                  />
-                </div>
-              </div>
-            </div>
-            <hr class="my-3" />
-            <div class="">
-              <label>Status:</label>
-              <div class="px-2">
-                <div class="custom-control custom-radio">
-                  <input
-                    type="radio"
-                    class="custom-control-input"
-                    name="user-status"
-                    id="users-status-disabled"
-                  />
-                  <label
-                    class="custom-control-label"
-                    for="users-status-disabled"
-                    >Disabled</label
-                  >
-                </div>
-              </div>
-              <div class="px-2">
-                <div class="custom-control custom-radio">
-                  <input
-                    type="radio"
-                    class="custom-control-input"
-                    name="user-status"
-                    id="users-status-active"
-                  />
-                  <label class="custom-control-label" for="users-status-active"
-                    >Active</label
-                  >
-                </div>
-              </div>
-              <div class="px-2">
-                <div class="custom-control custom-radio">
-                  <input
-                    type="radio"
-                    class="custom-control-input"
-                    name="user-status"
-                    id="users-status-any"
-                    checked=""
-                  />
-                  <label class="custom-control-label" for="users-status-any"
-                    >Any</label
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+
+      <!-- ----------------------------------SIDE CARD --------------------------------- -->
+      <b-col cols="12" md="auto" class="mb-3">
+        <b-card id="card-info" bg-variant="dark" header-tag="header">
+          <template #header>
+            <b-button variant="progas" href="/user/add">Nowy użytkownik</b-button>
+          </template>
+
+          <b-card-text class="text-left pl-3 mb-1">Wszyscy / {{ calculateAll }}</b-card-text>
+          <b-card-text class="text-left pl-3 mb-1 color-green">Aktywni / {{ calculateActive }}</b-card-text>
+          <b-card-text class="text-left pl-3 mb-1 color-red">Nieaktywni / {{ calculateNotActive }}</b-card-text>
+          <b-card-text class="text-left pl-3 mb-1 color-green">Odblokowani / {{ calculateUnLock }}</b-card-text>
+          <b-card-text class="text-left pl-3 color-red">Zablokowani / {{ calculateLock }}</b-card-text>
+          <!-- <div class="text-center px-xl-3"> -->
+          <!-- </div> -->
+          <hr class="my-4" style="color:yellow;background-color:yellow" />
+
+          <b-form-group label="Wyświetl:">
+            <b-form-radio v-model="selectedDisplay" class="pb-1" value="ALL" @change="displayRadio($event)">Wszystkie
+            </b-form-radio>
+            <b-form-radio v-model="selectedDisplay" class="color-green pb-1" value="ACTIVE"
+              @change="displayRadio($event)">Aktywne</b-form-radio>
+            <b-form-radio v-model="selectedDisplay" class="color-red pb-1" value="DISABLED"
+              @change="displayRadio($event)">Wyłączone</b-form-radio>
+            <b-form-radio v-model="selectedDisplay" class="color-green pb-1" value="UNLOCK"
+              @change="displayRadio($event)">Odblokowane</b-form-radio>
+            <b-form-radio v-model="selectedDisplay" class="color-red" value="LOCK" @change="displayRadio($event)">
+              Zablokowane</b-form-radio>
+          </b-form-group>
+        </b-card>
       </b-col>
     </b-row>
 
-    <router-link to="/user/profile">Do profilu</router-link>
-    <ul v-if="errors && errors.length">
-      <li v-for="error of errors" :key="error.ruleId">
-        {{ error.message }}
-      </li>
-    </ul>
+    <!-- <router-link to="/user/profile">Do profilu</router-link> -->
 
-  
     <!-- Info modal -->
-    <b-modal
-      :id="infoModal.id"
-      :title="infoModal.title"
-      ok-only
-      @hide="resetInfoModal"
-    >
+    <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
       <pre>{{ infoModal.content }}</pre>
     </b-modal>
   </b-container>
@@ -248,6 +109,7 @@ export default {
         {
           key: "lastName",
           label: "Nazwisko",
+          sortable: true
         },
         {
           key: "username",
@@ -268,7 +130,8 @@ export default {
       ],
       isBusy: false,
       usersList: [],
-
+      usersListDisplay: [],
+      selectedDisplay: "ALL",
       infoModal: {
         id: "info-modal",
         title: "",
@@ -276,19 +139,57 @@ export default {
       },
     };
   },
+  computed: {
 
+    calculateAll() {
+      return this.usersList.length;
+    },
+    calculateActive() {
+      let count = 0;
+      this.usersList.forEach((user) => {
+        if (user.enabled == true) {
+          count++;
+        }
+      });
+      return count;
+    },
+    calculateNotActive() {
+      let count = 0;
+      this.usersList.forEach((user) => {
+        if (user.enabled == false) {
+          count++;
+        }
+      });
+      return count;
+    },
+    calculateLock() {
+      let count = 0;
+      this.usersList.forEach((user) => {
+        if (user.notLocked == false) {
+          count++;
+        }
+      });
+      return count;
+    },
+    calculateUnLock() {
+      let count = 0;
+      this.usersList.forEach((user) => {
+        if (user.notLocked == true) {
+          count++;
+        }
+      });
+      return count;
+    }
+
+  },
   created() {
     this.getUsersFromDb();
   },
   methods: {
     rowClass(item, type) {
       // if (!item || type !== 'row') return
-      if (item.isHoliday === true) return "table-dark";
-      // if (item.isHoliday === true) return "worktime1"
-      // if (item.isHoliday === true) return {
-      //     classes: 'worktime-table',
-      //     css: {"color": "blue"}
-      // }
+      //if (item.isHoliday === true) return "table-dark";
+      return "color-progas-yellow"
     },
     //
     //------------------------------------------ MESSAGE ------------------------------------------
@@ -311,6 +212,51 @@ export default {
     resetInfoModal() {
       this.infoModal.title = "";
       this.infoModal.content = "";
+    },
+    //-------------------------------------------DISPLAY-------------------------------------------
+    displayRadio(event) {
+      console.log("DisplayRadio(): " + event);
+      if (event == "ALL") {
+        this.usersListDisplay = [];
+        this.usersList.forEach((user) => {
+          this.usersListDisplay.push(user);
+        });
+      }
+      if (event == "ACTIVE") {
+        this.usersListDisplay = [];
+        this.usersList.forEach((user) => {
+          if (user.enabled == true) {
+            this.usersListDisplay.push(user);
+          }
+        });
+      }
+
+      if (event == "DISABLED") {
+        this.usersListDisplay = [];
+        this.usersList.forEach((user) => {
+          if (user.enabled == false) {
+            this.usersListDisplay.push(user);
+          }
+        });
+      }
+
+      if (event == "LOCK") {
+        this.usersListDisplay = [];
+        this.usersList.forEach((user) => {
+          if (user.notLocked == false) {
+            this.usersListDisplay.push(user);
+          }
+        });
+      }
+
+      if (event == "UNLOCK") {
+        this.usersListDisplay = [];
+        this.usersList.forEach((user) => {
+          if (user.notLocked == true) {
+            this.usersListDisplay.push(user);
+          }
+        });
+      }
     },
     //-------------------------------------------USER-------------------------------------------
     //
@@ -338,7 +284,6 @@ export default {
         .then((value) => {
           if (value) {
             this.deleteUserDB(item.id);
-            // this.displaySmallMessage("success", "Usunięto użytkownika.");
           }
         })
         .catch((err) => {
@@ -350,7 +295,6 @@ export default {
     //
     editUser(item, index, button) {
       console.log("Edycja id: " + item.id);
-      // const id = item.id;
       let data = {
         id: item.id,
         edit: true,
@@ -391,13 +335,13 @@ export default {
           // An error occurred
         });
     },
-      //
+    //
     //set user lock/unlock
     //
     setLockUser(item, index, button) {
       console.log("user id: " + item.id + ", isLock: " + item.notLocked);
       let lock = item.notLocked ? "zablokować" : "odblokować";
-      
+
       this.$bvModal
         .msgBoxConfirm(
           `Czy chcesz  ${lock} konto użytkownika: 
@@ -416,7 +360,7 @@ export default {
         )
         .then((value) => {
           if (value) {
-           this.setLockUserDb(item.id, !item.notLocked);
+            this.setLockUserDb(item.id, !item.notLocked);
           }
         })
         .catch((err) => {
@@ -429,8 +373,12 @@ export default {
     //
     getUsersFromDb() {
       console.log("getUsersFromDb() - start");
+        const headers = {
+        "Content-type": "application/json; charset=UTF-8",
+        'Authorization': "Bearer "+ this.$store.getters.getToken
+      };
       axios
-        .get(this.url + `/api/user`)
+        .get(this.url + `/api/user`, {headers})
         .then((response) => {
           // JSON responses are automatically parsed.
           this.usersList = response.data;
@@ -440,9 +388,11 @@ export default {
           console.log(
             "getUsersFromDb() - Ilosc usersList[]: " + this.usersList.length
           );
+          //wyświetla tabele
+          this.displayRadio(this.selectedDisplay);
         })
         .catch((e) => {
-          this.errors.push(e);
+          this.validateError(e);
         });
     },
     //
@@ -453,7 +403,7 @@ export default {
       // const token=this.$store.getters.getToken;
       const headers = {
         "Content-type": "application/json; charset=UTF-8",
-        //   'Authorization': `Bearer ${token}`
+        'Authorization': "Bearer "+ this.$store.getters.getToken
       };
 
       axios
@@ -478,7 +428,7 @@ export default {
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-          // Authorization: `Bearer ` + this.$store.getters.getToken,
+           Authorization: "Bearer "+ this.$store.getters.getToken
         },
       };
       const params = {
@@ -502,7 +452,7 @@ export default {
           this.validateError(e);
         });
     },
-     //
+    //
     //update IsLock
     //
     setLockUserDb(userID, isLock) {
@@ -512,7 +462,7 @@ export default {
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-          // Authorization: `Bearer ` + this.$store.getters.getToken,
+          Authorization: "Bearer "+ this.$store.getters.getToken,
         },
       };
       const params = {
@@ -526,7 +476,7 @@ export default {
         .then((response) => {
           // JSON responses are automatically parsed.
           this.user = response.data;
-          this.displaySmallMessage("success", lock +" konto użytkownika.");
+          this.displaySmallMessage("success", lock + " konto użytkownika.");
           console.log(
             "Odpowiedz HTTP: " + response.status + ", " + response.statusText
           );
@@ -542,22 +492,25 @@ export default {
     validateError(e) {
       console.log(
         "validating error: " +
-          e.response.status +
-          ", status: " +
-          e.response.data.httpStatus +
-          ", message: " +
-          e.response.data.message
+        e.response.status +
+        ", status: " +
+        e.response.data.httpStatus +
+        ", message: " +
+        e.response.data.message
       );
 
       let msgError =
         "error: " + e.response.status + ";    " + e.response.data.message;
       this.displayLargeMessage("danger", msgError);
+      if(e.response.status == 401){
+        router.push('/login');
+      }
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 #container {
   color: rgba(255, 245, 0, 0.8);
   margin-top: 20px;
@@ -569,5 +522,10 @@ export default {
 
 #table {
   color: rgba(255, 245, 0, 0.8);
+}
+
+/deep/.table-bg {
+  background-color: rgba(255, 245, 0, 0.8);
+  /* color: rgb(97, 93, 92); */
 }
 </style>

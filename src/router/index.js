@@ -9,7 +9,8 @@ import LoginView from '@/views/LoginView.vue';
 import UsersView from '@/views/UsersView.vue';
 import UsersProfileView from '@/views/UserProfileView.vue';
 import UserRolesView from '@/views/UserRolesView.vue';
-import UserView from '@/views/UserView';
+import UserView from '@/views/UserView.vue';
+import ErrorView from '@/views/ErrorView.vue'
 Vue.use(VueRouter);
 
 const routes = [
@@ -70,6 +71,12 @@ const routes = [
   path: '/user/roles',
   name: 'UserRoles',
   component: UserRolesView,
+  props: true
+},
+{
+  path: '/error',
+  name: 'Error',
+  component: ErrorView,
   props: true
 },
 // ,

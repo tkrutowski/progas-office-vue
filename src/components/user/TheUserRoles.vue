@@ -14,7 +14,6 @@
 
         <!-- ------------------- CARD ROLES ------------------------>
         <b-card-group deck class="roles-group">
-          <!-- <b-form @submit="addRoleToUser"> -->
           <b-card header-tag="header" footer-tag="footer"  bg-variant="dark" >
             <template #header>
               <h4 class="mb-0 text-progas">Role</h4>
@@ -26,16 +25,11 @@
                 @change="onRoleChange"></b-form-select>
               <div class="mt-3"></div>
             </div>
-            <!-- <b-button @click="showRoleModal" variant="primary">Dodaj role</b-button> -->
-            <!-- v-b-modal="'role' + selectedUserID" -->
 
             <template #footer>
-              <!-- <b-form @submit.prevent="deleteRoleFromUser" > -->
 
               <b-button class="mr-2 text-dark" :disabled="selectedRole > 0 ? false : true" variant="danger" @click="deleteRoleFromUser">Usuń
                 role</b-button>
-              <!-- @click="deleteRoleFromUser" -->
-              <!-- </b-form> -->
               <b-button class="button-my" :disabled="selectedUserID > 0 ? false : true" variant="progas"
                 @click="showRoleModal">Dodaj role</b-button>
             </template>
@@ -51,10 +45,9 @@
             </b-card-text>
             <!-- <b-card-text>Uprawnienia do odczytu</b-card-text> -->
             <b-form-group label="Uprawnienia do odczytu">
-              <b-form-radio v-model="selectedRead" value="NULL" >None
-              </b-form-radio>
-              <b-form-radio v-model="selectedRead" value="READ">Read</b-form-radio>
-              <b-form-radio v-model="selectedRead" value="READ_ALL">Read all</b-form-radio>
+              <b-form-radio v-model="selectedRead" value="NULL" :disabled="selectedRole > 0 ? false : true">None</b-form-radio>
+              <b-form-radio v-model="selectedRead" value="READ" :disabled="selectedRole > 0 ? false : true">Read</b-form-radio>
+              <b-form-radio v-model="selectedRead" value="READ_ALL" :disabled="selectedRole > 0 ? false : true">Read all</b-form-radio>
             </b-form-group>
             <hr />
             <!-- <b-card-text>Uprawnienia do zapisu</b-card-text> -->
@@ -62,9 +55,9 @@
               <h3>Zapis</h3>
             </b-card-text>
             <b-form-group label="Uprawnienia do odczytu">
-              <b-form-radio v-model="selectedWrite" value="NULL">None</b-form-radio>
-              <b-form-radio v-model="selectedWrite" value="WRITE">Write</b-form-radio>
-              <b-form-radio v-model="selectedWrite" value="WRITE_ALL">Write all</b-form-radio>
+              <b-form-radio v-model="selectedWrite" value="NULL" :disabled="selectedRole > 0 ? false : true">None</b-form-radio>
+              <b-form-radio v-model="selectedWrite" value="WRITE" :disabled="selectedRole > 0 ? false : true">Write</b-form-radio>
+              <b-form-radio v-model="selectedWrite" value="WRITE_ALL" :disabled="selectedRole > 0 ? false : true">Write all</b-form-radio>
             </b-form-group>
             <hr />
 
@@ -73,9 +66,9 @@
               <h3>Usuwanie</h3>
             </b-card-text>
             <b-form-group label="Uprawnienia do usuwania">
-              <b-form-radio v-model="selectedDelete" value="NULL">None</b-form-radio>
-              <b-form-radio v-model="selectedDelete" value="DELETE">Delete</b-form-radio>
-              <b-form-radio v-model="selectedDelete" value="DELETE_ALL">Delete all</b-form-radio>
+              <b-form-radio v-model="selectedDelete" value="NULL" :disabled="selectedRole > 0 ? false : true">None</b-form-radio>
+              <b-form-radio v-model="selectedDelete" value="DELETE" :disabled="selectedRole > 0 ? false : true">Delete</b-form-radio>
+              <b-form-radio v-model="selectedDelete" value="DELETE_ALL" :disabled="selectedRole > 0 ? false : true">Delete all</b-form-radio>
             </b-form-group>
 
             <div class="mt-3"></div>
@@ -88,18 +81,12 @@
           <!-- </b-form> -->
         </b-card-group>
 
-
-
-    <!-- The modal  ADD NEW ROLE-->
-    <!-- :id="'role' + selectedUserID" -->
-    <!-- @show="getRemainingRoles" -->
     <b-modal ref="roleModal" centered title="Dodaj nową rolę" @ok="addRoleToUser"
     header-bg-variant="dark" header-text-variant="progas"
     body-bg-variant="dark" body-text-variant="progas"
     footer-bg-variant="dark" footer-text-variant="progas"
     ok-title="Dodaj" ok-variant="progas"
     cancel-title="Anuluj">
-      <!-- <b-textarea id="input-info" v-model="addRoleID"  rows="6" locale="pl" ></b-textarea> -->
       <div>
         <b-form-select id="select-new-role" v-model="selectedRemainingRole" :options="optionsRemainingRoles" required>
         </b-form-select>
@@ -114,6 +101,7 @@
 <script>
 import moment from "moment";
 import axios from "axios";
+import router from "@/router";
 export default {
   name: "UserRoles",
   data() {
@@ -245,12 +233,6 @@ export default {
       console.log("selectedUserID: " + this.selectedUserID);
       this.addRoleToUserDB(this.selectedUserID, this.selectedRemainingRole);
       //odświerzenie ról
-      console.log("ilość ról przed odświerzaniem: " + this.optionsUserRoles.length);
-
-      //       this.getUserRolesFromDb(this.selectedUserID);
-      console.log("ilość ról po odświerzaniu: " + this.optionsUserRoles.length);
-      console.log("ilość optionsRemainingRoles: " + this.optionsRemainingRoles.length);
-
       this.optionsRemainingRoles.forEach((roleOpt) => {
         if (roleOpt.value == this.selectedRemainingRole) {
           this.optionsUserRoles.push(roleOpt);
@@ -299,7 +281,7 @@ export default {
       let displayedPrivleges = [];
       const headers = {
         "Content-type": "application/json; charset=UTF-8",
-        //   'Authorization': `Bearer ${token}`
+        'Authorization': "Bearer "+ this.$store.getters.getToken
       };
 
       const params = {
@@ -335,7 +317,7 @@ export default {
       // const token=this.$store.getters.getToken;
       const headers = {
         "Content-type": "application/json; charset=UTF-8",
-        //   'Authorization': `Bearer ${token}`
+        'Authorization': "Bearer "+ this.$store.getters.getToken
       };
 
       const params = {
@@ -358,7 +340,7 @@ export default {
       // const token=this.$store.getters.getToken;
       const headers = {
         "Content-type": "application/json; charset=UTF-8",
-        //   'Authorization': `Bearer ${token}`
+       'Authorization': "Bearer "+ this.$store.getters.getToken
       };
 
       const params = {
@@ -389,7 +371,7 @@ export default {
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-          //  'Authorization': `Bearer `+ this.$store.getters.token
+          'Authorization': "Bearer "+ this.$store.getters.getToken
         },
       };
       axios
@@ -402,7 +384,7 @@ export default {
         })
 
         .catch((e) => {
-          this.errors.push(e);
+         this.validateError(e);
         });
     },
     //
@@ -414,7 +396,7 @@ export default {
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-          //  'Authorization': `Bearer `+ this.$store.getters.token
+          'Authorization': "Bearer "+ this.$store.getters.getToken
         },
       };
       axios
@@ -433,7 +415,7 @@ export default {
           });
         })
         .catch((e) => {
-          this.errors.push(e);
+         this.validateError(e);
         });
     },
     //
@@ -444,7 +426,7 @@ export default {
       // const token=this.$store.getters.getToken;
       const headers = {
         "Content-type": "application/json; charset=UTF-8",
-        //   'Authorization': `Bearer ${token}`
+       'Authorization': "Bearer "+ this.$store.getters.getToken
       };
 
       const params = {
@@ -455,7 +437,6 @@ export default {
         .post(this.url + `/api/user/role/add`, null, { params, headers })
         .then((response) => this.displaySmallMessage("success", "Dodano rolę do użytkownika."))
         .catch((e) => {
-          this.errors.push(e);
           this.validateError(e);
         });
     },
@@ -467,30 +448,19 @@ export default {
     },
     /////////////////////////////////UŻYTKOWNIK//////////////////////////////////////
   
-    validateError(e) {
-      console.log(
-        "validating error: " +
-        e.response.status +
-        ", status: " +
-        e.response.data.httpStatus +
-        ", message: " +
-        e.response.data.message
-      );
-
-      this.msgError = "error: " + e.response.status + ";    " + e.response.data.message;
-      this.showAlertError(10);
-    },
+  
     //
     //get users from DB
     //
     getUsersFromDb() {
       console.log("getUsersFromDb() - start");
+      console.log("token: "+ this.$store.getters.getToken);
       // axios.get(`http://77.55.210.35:9090/api/teams`)
       // axios.get(`http://localhost:9090/api/teams`)
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-          //  'Authorization': `Bearer `+ this.$store.getters.token
+           'Authorization': "Bearer "+ this.$store.getters.getToken
         },
       };
       axios
@@ -505,7 +475,7 @@ export default {
           }
         })
         .catch((e) => {
-          this.errors.push(e);
+          this.validateError(e);
         });
     },
     convertToOptionsUsers() {
@@ -519,7 +489,26 @@ export default {
         console.log(e.id + " " + e.lastName);
       });
     },
-  },
+     validateError(e) {
+      console.log(
+        "validating error: " +
+        e.response.status +
+        ", status: " +
+        e.response.data.httpStatus +
+        ", message: " +
+        e.response.data.message
+      );
+
+      let msgError =
+        "error: " + e.response.status + ";    " + e.response.data.message;
+       this.displayLargeMessage("danger", msgError);
+      if(e.response.status == 401){
+        router.push('/login');
+      }
+    },
+
+
+  },   
 };
 </script>
 
