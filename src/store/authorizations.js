@@ -1,11 +1,12 @@
 const authorizations = {
     state: {
-        token: "",
+        token: "null",
         isAuthenticated: false,
         user: {
             id:0,
             username: "test",
-            firstName: "Test"
+            firstName: "Test",
+            idEmployee: 0
         },
         userPrivileges: []
     },

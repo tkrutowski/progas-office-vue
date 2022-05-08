@@ -1,6 +1,7 @@
 <template>
-  <div id="footer">
-          ⓒ 2022 ProgasOffice
+  <!-- <div id="footer" class="fixed-bottom"> -->
+  <div id="footer" >
+         <!-- <p class=" d-none d-md-block "> ⓒ 2022 ProgasOffice </p> -->
   </div>
 </template>
 
@@ -12,8 +13,8 @@ export default {
 
 <style>
 #footer{
- position:fixed;
- bottom:0;
+ /* position:fixed; */
+ /* bottom:0; */
    color: rgba(255, 245, 0, 0.8);
    width: 100%;
    margin-bottom: 20px;

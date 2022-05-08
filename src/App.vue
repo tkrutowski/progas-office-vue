@@ -26,7 +26,9 @@ export default {
   text-align: center;
   /* background-color: rgb(29,29,29); */
   background-color: #252525;
-  color: #2c3e50;
+  /* color: #2c3e50; */
+  color: rgba(255, 245, 0, 0.8);
   /* margin-top: 60px; */
 }
+
 </style>

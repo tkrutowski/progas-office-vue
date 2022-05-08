@@ -51,15 +51,12 @@
 <script>
 import axios from "axios";
 import {errorMixin} from "@/mixins/error"
+import {userMixin} from "@/mixins/user"
 export default {
   name: "TheLogin",
-  mixins : [errorMixin],
+  mixins : [errorMixin, userMixin],
   data() {
     return {
-      //  url: "http://focikhome.no-ip.org:9090",
-      // url: "http://localhost:8089",
-      // url: "http://localhost:9090",
-       url: "https://docker.focikhome.synology.me",
       error: false,
 
       user: {
@@ -99,7 +96,7 @@ export default {
       };
       axios
         .post(
-          this.url + `/api/auth/login`,
+          this.urlUser + `/api/auth/login`,
           {
             username: this.username,
             password: this.password,
