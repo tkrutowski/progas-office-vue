@@ -91,21 +91,18 @@
 import moment from "moment";
 import axios from "axios";
 import router from "@/router";
+import {errorMixin} from "@/mixins/error"
+import {userMixin} from "@/mixins/user"
 export default {
   name: "UserProfile",
+    mixins : [errorMixin, userMixin],
   data() {
     return {
-      url: "http://localhost:8089",
-      // url: "http://localhost:8082",
-      // url: "https://docker.focikhome.synology.me",
       user: {},
       idUser: 0,
       oldPassword: "",
       newPassword: "",
       confirmPassword: "",
-      // Message
-      msgSuccess: "succes",
-      msgError: "error",
     };
   },
 
@@ -125,25 +122,7 @@ export default {
     },
   },
   methods: {
-    //
-    //------------------------------------------ MESSAGE ------------------------------------------
-    //
-    displaySmallMessage(variant = null, msg) {
-      this.$bvToast.toast(`${msg}`, {
-        title: "Informacja",
-        variant: variant,
-        solid: true,
-      });
-    },
-    displayLargeMessage(variant = null, msg) {
-      this.$bvToast.toast(`${msg}`, {
-        title: "Informacja",
-        variant: variant,
-        solid: true,
-        toaster: "b-toaster-top-full",
-      });
-    },
-   
+     
     //------------------------------   USER  ------------------------------------------------
      updatePassword() {     
         if (this.validationPassword && this.validationConfirmPassword) {
@@ -166,7 +145,7 @@ export default {
         newPass: this.newPassword,
       };
       axios
-        .put(this.url + `/api/user/changepass/` + this.idUser, null, {
+        .put(this.urlUser + `/api/user/changepass/` + this.idUser, null, {
           params,
           header,
         })
@@ -194,7 +173,7 @@ export default {
         },
       };
       axios
-        .put(this.url + `/api/user/update`, this.user, header)
+        .put(this.urlUser + `/api/user/update`, this.user, header)
         .then((response) => {
           this.user = response.data;
           this.msgSuccess = "Zaaktualizowano profil użytkownika";
@@ -218,7 +197,7 @@ export default {
         },
       };
       axios
-        .get(this.url + `/api/user/` + userID, header)
+        .get(this.urlUser + `/api/user/` + userID, header)
         .then((response) => {
           this.user = response.data;
           console.log("Odpowiedz HTTP: "+response.status+", "+response.statusText);
@@ -228,24 +207,7 @@ export default {
           this.validateError(e);
         });
     },
-    
-    validateError(e) {
-      console.log(
-        "validating error: " +
-        e.response.status +
-        ", status: " +
-        e.response.data.httpStatus +
-        ", message: " +
-        e.response.data.message
-      );
-
-      this.msgError = "error: " + e.response.status + "; " + e.response.data.message;
-      this.displayLargeMessage("danger", this.msgError);
-
-       if(e.response.status == 401){
-        router.push('/login');
-      }
-    },
+      
   },
 };
 </script>

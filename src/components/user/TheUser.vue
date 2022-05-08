@@ -1,11 +1,26 @@
 <template>
   <b-container id="container">
     <b-card :title="
-      isEdit == false ? 'Dodawanie nowego użytkownika' : 'Edycja użytkownia'
+      isEdit == 'false' ? 'Dodawanie nowego użytkownika' : 'Edycja użytkownia'
     " bg-variant="dark">
 
       <b-form @submit.stop.prevent="saveUser" autocomplete="off">
         <div class="row">
+
+            <!-- EMPLOYEE? -->
+          <b-form-group v-if="isEdit == 'false'" class="col"  
+            description="Zaznacz, jeżeli nowy użytkownik jest pracownikiem firmy.">
+              <b-form-checkbox v-model="isEmployee" name="checkbox-employee" checked="isEmployee" 
+              switch class="pb-1" @change="employeeClear">
+            Pracownik firmy
+          </b-form-checkbox>
+          
+           <b-form-select  v-model="selectedEmployeeID" :options="optionsEmployees" class="" id="select-employee"
+              @change="onEmployeeChange" :disabled="!isEmployee" required>
+            </b-form-select>
+          </b-form-group>
+</div>
+         <div class="row">
           <!-- FIRSTNAME -->
           <b-form-group class="col" label="Imię:" label-for="input-firstname">
             <b-form-input id="input-firstname" v-model="user.firstName" :state="validationUserFirstName" placeholder=""
@@ -45,7 +60,7 @@
           </b-form-group>
 
           <!-- PASSWORD -->
-          <b-form-group v-if="!isEdit" class="col" label="Hasło:" label-for="input-pass">
+          <b-form-group v-if="isEdit == 'false'" class="col" label="Hasło:" label-for="input-pass">
             <b-form-input id="input-pass" v-model="user.password" :state="validationPassword" placeholder=""
               type="password" required></b-form-input>
             <b-form-invalid-feedback :state="validationPassword">
@@ -57,7 +72,7 @@
           </b-form-group>
 
           <!-- CONFIRM PASSWORD -->
-          <b-form-group v-if="!isEdit" class="col" label="Potwierdź hasło:" label-for="input-pass-confirm">
+          <b-form-group v-if="isEdit == 'false'" class="col" label="Potwierdź hasło:" label-for="input-pass-confirm">
             <b-form-input id="input-pass-confirm" v-model="confirmPassword" :state="validationConfirmPassword"
               placeholder="" type="password" required></b-form-input>
             <b-form-invalid-feedback :state="validationConfirmPassword">
@@ -69,7 +84,7 @@
           </b-form-group>
         </div>
 
-        <b-form-group label="Using sub-components:">
+        <b-form-group >
           <b-form-checkbox v-model="user.enabled" name="checkbox-enabled" checked="user.enabled" switch>
             Aktywny
           </b-form-checkbox>
@@ -95,33 +110,36 @@
 <script>
 import moment from "moment";
 import axios from "axios";
-import router from "@/router";
+import {errorMixin} from "@/mixins/error"
+import {userMixin} from "@/mixins/user"
 export default {
   name: "User",
+  mixins : [errorMixin, userMixin],
   data() {
     return {
-      url: "http://localhost:8089",
-      // url: "http://localhost:8082",
-      // url: "https://docker.focikhome.synology.me",
-      errors: [],
       idUser: 0,
       isEdit: false,
-      user: {
-        id: 0,
-        firstName: "",
-        lastName: "",
-        password: "",
-        email: "",
-        username: "",
-        enabled: true,
-        notLocked: true,
-      },
+      // user: {
+      //   id: 0,
+      //   firstName: "",
+      //   lastName: "",
+      //   password: "",
+      //   email: "",
+      //   username: "",
+      //   enabled: true,
+      //   notLocked: true,
+      //   idEmployee: 0
+      // },
       confirmPassword: "",
       infoModal: {
         id: "info-modal",
         title: "",
         content: "",
       },
+      //employee
+      selectedEmployeeID: 0,
+      optionsEmployees: [],
+      isEmployee: false
     };
   },
   mounted() {
@@ -131,7 +149,9 @@ export default {
     this.idUser = idTemp;
     this.getUserifEdit();
   },
-  created() { },
+  created() {
+    this.getEmployeesFromDb();
+   },
   computed: {
     validationUserFirstName() {
       return this.user.firstName.length > 0 && this.user.firstName.length < 50;
@@ -160,23 +180,22 @@ export default {
     },
   },
   methods: {
+      //-------------------------------------------EMPLOYEE-------------------------------------------
     //
-    //------------------------------------------ MESSAGE ------------------------------------------
+    //Podczas zmiany uzytkownika pobierane są z bazy jego role
     //
-    displaySmallMessage(variant = null, msg) {
-      this.$bvToast.toast(`${msg}`, {
-        title: "Informacja",
-        variant: variant,
-        solid: true,
-      });
+    onEmployeeChange() {
+      console.log("onEmployeeChange()");
+      if (this.selectedEmployeeID > 0) {
+        this.getEmployeeFromDb(this.selectedEmployeeID);
+        this.user.idEmployee = this.selectedEmployeeID;
+      }
     },
-    displayLargeMessage(variant = null, msg) {
-      this.$bvToast.toast(`${msg}`, {
-        title: "Informacja",
-        variant: variant,
-        solid: true,
-        toaster: "b-toaster-top-full",
-      });
+    employeeClear(){
+           this.user.firstName = "";
+          this.user.lastName = "";
+          this.user.email = "";
+          this.selectedEmployeeID=0;
     },
     //-------------------------------------------USER-------------------------------------------
 
@@ -184,7 +203,7 @@ export default {
     //zapisuje użytkownika
     //
     saveUser() {
-      if (this.isEdit) {
+      if (this.isEdit == "true") {
         if (
           this.validationUserFirstName &&
           this.validationUserLastName &&
@@ -216,7 +235,7 @@ export default {
     //
     getUserifEdit() {
       console.log("getUserifEdit()) - start, ID = " + this.idUser);
-      if (this.isEdit) {
+      if (this.isEdit == "true") {
         this.getUserFromDb(this.idUser);
       }
     },
@@ -233,94 +252,73 @@ export default {
       this.user.username = "";
       this.user.enabled = true;
       this.user.notLocked = true;
+      this.selectedEmployeeID = 0;
+      this.user.idEmployee = 0;
+      this.confirmPassword = "";
+      this.isEmployee=false;
     },
+    //------------------------------------------EMPLOYEE DB--------------------------------------------------
+     //
+    //get users from DB
     //
-    //get user from DB
-    //
-    getUserFromDb(userID) {
-      console.log("getUserFromDb() - start, ID = " + userID);
+    getEmployeesFromDb() {
+      console.log("getEmployeeFromDb() - start");
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-          'Authorization': "Bearer "+ this.$store.getters.getToken
+          // 'Authorization': "Bearer "+ this.$store.getters.getToken
         },
       };
       axios
-        .get(this.url + `/api/user/` + userID, header)
+        .get(this.urlUser + `/api/employee/query?status=HIRED`, header)
         .then((response) => {
-          this.user = response.data;
-          console.log(
-            "Odpowiedz HTTP: " + response.status + ", " + response.statusText
-          );
-          console.log("getUserFromDb(): " + this.user);
-        })
-        .catch((e) => {
-          validateError(e);
-        });
-    },
-    //
-    //add USER into db
-    //
-    addUserDB() {
-      console.log("addUserDB() - start");
-      const headers = {
-        "Content-type": "application/json; charset=UTF-8",
-        'Authorization': "Bearer "+ this.$store.getters.getToken
-      };
-      axios
-        .post(this.url + `/api/user`, this.user, {
-          headers,
-        })
-        .then((response) => {
-          this.displaySmallMessage("success", "Dodano użytkownika.");
-          this.resetForm();
-        })
-        .catch((e) => {
-          this.errors.push(e);
-          this.validateError(e);
-        });
-    },
-    //
-    //update user
-    //
-    updateUserDb() {
-      console.log("updateUser() - start");
-      const header = {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-         'Authorization': "Bearer "+ this.$store.getters.getToken
-        },
-      };
-      axios
-        .put(this.url + `/api/user/update`, this.user, header)
-        .then((response) => {
-          this.user = response.data;
-          this.displaySmallMessage("success", "Zaaktualizowano użytkownika.");
-          console.log(
-            "Odpowiedz HTTP: " + response.status + ", " + response.statusText
-          );
-          console.log("after updateUser(): " + this.user);
-        })
-        .catch((e) => {
-          this.validateError(e);
-        });
-    },
-    //
-    //error
-    //
-    validateError(e) {
-      console.log(
-        "validating error: " +
-        e.response.status +
-        ", status: " +
-        e.response.data.httpStatus +
-        ", message: " +
-        e.response.data.message
-      );
+          // JSON responses are automatically parsed.
+          const employees = response.data;
+          console.log("getEmployeeFromDb(), znaleziono: " + employees.length);
 
-      let msgError =
-        "error: " + e.response.status + ";    " + e.response.data.message;
-      this.displayLargeMessage("danger", msgError);
+          if (employees.length > 0) {
+            this.convertToOptionsEmployees(employees);
+          }
+        })
+        .catch((e) => {
+          this.validateError(e);
+        });
+    },
+    convertToOptionsEmployees(emp) {
+      console.log("convert employees to options...");
+      emp.forEach((e) => {
+        let opt = {
+          value: e.id,
+          text: e.lastName + " " + e.firstName,
+        };
+        this.optionsEmployees.push(opt);
+        console.log(e.id + " " + e.lastName);
+      });
+    },
+      //
+    //get employee from DB
+    //
+    getEmployeeFromDb(employeeID) {
+      console.log("getEmployeeFromDb() - start, ID = " + employeeID);
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          //'Authorization': "Bearer "+ this.$store.getters.getToken
+        },
+      };
+      axios
+        .get(this.urlUser + `/api/employee/query/` + employeeID, header)
+        .then((response) => {
+          console.log("Odpowiedz HTTP: " + response.status + ", " + response.statusText);
+          let employee = response.data;
+          this.user.firstName = employee.firstName;
+          this.user.lastName = employee.lastName;
+          this.user.email = employee.email == null ? "":employee.email;
+          this.user.idEmployee = employee.id;
+        })
+        .catch((e) => {
+          this.validateError(e);
+        });
     },
   },
 };

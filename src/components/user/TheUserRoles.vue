@@ -102,14 +102,13 @@
 import moment from "moment";
 import axios from "axios";
 import router from "@/router";
+import { errorMixin } from "@/mixins/error";
+import {userMixin} from "@/mixins/user"
 export default {
   name: "UserRoles",
+    mixins: [errorMixin, userMixin],
   data() {
     return {
-      url: "http://localhost:8089",
-      // url: "http://localhost:8082",
-      // url: "https://docker.focikhome.synology.me",
-  
   
       idUser: 0,
       users: [],
@@ -139,24 +138,6 @@ export default {
     this.getAllRolesFromDb();
   },
   methods: {
-    //
-    //------------------------------------------ MESSAGE ------------------------------------------
-    //
-    displaySmallMessage(variant = null, msg) {
-      this.$bvToast.toast(`${msg}`, {
-        title: "Informacja",
-        variant: variant,
-        solid: true,
-      });
-    },
-    displayLargeMessage(variant = null, msg) {
-      this.$bvToast.toast(`${msg}`, {
-        title: "Informacja",
-        variant: variant,
-        solid: true,
-        toaster: "b-toaster-top-full",
-      });
-    },
 
     //-----------------------------------         ROLE  -------------------------------------
     //
@@ -289,7 +270,7 @@ export default {
         roleID: roleID,
       };
       axios
-        .get(this.url + `/api/user/role/details`, { params, headers })
+        .get(this.urlUser + `/api/user/role/details`, { params, headers })
         .then((response) => {
           displayedPrivleges = response.data;
           displayedPrivleges.forEach((priv) => {
@@ -325,7 +306,7 @@ export default {
         roleID: roleID,
       };
       axios
-        .put(this.url + `/api/user/role/details`, privileges, {
+        .put(this.urlUser + `/api/user/role/details`, privileges, {
           params,
           headers,
         })
@@ -335,6 +316,10 @@ export default {
           this.validateError(e);
         });
     },
+
+    //
+    //usuwanie roli
+    //
     deleteRoleFromUserDB(userID, roleID) {
       console.log("deleteRoleFromUserDB() - start");
       // const token=this.$store.getters.getToken;
@@ -348,7 +333,7 @@ export default {
         roleID: roleID,
       };
       axios
-        .delete(this.url + `/api/user/role`, {
+        .delete(this.urlUser + `/api/user/role`, {
           params,
           headers,
         })
@@ -375,7 +360,7 @@ export default {
         },
       };
       axios
-        .get(this.url + `/api/user/role/`, header)
+        .get(this.urlUser + `/api/user/role/`, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           console.log("getAllRolesFromDb(): " + response.data.length);
@@ -400,7 +385,7 @@ export default {
         },
       };
       axios
-        .get(this.url + `/api/user/role/` + userID, header)
+        .get(this.urlUser + `/api/user/role/` + userID, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           console.log("getUserRolesFromDb(): " + response.data.length);
@@ -434,7 +419,7 @@ export default {
         roleID: roleID,
       };
       axios
-        .post(this.url + `/api/user/role/add`, null, { params, headers })
+        .post(this.urlUser + `/api/user/role/add`, null, { params, headers })
         .then((response) => this.displaySmallMessage("success", "Dodano rolę do użytkownika."))
         .catch((e) => {
           this.validateError(e);
@@ -464,11 +449,11 @@ export default {
         },
       };
       axios
-        .get(this.url + `/api/user/`, header)
+        .get(this.urlUser + `/api/user/`, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.users = response.data;
-          console.log("getUserFromDb(), znaleziono: " + this.optionsUsers.length);
+          console.log("getUserFromDb(), znaleziono: " + this.users.length);
 
           if (this.users.length > 0) {
             this.convertToOptionsUsers();
@@ -489,25 +474,6 @@ export default {
         console.log(e.id + " " + e.lastName);
       });
     },
-     validateError(e) {
-      console.log(
-        "validating error: " +
-        e.response.status +
-        ", status: " +
-        e.response.data.httpStatus +
-        ", message: " +
-        e.response.data.message
-      );
-
-      let msgError =
-        "error: " + e.response.status + ";    " + e.response.data.message;
-       this.displayLargeMessage("danger", msgError);
-      if(e.response.status == 401){
-        router.push('/login');
-      }
-    },
-
-
   },   
 };
 </script>

@@ -48,7 +48,7 @@
       <b-col cols="12" md="auto" class="mb-3">
         <b-card id="card-info" bg-variant="dark" header-tag="header">
           <template #header>
-            <b-button variant="progas" href="/user/add">Nowy użytkownik</b-button>
+            <b-button variant="progas" @click="addUser">Nowy użytkownik</b-button>
           </template>
 
           <b-card-text class="text-left pl-3 mb-1">Wszyscy / {{ calculateAll }}</b-card-text>
@@ -89,14 +89,13 @@
 import moment from "moment";
 import axios from "axios";
 import router from "@/router";
+import {errorMixin} from "@/mixins/error"
+import {userMixin} from "@/mixins/user"
 export default {
   name: "Users",
+    mixins : [errorMixin, userMixin],
   data() {
     return {
-      url: "http://localhost:8089",
-      // url: "http://localhost:8082",
-      // url: "https://docker.focikhome.synology.me",
-      errors: [],
       fields: [
         {
           key: "id",
@@ -191,28 +190,7 @@ export default {
       //if (item.isHoliday === true) return "table-dark";
       return "color-progas-yellow"
     },
-    //
-    //------------------------------------------ MESSAGE ------------------------------------------
-    //
-    displaySmallMessage(variant = null, msg) {
-      this.$bvToast.toast(`${msg}`, {
-        title: "Informacja",
-        variant: variant,
-        solid: true,
-      });
-    },
-    displayLargeMessage(variant = null, msg) {
-      this.$bvToast.toast(`${msg}`, {
-        title: "Informacja",
-        variant: variant,
-        solid: true,
-        toaster: "b-toaster-top-full",
-      });
-    },
-    resetInfoModal() {
-      this.infoModal.title = "";
-      this.infoModal.content = "";
-    },
+    
     //-------------------------------------------DISPLAY-------------------------------------------
     displayRadio(event) {
       console.log("DisplayRadio(): " + event);
@@ -305,6 +283,16 @@ export default {
       });
       //  router.push({ name: 'User', params: {data}})
     },
+     //
+    //add user
+    //
+    addUser() {
+      console.log("Add user()");
+      router.push({
+        name: "User",
+           params: { idUser: 0, isEdit: "false" },
+      });
+    },
     //
     //set user active/inactive
     //
@@ -378,7 +366,7 @@ export default {
         'Authorization': "Bearer "+ this.$store.getters.getToken
       };
       axios
-        .get(this.url + `/api/user`, {headers})
+        .get(this.urlUser + `/api/user`, {headers})
         .then((response) => {
           // JSON responses are automatically parsed.
           this.usersList = response.data;
@@ -407,7 +395,7 @@ export default {
       };
 
       axios
-        .delete(this.url + `/api/user/delete/` + userID, {
+        .delete(this.urlUser + `/api/user/delete/` + userID, {
           headers,
         })
         .then((response) => {
@@ -435,7 +423,7 @@ export default {
         enabled: isEnabled,
       };
       axios
-        .put(this.url + `/api/user/update/active/` + userID, null, {
+        .put(this.urlUser + `/api/user/update/active/` + userID, null, {
           params,
           header,
         })
@@ -469,7 +457,7 @@ export default {
         lock: isLock,
       };
       axios
-        .put(this.url + `/api/user/update/lock/` + userID, null, {
+        .put(this.urlUser + `/api/user/update/lock/` + userID, null, {
           params,
           header,
         })
@@ -485,26 +473,6 @@ export default {
         .catch((e) => {
           this.validateError(e);
         });
-    },
-    //
-    //error
-    //
-    validateError(e) {
-      console.log(
-        "validating error: " +
-        e.response.status +
-        ", status: " +
-        e.response.data.httpStatus +
-        ", message: " +
-        e.response.data.message
-      );
-
-      let msgError =
-        "error: " + e.response.status + ";    " + e.response.data.message;
-      this.displayLargeMessage("danger", msgError);
-      if(e.response.status == 401){
-        router.push('/login');
-      }
     },
   },
 };
