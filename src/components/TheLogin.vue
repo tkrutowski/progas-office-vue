@@ -17,6 +17,7 @@
           id="login"
           class="form-control form-control-lg"
           placeholder="Nazwa użytkownika"
+          autocomplete="username"
           required
           v-model="username"
         />
@@ -32,6 +33,7 @@
           id="password"
           class="form-control form-control-lg"
           placeholder="Hasło"
+          autocomplete="current-password"
           required
           v-model="password"
         />

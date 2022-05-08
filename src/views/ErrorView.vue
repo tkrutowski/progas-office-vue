@@ -2,11 +2,11 @@
   <div class="mt-5 pt-5">
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <div v-if="error == 401">
-      {{error}}
+      <!-- {{error}} -->
       <e401 />
     </div>
     <div v-if="error == 503">
-       {{error}}
+       <!-- {{error}} -->
       <e503 />
     </div>
 
