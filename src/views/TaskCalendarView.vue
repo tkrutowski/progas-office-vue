@@ -1,17 +1,17 @@
 <template>
   <div>
-    <TaskCalendar />
+    <TheTaskCalendar />
   </div>
 </template>
 
 <script>
-import TaskCalendar from "@/components/tasks/TaskCalendar";
+import TheTaskCalendar from "@/components/tasks/TheTaskCalendar.vue";
 
 export default {
   name: "TASKTaskCalendar",
   components: {
-    TaskCalendar,
-  },
+    TheTaskCalendar
+},
 };
 </script>
 
