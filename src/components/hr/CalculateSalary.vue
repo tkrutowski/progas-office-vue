@@ -2,21 +2,12 @@
   <div>
     <b-container fluid="" id="container">
       <h1>Obliczanie wypłat</h1>
-      <hr
-        style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px"
-      />
+      <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
       <b-container id="dateSwitch">
         <b-row align-h="center">
           <div>
-            <label class="form-label" for="employee"
-              >Wybierz pracownika:
-            </label>
-            <b-form-select
-              v-model="selected"
-              :options="options"
-              class="mb-3"
-              id="employee"
-            >
+            <label class="form-label" for="employee">Wybierz pracownika: </label>
+            <b-form-select v-model="selected" :options="options" class="mb-3" id="employee">
               <!-- This slot appears above the options from 'options' prop -->
               <template #first>
                 <b-form-select-option :value="null" disabled>
@@ -40,12 +31,7 @@
                   </b-form-select-option>
                 </template>
               </b-form-select>
-              <b-form-select
-                v-model="year"
-                :options="years"
-                class="mb-3"
-                style="width: 45%"
-              >
+              <b-form-select v-model="year" :options="years" class="mb-3" style="width: 45%">
                 <!-- This slot appears above the options from 'options' prop -->
                 <template #first>
                   <b-form-select-option :value="null" disabled>
@@ -54,18 +40,16 @@
                 </template>
               </b-form-select>
             </div>
-            <a
-              class="btn  form-button mt-3 button-view"
-              style="width: 100px"
-              @click="getSalaryFromDb"
-              >Oblicz</a
-            >
+
+            <b-button class="mt-3" style="width: 100px" variant="progas" @click="calculateSalary"
+              >Oblicz
+            </b-button>
           </div>
         </b-row>
 
-        <b-row class="mt-5 pl-5 ml-5">
+        <b-row class="mt-5 ">
           <!--obliczanie wypłąt lewa-->
-          <div style="float: left; width: 40%">
+          <div class="col-md-4 mb-5" style="float: left;">
             <div class="main">
               <p class="text">Godziny urlopowe (płatne):</p>
               <p class="value">{{ salary.dayOffWorkTimePay }}</p>
@@ -101,7 +85,7 @@
           </div>
 
           <!--obliczanie wypłąt środek-->
-          <div style="float: left; width: 30%">
+          <div class="col-md-4 mb-5"  style="float: left;">
             <div class="main">
               <p class="text">Za godziny:</p>
               <p class="value">{{ salary.forRegularRate }}</p>
@@ -133,7 +117,7 @@
           </div>
 
           <!-- obliczenia wypłat prawa               -->
-          <div style="float: left; width: 30%">
+          <div class="col-md-4 mb-5" style="float: left;">
             <div class="main">
               <p class="text">Normatywny czas pracy:</p>
               <p class="value">...</p>
@@ -173,13 +157,7 @@
           </div>
         </b-row>
       </b-container>
-
-      <ul v-if="errors && errors.length">
-        <li v-for="error of errors" :key="error.ruleId">
-          {{ error.message }}
-        </li>
-      </ul>
-      <br />
+     
     </b-container>
   </div>
 </template>
@@ -187,18 +165,20 @@
 <script>
 import moment from "moment";
 import axios from "axios";
-
+import { errorMixin } from "@/mixins/error";
+import { employeeMixin } from "@/mixins/employee";
+import { mapGetters } from "vuex";
+import jwt_decode from "jwt-decode";
 export default {
   name: "CalculateSalary",
+  mixins: [errorMixin, employeeMixin],
   data() {
     return {
-      //  url: "http://focikhome.no-ip.org:9090",
-        url: "https://docker.focikhome.synology.me",
       employees: [],
       options: [],
       salaryDate: moment(),
       errors: [],
-      selected: "",
+      selected: null,
       months: [
         { value: "01", text: "styczeń" },
         { value: "02", text: "luty" },
@@ -248,58 +228,43 @@ export default {
     };
   },
   created() {
-    this.getEmployeesFromDb();
+    this.getEmployees();
     moment.locale("pl");
     // this.months=moment.months();
   },
-  methods: {
-    getEmployeesFromDb() {
-      console.log("getEmployeesFromDb() - start");
-      // axios.get(`http://77.55.210.35:9090/api/teams`)
-      // axios.get(`http://localhost:9090/api/teams`)
-      axios
-        .get(this.url+`/api/employee/query?status=HIRED`)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          this.employees = response.data;
-          console.log(
-            "getEmployeesFromDb() - Ilosc employees[]: " + this.employees.length
-          );
-          if (this.employees.length > 0) {
-            this.convertToOptions();
-          }
-        })
-        .catch((e) => {
-          this.errors.push(e);
-        });
-    },
-    getSalaryFromDb() {
-      if (this.selected === "") window.alert("Musisz wybrać pracownika!");
-      else {
-        // this.salaryDate = moment().creationData().
-        let url =
-          this.url+"/api/employee/salary/" +
-          this.selected +
-          "?date=" +
-          this.year +
-          "-" +
-          this.month +
-          "-01";
-        console.log("getSalaryFromDb(): " + url);
-        // axios.get(`http://77.55.210.35:9090/api/teams`)
-        // axios.get(`http://localhost:9090/api/teams`)
-        axios
-          .get(url)
-          .then((response) => {
-            // JSON responses are automatically parsed.
-            this.salary = response.data;
-            console.log(this.salary.toString());
-          })
-          .catch((e) => {
-            this.errors.push(e);
-          });
+  computed: {
+    ...mapGetters(["getAuthenticationState", "getToken"]),
+    hasReadAll() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        return token2.authorities.includes("HR_SALARIES_READ_ALL");
+      } catch (error) {
+        return false;
       }
     },
+    hasRead() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        return token2.authorities.includes("HR_SALARIES_READ");
+      } catch (error) {
+        return false;
+      }
+    },
+  },
+  methods: {
+    
+    //
+    //Oblicza wypłate
+    //
+    calculateSalary() {
+      if (this.selected == null) {
+        // this.displaySmallMessage("warning", "Musisz wybrać pracownika!") ;
+        this.displayLargeMessage("warning", "Musisz wybrać pracownika!");
+      } else {
+        this.getSalaryFromDb();
+      }
+    },
+
     convertToOptions() {
       console.log("convert to options...");
       this.employees.forEach((e) => {
@@ -310,6 +275,30 @@ export default {
         this.options.push(opt);
         console.log(e.id + " " + e.lastName);
       });
+    },
+    //-------------------------------------------------- DB----------------------------------------------------------
+
+    getSalaryFromDb() {
+      console.log("getSalaryFromDb() - start ");
+      let url =
+        this.urlEmpl +
+        "/api/employee/salary/" +
+        this.selected +
+        "?date=" +
+        this.year +
+        "-" +
+        this.month +
+        "-01";
+      axios
+        .get(url)
+        .then((response) => {
+          // JSON responses are automatically parsed.
+          this.salary = response.data;
+          //  console.log("Salary: "+ JSON.stringify(this.salary));
+        })
+        .catch((e) => {
+          this.validateError(e);
+        });
     },
   },
 };
@@ -342,19 +331,4 @@ export default {
   /*font-size: 20px;*/
   color: darkgrey;
 }
-
- .button-view {
-        background-color: rgba(255, 245, 0, 0.8);
-        color: #2c3e50 ;
-        border-color:  rgb(108, 117, 125);
-        /* font-weight: bold; */
-    }
-
-
-.button-view:hover {
-  color: white;
-  background-color:  rgb(108, 117, 125);
-  /* text-decoration: underline; */
-}
-    
 </style>
