@@ -5,7 +5,9 @@
       <h1>Wpisywanie godzin</h1>
       <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
       <b-row align-h="center">
+
         <b-col>
+        <form class="" @submit.prevent="addWorkTime">
           <!--                    Pracownik-->
           <div>
             <label class="form-label mt-5 max-width" for="employeeSelect">
@@ -19,11 +21,11 @@
                 required
               >
                 <!-- This slot appears above the options from 'options' prop -->
-                <!-- <template #first>
+                <template #first>
                   <b-form-select-option :value="null" disabled
                     >-- Wybierz pracownika --
                   </b-form-select-option>
-                </template> -->
+                </template>
               </b-form-select>
             </label>
           </div>
@@ -155,12 +157,11 @@
             </b-col>
           </b-row>
 
-          <a
-            class="btn btn-warning form-button mt-3 button-view "
-            style="width: 100px"
-            @click="addWorkTime"
-            >Dodaj</a
-          >
+         
+            <b-button class="mt-3" style="width: 100px" type="submin" variant="progas" 
+              >Dodaj
+            </b-button>
+        </form>
         </b-col>
 
         <!--                TABELA-->
@@ -177,12 +178,7 @@
         </b-col>
       </b-row>
 
-      <ul v-if="errors && errors.length">
-        <li v-for="error of errors" :key="error.ruleId">
-          {{ error.message }}
-        </li>
-      </ul>
-      <br />
+    
     </b-container>
   </div>
 </template>
@@ -190,15 +186,15 @@
 <script>
 import moment from "moment";
 import axios from "axios";
-
+import { errorMixin } from "@/mixins/error";
+import { employeeMixin } from "@/mixins/employee";
+import { mapGetters } from "vuex";
+import jwt_decode from "jwt-decode";
 export default {
   name: "AddWorkTime",
+    mixins: [errorMixin, employeeMixin],
   data() {
     return {
-      // url: "http://focikhome.no-ip.org:9090",
-      url: "http://localhost:9090",
-      // url: "http://localhost:8082",
-        // url: "https://docker.focikhome.synology.me",
       fields: [
         {
           key: "date",
@@ -247,7 +243,7 @@ export default {
       optionsEmployee: [],
       optionIllness: [],
 
-      selectedEmployee: "",
+      selectedEmployee: null,
       selectedDayOffType: "",
       selectedIllnessType: "",
 
@@ -270,17 +266,36 @@ export default {
     };
   },
   created() {
-    this.getEmployeesFromDb();
+    this.getEmployees();
     this.getDayOffTypesFromDb();
     this.getIllnessTypesFromDb();
     moment.locale("pl");
     // this.workTimeDate = new Date();
     this.workTimeDateString = this.workTimeDate.format("YYYY-MM-DD");
     this.isWork = true;
-    this.selectedEmployee = 0;
+    this.selectedEmployee = null;
     this.selectedDayOffType = 2;
     this.selectedIllnessType = 1;
-    this.getWorkTimeAll();
+    //this.getWorkTimeAllFromDB();
+  },
+  computed: {
+    ...mapGetters(["getAuthenticationState", "getToken"]),
+    hasReadAll() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        return token2.authorities.includes("HR_WORKTIME_READ_ALL");
+      } catch (error) {
+        return false;
+      }
+    },
+    hasRead() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        return token2.authorities.includes("HR_WORKTIME_READ");
+      } catch (error) {
+        return false;
+      }
+    },
   },
   methods: {
     rowClass(item, type) {
@@ -293,9 +308,13 @@ export default {
       // }
       
     },
+   
     onEmployeeChange() {
-      console.log("onEmployeeChange()");
-      this.getWorkTimeAll();
+      console.log("onEmployeeChange() - start");
+      console.log("selectedEmployee: "+this.selectedEmployee);
+      if(this.selectedEmployee != null){
+        this.getWorkTimeAllFromDB();
+      }
     },
     rbWork_click() {
       this.isWork = true;
@@ -313,167 +332,25 @@ export default {
       this.isDayOff = false;
     },
     onContext(ctx) {
-      // The date formatted in the locale, or the `label-no-date-selected` string
-      //this.formatted = ctx.selectedFormatted
-      // The following will be an empty string until a valid date is entered
       this.workTimeDateString = ctx.selectedYMD;
       this.workTimeDate = moment(this.workTimeDateString);
-      this.getWorkTimeAll();
+         if(this.selectedEmployee != null){
+        this.getWorkTimeAllFromDB();
+      }
     },
-    getEmployeesFromDb() {
-      console.log("getEmployeesFromDb() - start");
-      // axios.get(`http://77.55.210.35:9090/api/teams`)
-      // axios.get(`http://localhost:9090/api/teams`)
-      axios
-        .get(this.url+`/api/employee/query?status=HIRED`)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          this.employees = response.data;
-          console.log('Odpowiedz HTTP: ${response.status}, ${response.statusText}');
-          console.log(
-            "getEmployeesFromDb() - Ilosc employees[]: " + this.employees.length
-          );
-          if (this.employees.length > 0) {
-            this.convertToOptionsEmployee();
-          }
-        })
-        .catch((e) => {
-          this.errors.push(e);
-        });
-    },
-    getDayOffTypesFromDb() {
-      console.log("getDayOffTypesFromDb() - start");
-      // axios.get(`http://77.55.210.35:9090/api/teams`)
-      // axios.get(`http://localhost:9090/api/teams`)
-      axios
-        .get(this.url+`/api/employee/worktime/dayofftype`)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          this.dayOffTypes = response.data;
-          console.log(
-            "getDayOffTypesFromDb() - Ilosc dayOffTypes[]: " + this.dayOffTypes.length
-          );
-          if (this.dayOffTypes.length > 0) {
-            this.convertToOptionsDayOff();
-          }
-        })
-        .catch((e) => {
-          this.errors.push(e);
-        });
-    },
-    getIllnessTypesFromDb() {
-      console.log("getIllnessTypesFromDb() - start");
-      // axios.get(`http://77.55.210.35:9090/api/teams`)
-      // axios.get(`http://localhost:9090/api/teams`)
-      axios
-        .get(this.url+`/api/employee/worktime/illnesstype`)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          this.illnessTypes = response.data;
-          console.log(
-            "getIllnessTypesFromDb() - Ilosc illnessTypes[]: " + this.illnessTypes.length
-          );
-          if (this.illnessTypes.length > 0) {
-            this.convertToOptionsIllness();
-          }
-        })
-        .catch((e) => {
-          this.errors.push(e);
-        });
-    },
-    getWorkTimeAll() {
-      // this.salaryDate = moment().creationData().
-      console.log("getWorkTimeAll()");
-      this.isBusy = true;
-      // let url = "http://localhost:8082/api/worktime/" + this.selectedEmployee + "?date=" + this.workTimeDate.year() + "-" + (this.workTimeDate.month() + 1) + "-01";
-     console.log("selected employee: " + this.selectedEmployee);
-     let url =
-        this.url+"/api/employee/worktime/" +
-        this.selectedEmployee +
-        "?date=" +
-        this.workTimeDate.format("YYYY-MM-DD");
-      // // axios.get(`http://77.55.210.35:9090/api/teams`)
-      axios
-        .get(url)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          this.workTimeList = response.data;
-          // console.log(this.salary.toString());
-          this.isBusy = false;
-        })
-        .catch((e) => {
-          this.errors.push(e);
-        });
-    },
+   
+
     addWorkTime() {
       if (this.isWork) {
-        this.addWork();
+        this.addWorkToDB();
       }
-      if (this.isIllness) this.addIllness();
+      if (this.isIllness) this.addIllnessToDB();
 
-      if (this.isDayOff) this.addDayOff();
+      if (this.isDayOff) this.addDayOffToDB();
 
       this.addCalendarDay();
     },
-    addWork() {
-      console.log("add praca: " + this.timeFrom + " - " + this.timeTo);
-      this.work.idEmployee = this.selectedEmployee;
-      this.work.date = this.workTimeDate.format("YYYY-MM-DD");
-      this.work.startTime = this.timeFrom;
-      this.work.stopTime = this.timeTo;
-      console.log(this.work);
-      let url = this.url+ "/api/employee/worktime?workType=WORK";
-      // // axios.get(`http://77.55.210.35:9090/api/teams`)
-      // // axios.get(`http://localhost:9090/api/teams`)
-      axios
-        .post(url, this.work)
-        .then((response) => {
-          console.log(response);
-          this.getWorkTimeAll();
-        })
-        .catch((e) => {
-          this.errors.push(e);
-        });
-    },
-    addIllness() {
-      console.log("add illness: " + this.workTimeDate.format("YYYY-MM-DD"));
-      this.illness.idEmployee = this.selectedEmployee;
-      this.illness.date = this.workTimeDate.format("YYYY-MM-DD");
-      this.illness.idIllnessType = this.selectedIllnessType;
-      console.log(this.illness);
-      let url = this.url+ "/api/employee/worktime?workType=ILLNESS";
-      // // axios.get(`http://77.55.210.35:9090/api/teams`)
-      // // axios.get(`http://localhost:9090/api/teams`)
-      axios
-        .post(url, this.illness)
-        .then((response) => {
-          console.log(response);
-          this.getWorkTimeAll();
-        })
-        .catch((e) => {
-          this.errors.push(e);
-        });
-    },
-    addDayOff() {
-      console.log("add dayOff: " + this.workTimeDate.format("YYYY-MM-DD"));
-      this.dayOff.idEmployee = this.selectedEmployee;
-      this.dayOff.date = this.workTimeDate.format("YYYY-MM-DD");
-      this.dayOff.idDayOffType = this.selectedDayOffType;
-      console.log(this.dayOff);
-      let url = this.url+"/api/employee/worktime?workType=DAY_OFF";
-      // // axios.get(`http://77.55.210.35:9090/api/teams`)
-      // // axios.get(`http://localhost:9090/api/teams`)
-      axios
-        .post(url, this.dayOff)
-        .then((response) => {
-          console.log(response);
-          this.getWorkTimeAll();
-        })
-        .catch((e) => {
-          this.errors.push(e);
-        });
-    },
-    addCalendarDay() {
+ addCalendarDay() {
       console.log("addCalendarDay()");
       console.log("przed dodaniem dnia: " + this.workTimeDate.format("YYYY-MM-DD"));
 
@@ -485,6 +362,129 @@ export default {
 
       this.workTimeDateString = this.workTimeDate.format("YYYY-MM-DD");
     },
+
+   //---------------------------------------------------- DB READ ---------------------------------------------------------
+    //
+    //pobranie rodzajów dni wolnych 
+    //
+    getDayOffTypesFromDb() {
+      console.log("getDayOffTypesFromDb() - start");
+      axios
+        .get(this.urlEmpl+`/api/employee/worktime/dayofftype`)
+        .then((response) => {
+          // JSON responses are automatically parsed.
+          this.dayOffTypes = response.data;
+          console.log(
+            "getDayOffTypesFromDb() - Ilosc dayOffTypes[]: " + this.dayOffTypes.length
+          );
+          if (this.dayOffTypes.length > 0) {
+            this.convertToOptionsDayOff();
+          }
+        })
+        .catch((e) => {
+          this.validateError(e);
+        });
+    },
+      //
+    //pobranie rodzajów dni chorobowych 
+    //
+    getIllnessTypesFromDb() {
+      console.log("getIllnessTypesFromDb() - start");
+      axios
+        .get(this.urlEmpl+`/api/employee/worktime/illnesstype`)
+        .then((response) => {
+          // JSON responses are automatically parsed.
+          this.illnessTypes = response.data;
+          console.log(
+            "getIllnessTypesFromDb() - Ilosc illnessTypes[]: " + this.illnessTypes.length
+          );
+          if (this.illnessTypes.length > 0) {
+            this.convertToOptionsIllness();
+          }
+        })
+        .catch((e) => {
+          this.validateError(e);
+        });
+    },
+      //
+    //pobranie czsu pracy 
+    //
+    getWorkTimeAllFromDB() {
+      console.log("getWorkTimeAllFromDB() - start");
+      this.isBusy = true;
+     console.log("selected employee: " + this.selectedEmployee);
+     let url =
+        this.urlEmpl+"/api/employee/worktime/" +
+        this.selectedEmployee +
+        "?date=" +
+        this.workTimeDate.format("YYYY-MM-DD");
+      axios
+        .get(url)
+        .then((response) => {
+          this.workTimeList = response.data;
+          this.isBusy = false;
+        })
+        .catch((e) => {
+        this.validateError(e);
+        });
+    },
+        //---------------------------------------------------- DB WRITE ---------------------------------------------------------
+    //
+    //zapisanie godzin pracy
+    //
+    addWorkToDB() {
+       console.log("addWorkToDB() - start");
+      console.log("add praca: " + this.timeFrom + " - " + this.timeTo);
+      this.work.idEmployee = this.selectedEmployee;
+      this.work.date = this.workTimeDate.format("YYYY-MM-DD");
+      this.work.startTime = this.timeFrom;
+      this.work.stopTime = this.timeTo;
+      //  console.log(JSON.stringify(this.work));
+      axios
+        .post(this.urlEmpl+ "/api/employee/worktime?workType=WORK", this.work)
+        .then((response) => {
+          this.displaySmallMessage("success", "Dodano godziny pracy.")
+          this.getWorkTimeAllFromDB();
+        })
+        .catch((e) => {
+         this.validateError(e);
+        });
+    },
+    addIllnessToDB() {
+       console.log("addWorkToDB() - start");
+      console.log("add illness: " + this.workTimeDate.format("YYYY-MM-DD"));
+      this.illness.idEmployee = this.selectedEmployee;
+      this.illness.date = this.workTimeDate.format("YYYY-MM-DD");
+      this.illness.idIllnessType = this.selectedIllnessType;
+       //  console.log(JSON.stringify(this.illness));
+      axios
+        .post(this.urlEmpl+ "/api/employee/worktime?workType=ILLNESS", this.illness)
+        .then((response) => {
+           this.displaySmallMessage("success", "Dodano godziny chorobowe.")
+          this.getWorkTimeAllFromDB();
+        })
+        .catch((e) => {
+           this.validateError(e);
+        });
+    },
+    addDayOffToDB() {
+      console.log("addDayOffToDB() - start");
+      console.log("add dayOff: " + this.workTimeDate.format("YYYY-MM-DD"));
+      this.dayOff.idEmployee = this.selectedEmployee;
+      this.dayOff.date = this.workTimeDate.format("YYYY-MM-DD");
+      this.dayOff.idDayOffType = this.selectedDayOffType;
+      //  console.log(JSON.stringify(this.dayOff));
+      axios
+        .post(this.urlEmpl+"/api/employee/worktime?workType=DAY_OFF", this.dayOff)
+        .then((response) => {
+           this.displaySmallMessage("success", "Dodano godziny urlopowe.")
+          this.getWorkTimeAllFromDB();
+        })
+        .catch((e) => {
+            this.validateError(e);
+        });
+    },
+   //---------------------------------------  CONVERT TO OPTION ----------------------------------------------------
     convertToOptionsEmployee() {
       console.log("convert to options...");
       this.employees.forEach((e) => {
@@ -551,19 +551,5 @@ export default {
 
 .max-width {
   width: -webkit-fill-available;
-}
-
- .button-view {
-        background-color: rgba(255, 245, 0, 0.8);
-        color: #2c3e50 ;
-        border-color:  rgb(108, 117, 125);
-        /* font-weight: bold; */
-    }
-
-
-.button-view:hover {
-  color: white;
-  background-color:  rgb(108, 117, 125);
-  /* text-decoration: underline; */
 }
 </style>
