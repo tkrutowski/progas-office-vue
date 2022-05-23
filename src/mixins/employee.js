@@ -6,7 +6,7 @@ export const employeeMixin = {
       // urlTeam: "http://localhost:8089",
       // urlEmpl: "http://localhost:8082",
       // urlEmpl: "http://192.168.1.33:8082",
-      url: "https://docker.focikhome.synology.me",
+      urlEmpl: "https://docker.focikhome.synology.me",
     
         
     };

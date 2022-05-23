@@ -3,8 +3,8 @@ import axios from "axios";
 export const userMixin = {
   data() {
     return {
-      // url: "http://localhost:8089",
-      // url: "http://localhost:8082",
+      // urlUser: "http://localhost:8089",
+      // urlUser: "http://localhost:8082",
       urlUser: "https://docker.focikhome.synology.me",
       
       idUser: 0,

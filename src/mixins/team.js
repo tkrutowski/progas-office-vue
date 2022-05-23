@@ -6,7 +6,7 @@ export const teamMixin = {
       // urlTeam: "http://localhost:8089",
       // urlTeam: "http://localhost:8082",
       // urlTeam: "http://192.168.1.33:8082",
-      url: "https://docker.focikhome.synology.me",
+      urlTeam: "https://docker.focikhome.synology.me",
     
         
     };
