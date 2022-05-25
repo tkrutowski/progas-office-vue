@@ -174,6 +174,7 @@ import axios from "axios";
 import { errorMixin } from "@/mixins/error";
 import { userMixin } from "@/mixins/user";
 import { employeeMixin } from "@/mixins/employee";
+import { response } from "express";
 export default {
   name: "User",
   mixins: [errorMixin, userMixin, employeeMixin],
@@ -259,20 +260,22 @@ export default {
     //
     getEmployees() {
       console.log("getEmployee() - start");
-      const employees = this.getEmployeesFromDb("HIRED");
-
-      if (employees.length > 0) {
-        this.convertToOptionsEmployees(employees);
-      }
+      this.getEmployeesFromDb("HIRED").then((response) => {
+        const employees = response.data;
+        if (employees.length > 0) {
+          this.convertToOptionsEmployees(employees);
+        }
+      });
     },
     getEmployeeByID(employeeID) {
       console.log("getEmployeeByID() - start, ID = " + employeeID);
-
-      let employee = this.getEmployeeFromDb(employeeID);
-      this.user.firstName = employee.firstName;
-      this.user.lastName = employee.lastName;
-      this.user.email = employee.email == null ? "" : employee.email;
-      this.user.idEmployee = employee.id;
+      this.getEmployeeFromDb(employeeID).then((response) => {
+        let employee = response.data;
+        this.user.firstName = employee.firstName;
+        this.user.lastName = employee.lastName;
+        this.user.email = employee.email == null ? "" : employee.email;
+        this.user.idEmployee = employee.id;
+      });
     },
     convertToOptionsEmployees(emp) {
       console.log("convert employees to options...");
