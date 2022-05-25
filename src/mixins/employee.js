@@ -17,8 +17,8 @@ export const employeeMixin = {
     //
     getEmployees() {
       console.log("getEmployees() - start");
-      console.log("hasRead: " + this.hasRead);
-      console.log("hasReadAll: " + this.hasReadAll);
+      // console.log("hasRead: " + this.hasRead);
+      // console.log("hasReadAll: " + this.hasReadAll);
       if (this.hasRead && !this.hasReadAll) {
         let idEmp = this.$store.getters.getUser.idEmployee;
         console.log("idEmpl: " + idEmp);
@@ -52,7 +52,6 @@ export const employeeMixin = {
           };
           return axios
               .get(this.urlEmpl + `/api/employee/query/` + employeeID, header)
-              // .get(`http://localhost:8082/api/employee/query/` + employeeID, header)
               .then((response) => {
                   console.log("Odpowiedz HTTP: " + response.status + ", " + response.statusText);
                   //   let employee = response.data;
@@ -68,8 +67,14 @@ export const employeeMixin = {
       //Get HIRED/FIRED employee
       getEmployeesFromDb(empStatus) {
         console.log("getEmployeesFromDb("+empStatus+") - start");
+        const header = {
+          headers: {
+              "Content-type": "application/json; charset=UTF-8",
+              'Authorization': "Bearer "+ this.$store.getters.getToken
+          },
+      };
         return axios
-          .get(this.urlEmpl+`/api/employee/query?status=`+empStatus)
+          .get(this.urlEmpl+`/api/employee/query?status=`+empStatus, header)
           .then((response) => {
             // JSON responses are automatically parsed.
             console.log("getEmployeesFromDb() - Ilosc employees[]: " + response.data.length);
