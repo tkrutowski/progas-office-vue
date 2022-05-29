@@ -368,7 +368,7 @@ export default {
     //pobranie rodzajów dni wolnych 
     //
     getDayOffTypesFromDb() {
-      console.log("getDayOffTypesFromDb() - start");
+      console.log("getDayOffTypesFromDb() - start");       
       axios
         .get(this.urlEmpl+`/api/employee/worktime/dayofftype`)
         .then((response) => {
@@ -413,13 +413,19 @@ export default {
       console.log("getWorkTimeAllFromDB() - start");
       this.isBusy = true;
      console.log("selected employee: " + this.selectedEmployee);
+        const header = {
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                  'Authorization': "Bearer "+ this.$store.getters.getToken
+              },
+          };
      let url =
         this.urlEmpl+"/api/employee/worktime/" +
         this.selectedEmployee +
         "?date=" +
         this.workTimeDate.format("YYYY-MM-DD");
       axios
-        .get(url)
+        .get(url, header)
         .then((response) => {
           this.workTimeList = response.data;
           this.isBusy = false;
@@ -440,8 +446,14 @@ export default {
       this.work.startTime = this.timeFrom;
       this.work.stopTime = this.timeTo;
       //  console.log(JSON.stringify(this.work));
+         const header = {
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                  'Authorization': "Bearer "+ this.$store.getters.getToken
+              },
+          };
       axios
-        .post(this.urlEmpl+ "/api/employee/worktime?workType=WORK", this.work)
+        .post(this.urlEmpl+ "/api/employee/worktime?workType=WORK", this.work, header)
         .then((response) => {
           this.displaySmallMessage("success", "Dodano godziny pracy.")
           this.getWorkTimeAllFromDB();
@@ -456,9 +468,15 @@ export default {
       this.illness.idEmployee = this.selectedEmployee;
       this.illness.date = this.workTimeDate.format("YYYY-MM-DD");
       this.illness.idIllnessType = this.selectedIllnessType;
+         const header = {
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                  'Authorization': "Bearer "+ this.$store.getters.getToken
+              },
+          };
        //  console.log(JSON.stringify(this.illness));
       axios
-        .post(this.urlEmpl+ "/api/employee/worktime?workType=ILLNESS", this.illness)
+        .post(this.urlEmpl+ "/api/employee/worktime?workType=ILLNESS", this.illness, header)
         .then((response) => {
            this.displaySmallMessage("success", "Dodano godziny chorobowe.")
           this.getWorkTimeAllFromDB();
@@ -474,8 +492,14 @@ export default {
       this.dayOff.date = this.workTimeDate.format("YYYY-MM-DD");
       this.dayOff.idDayOffType = this.selectedDayOffType;
       //  console.log(JSON.stringify(this.dayOff));
+         const header = {
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                  'Authorization': "Bearer "+ this.$store.getters.getToken
+              },
+          };
       axios
-        .post(this.urlEmpl+"/api/employee/worktime?workType=DAY_OFF", this.dayOff)
+        .post(this.urlEmpl+"/api/employee/worktime?workType=DAY_OFF", this.dayOff, header)
         .then((response) => {
            this.displaySmallMessage("success", "Dodano godziny urlopowe.")
           this.getWorkTimeAllFromDB();
