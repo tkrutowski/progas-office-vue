@@ -368,9 +368,15 @@ export default {
     //pobranie rodzajów dni wolnych 
     //
     getDayOffTypesFromDb() {
-      console.log("getDayOffTypesFromDb() - start");       
+      console.log("getDayOffTypesFromDb() - start");    
+      const header = {
+          headers: {
+              "Content-type": "application/json; charset=UTF-8",
+              'Authorization': "Bearer "+ this.$store.getters.getToken
+          },
+      }; 
       axios
-        .get(this.urlEmpl+`/api/employee/worktime/dayofftype`)
+        .get(this.urlEmpl+`/api/employee/worktime/dayofftype`, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.dayOffTypes = response.data;
@@ -390,8 +396,14 @@ export default {
     //
     getIllnessTypesFromDb() {
       console.log("getIllnessTypesFromDb() - start");
+          const header = {
+          headers: {
+              "Content-type": "application/json; charset=UTF-8",
+              'Authorization': "Bearer "+ this.$store.getters.getToken
+          },
+      };
       axios
-        .get(this.urlEmpl+`/api/employee/worktime/illnesstype`)
+        .get(this.urlEmpl+`/api/employee/worktime/illnesstype`, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.illnessTypes = response.data;
