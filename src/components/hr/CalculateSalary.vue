@@ -265,7 +265,7 @@ export default {
       }
     },
 
-    convertToOptions() {
+    convertToOptionsEmployee() {
       console.log("convert to options...");
       this.employees.forEach((e) => {
         let opt = {
@@ -289,8 +289,14 @@ export default {
         "-" +
         this.month +
         "-01";
+          const header = {
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                  'Authorization': "Bearer "+ this.$store.getters.getToken
+              },
+          };
       axios
-        .get(url)
+        .get(url, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.salary = response.data;
