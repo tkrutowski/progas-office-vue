@@ -174,7 +174,6 @@ import axios from "axios";
 import { errorMixin } from "@/mixins/error";
 import { userMixin } from "@/mixins/user";
 import { employeeMixin } from "@/mixins/employee";
-import { response } from "express";
 export default {
   name: "User",
   mixins: [errorMixin, userMixin, employeeMixin],
@@ -376,9 +375,9 @@ export default {
     //     });
     // },
 
-    //
-    //get employee from DB
-    //
+    // //
+    // // get employee from DB
+    // //
     // getEmployeeFromDb(employeeID) {
     //   console.log("getEmployeeFromDb() - start, ID = " + employeeID);
     //   const header = {
