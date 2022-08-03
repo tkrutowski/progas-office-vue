@@ -10,7 +10,7 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav id="test">
           <b-nav-item-dropdown text="Pracownicy" right>
-            <b-dropdown-item href="/hr/employee/all">Lista pracowników</b-dropdown-item>
+            <b-dropdown-item href="/hr/employee/all" :disabled="!hasAccessReadEmployees">Lista pracowników</b-dropdown-item>
             <b-dropdown-item href="/hr/AddWorkTime" :disabled="!hasAccessAddWorktime">Wpisywanie godzin</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Wpisywanie dodatków</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Wpisywanie zaliczek</b-dropdown-item>
@@ -112,7 +112,16 @@ export default {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_TASK_CALEDAR: " + token2.authorities.includes('ROLE_TASK_CALENDAR'))
-        return token2.authorities.includes('ROLE_TASK_CALENDAR');
+        return token2.authorities.includes('ROLE_TASK_CALENDAR') || token2.authorities.includes('ROLE_ADMIN');
+      } catch (error) {
+        return false;
+      }
+    },
+    hasAccessReadEmployees() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_EMPLOYEE: " + token2.authorities.includes('ROLE_HR_EMPLOYEE'))
+        return token2.authorities.includes('ROLE_HR_EMPLOYEE') || token2.authorities.includes('ROLE_ADMIN');
       } catch (error) {
         return false;
       }
@@ -121,7 +130,7 @@ export default {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
-        return token2.authorities.includes('ROLE_HR_WORKTIME');
+        return token2.authorities.includes('ROLE_HR_WORKTIME') || token2.authorities.includes('ROLE_ADMIN');
       } catch (error) {
         return false;
       }
@@ -130,7 +139,7 @@ export default {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_HR_SALARIES: " + token2.authorities.includes('ROLE_HR_SALARIES'))
-        return token2.authorities.includes('ROLE_HR_SALARIES');
+        return token2.authorities.includes('ROLE_HR_SALARIES') || token2.authorities.includes('ROLE_ADMIN');
       } catch (error) {
         return false;
       }
