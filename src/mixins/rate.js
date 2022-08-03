@@ -4,9 +4,9 @@ export const rateMixin = {
   data() {
     return {
       // urlRate: "http://localhost:8089",
-      urlRate: "http://localhost:8082",
+      // urlRate: "http://localhost:8082",
       // urlRate: "http://192.168.1.33:8082",
-      // urlRate: "https://docker.focikhome.synology.me",
+      urlRate: "https://docker.focikhome.synology.me",
     
       fieldsRateAll: [
         {
