@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import HrCalculateSalaryView from '../views/HrCalculateSalaryView';
 import HrAddWorkTimeView from '../views/HrAddWorkTimeView.vue';
+import HrEmployeesView from '../views/HrEmployeesView.vue';
 import TaskCalendarView from '../views/TaskCalendarView.vue'
 import MapsView from '@/views/MapsView.vue';
 import LoginView from '@/views/LoginView.vue';
@@ -11,6 +12,7 @@ import UsersProfileView from '@/views/UserProfileView.vue';
 import UserRolesView from '@/views/UserRolesView.vue';
 import UserView from '@/views/UserView.vue';
 import ErrorView from '@/views/ErrorView.vue'
+import HrEmployeeView from '../views/HrEmployeeView.vue';
 Vue.use(VueRouter);
 
 const routes = [
@@ -31,6 +33,18 @@ const routes = [
       component: HrAddWorkTimeView,
       props: true
   },
+  {
+    path: '/hr/employee/all',
+    name: 'TheEmployees',
+    component: HrEmployeesView,
+    props: true
+},
+{
+  path: '/hr/employee',
+  name: 'TheEmployee',
+  component: HrEmployeeView,
+  props: true
+},
   {
       path: '/tasks/TaskCalendar',
       name: 'TaskCalendar',
