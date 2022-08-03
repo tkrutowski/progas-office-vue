@@ -7,14 +7,26 @@
         <b-row align-h="center">
           <div>
             <label class="form-label" for="employee">Wybierz pracownika: </label>
-            <b-form-select v-model="selected" :options="options" class="mb-3" id="employee">
-              <!-- This slot appears above the options from 'options' prop -->
-              <template #first>
-                <b-form-select-option :value="null" disabled>
-                  -- Wybierz pracownika --
-                </b-form-select-option>
-              </template>
-            </b-form-select>
+            <div style="display: flex">
+              <b-form-select v-model="selected" :options="options" class="mb-3" id="employee">
+                <!-- This slot appears above the options from 'options' prop -->
+                <template #first>
+                  <b-form-select-option :value="null" disabled>
+                    -- Wybierz pracownika --
+                  </b-form-select-option>
+                </template>
+              </b-form-select>
+              <b-button
+                v-if="loading"
+                style="height: fit-content"
+                variant="progas"
+                class="ml-3"
+                disabled
+              >
+                <b-spinner small></b-spinner>
+                <span class="sr-only">Loading...</span>
+              </b-button>
+            </div>
             <label for="date">Wybierz datę:</label>
             <div style="display: flex; justify-content: space-between">
               <b-form-select
@@ -41,15 +53,26 @@
               </b-form-select>
             </div>
 
-            <b-button class="mt-3" style="width: 100px" variant="progas" @click="calculateSalary"
+            <b-button
+              class="mt-3"
+              style="width: 100px"
+              variant="progas"
+              @click="calculateSalary"
+              :disabled="btnDisabled"
               >Oblicz
+              <b-icon
+                v-if="busyIcon"
+                icon="arrow-clockwise"
+                animation="spin-pulse"
+                font-scale="1"
+              ></b-icon>
             </b-button>
           </div>
         </b-row>
 
-        <b-row class="mt-5 ">
+        <b-row class="mt-5">
           <!--obliczanie wypłąt lewa-->
-          <div class="col-md-4 mb-5" style="float: left;">
+          <div class="col-md-4 mb-5" style="float: left">
             <div class="main">
               <p class="text">Godziny urlopowe (płatne):</p>
               <p class="value">{{ salary.dayOffWorkTimePay }}</p>
@@ -85,7 +108,7 @@
           </div>
 
           <!--obliczanie wypłąt środek-->
-          <div class="col-md-4 mb-5"  style="float: left;">
+          <div class="col-md-4 mb-5" style="float: left">
             <div class="main">
               <p class="text">Za godziny:</p>
               <p class="value">{{ salary.forRegularRate }}</p>
@@ -117,7 +140,7 @@
           </div>
 
           <!-- obliczenia wypłat prawa               -->
-          <div class="col-md-4 mb-5" style="float: left;">
+          <div class="col-md-4 mb-5" style="float: left">
             <div class="main">
               <p class="text">Normatywny czas pracy:</p>
               <p class="value">...</p>
@@ -157,7 +180,6 @@
           </div>
         </b-row>
       </b-container>
-     
     </b-container>
   </div>
 </template>
@@ -174,6 +196,9 @@ export default {
   mixins: [errorMixin, employeeMixin],
   data() {
     return {
+      busyIcon: false,
+      btnDisabled: false,
+      loadnig: false,
       employees: [],
       options: [],
       salaryDate: moment(),
@@ -202,7 +227,7 @@ export default {
           text: "grudzień",
         },
       ],
-      years: [2020, 2021, 2022],
+      years: [2020, 2021, 2022, 2023, 2024],
       salary: {
         advancesSum: "...",
         additionsSum: "...",
@@ -252,7 +277,6 @@ export default {
     },
   },
   methods: {
-    
     //
     //Oblicza wypłate
     //
@@ -261,6 +285,8 @@ export default {
         // this.displaySmallMessage("warning", "Musisz wybrać pracownika!") ;
         this.displayLargeMessage("warning", "Musisz wybrać pracownika!");
       } else {
+        this.busyIcon = true;
+        this.btnDisabled = true;
         this.getSalaryFromDb();
       }
     },
@@ -289,20 +315,23 @@ export default {
         "-" +
         this.month +
         "-01";
-          const header = {
-              headers: {
-                  "Content-type": "application/json; charset=UTF-8",
-                  'Authorization': "Bearer "+ this.$store.getters.getToken
-              },
-          };
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
       axios
         .get(url, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.salary = response.data;
-          //  console.log("Salary: "+ JSON.stringify(this.salary));
+          this.busyIcon = false;
+          this.btnDisabled = false;
         })
         .catch((e) => {
+          this.busyIcon = false;
+          this.btnDisabled = false;
           this.validateError(e);
         });
     },

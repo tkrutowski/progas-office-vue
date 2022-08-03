@@ -10,7 +10,7 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav id="test">
           <b-nav-item-dropdown text="Pracownicy" right>
-            <b-dropdown-item href="#" disabled>Lista pracowników</b-dropdown-item>
+            <b-dropdown-item href="/hr/employee/all">Lista pracowników</b-dropdown-item>
             <b-dropdown-item href="/hr/AddWorkTime" :disabled="!hasAccessAddWorktime">Wpisywanie godzin</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Wpisywanie dodatków</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Wpisywanie zaliczek</b-dropdown-item>
@@ -38,7 +38,7 @@
 
           <!--                    <b-nav-item href="#" :active="isTaskActive">Zadania</b-nav-item>-->
           <b-nav-item href="#" disabled>Pojazdy</b-nav-item>
-          <b-nav-item href="#" disabled>UStawienia</b-nav-item>
+          <b-nav-item href="#" disabled>Ustawienia</b-nav-item>
 
           <!-- ADMINISTRACJA -->
           <b-nav-item-dropdown text="Administracja" v-if="isAdmin">

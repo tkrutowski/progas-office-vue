@@ -1,7 +1,19 @@
 <template>
   <div>
     <b-container fluid="" id="container">
+      <div style="display: flex; justify-content: center">
       <h1>Kalendarz zadań</h1>
+      <b-button
+               v-show="loading" 
+                style="height: fit-content"
+                variant="progas"
+                class="ml-3"
+                disabled
+              >
+                <b-spinner small></b-spinner>
+                <span class="sr-only">Loading...</span>
+              </b-button>
+              </div>
       <!--            <h2>Przełączanie daty</h2>-->
       <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
       <b-container id="dateSwitch">
@@ -344,7 +356,7 @@ export default {
   mixins: [errorMixin, teamMixin, employeeMixin, taskMixin],
   data() {
     return {
-    
+      loading: false,
       calendarEntries: [],
       allTeams: [],
       // idTeam: 0,
@@ -570,6 +582,7 @@ export default {
     //-------------------------------DB---------------------------------------------
     getFromDb() {
       console.log("getEntryFromDb() - start");
+      this.loading = true;
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -586,8 +599,10 @@ export default {
           console.log("getTaskEntriesFromDb() - Ilosc entries[]: " + this.calendarEntries.length);
           //button set to enabled
           this.isButtonDisabled = false;
+          this.loading = false;
         })
         .catch((e) => {
+          this.loading = false;
           this.validateError(e);
         });
     },

@@ -12,6 +12,7 @@
           <div>
             <label class="form-label mt-5 max-width" for="employeeSelect">
               Wybierz pracownika:
+              <div style="display: flex">
               <b-form-select
                 v-model="selectedEmployee"
                 :options="optionsEmployee"
@@ -27,6 +28,17 @@
                   </b-form-select-option>
                 </template>
               </b-form-select>
+                  <b-button
+                v-if="loading"
+                style="height: fit-content"
+                variant="progas"
+                class="ml-3"
+                disabled
+              >
+                <b-spinner small></b-spinner>
+                <span class="sr-only">Loading...</span>
+              </b-button>
+              </div>
             </label>
           </div>
 
@@ -158,8 +170,31 @@
           </b-row>
 
          
-            <b-button class="mt-3" style="width: 100px" type="submin" variant="progas" 
+            <b-button class="mt-3" style="width: 120px" type="submin" variant="progas" 
               >Dodaj
+          
+          <b-icon
+            v-if="savedIcon"
+            class="pl-2"
+            scale="2.6"
+            icon="check"
+            variant="success"
+            aria-hidden="true"
+          ></b-icon>
+          <b-icon
+            v-if="errorIcon"
+            class="pl-2"
+            scale="1.6"
+            icon="x-circle"
+            variant="danger"
+            aria-hidden="true"
+          ></b-icon>
+          <b-icon
+            v-if="busyIcon"
+            icon="arrow-clockwise"
+            animation="spin-pulse"
+            font-scale="1"
+          ></b-icon>
             </b-button>
         </form>
         </b-col>
@@ -173,7 +208,15 @@
               :fields="fields"
               :tbody-tr-class="rowClass"
               id="table"
-            ></b-table>
+            >
+            <!-- ICON BUSY -->
+          <template #table-busy>
+            <div class="text-center text-progas my-2">
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
+          </b-table>
           </div>
         </b-col>
       </b-row>
@@ -225,7 +268,16 @@ export default {
           label: "Ilość godzin 100%",
         },
       ],
+      busyIcon: false,
+      btnDisabled: false,
+      loading: false,
       isBusy: false,
+
+      busyIcon: false,
+      savedIcon: false,
+      errorIcon: false,
+
+
       workTimeList: [],
       employees: [],
       dayOffTypes: [],
@@ -341,6 +393,9 @@ export default {
    
 
     addWorkTime() {
+      this.busyIcon = true;
+      this.savedIcon = false;
+      this.errorIcon = false;
       if (this.isWork) {
         this.addWorkToDB();
       }
@@ -469,8 +524,14 @@ export default {
         .then((response) => {
           this.displaySmallMessage("success", "Dodano godziny pracy.")
           this.getWorkTimeAllFromDB();
+              this.busyIcon = false;
+      this.savedIcon = true;
+      this.errorIcon = false;
         })
         .catch((e) => {
+              this.busyIcon = false;
+      this.savedIcon = false;
+      this.errorIcon = true;
          this.validateError(e);
         });
     },
@@ -492,8 +553,14 @@ export default {
         .then((response) => {
            this.displaySmallMessage("success", "Dodano godziny chorobowe.")
           this.getWorkTimeAllFromDB();
+                    this.busyIcon = false;
+      this.savedIcon = true;
+      this.errorIcon = false;
         })
         .catch((e) => {
+               this.busyIcon = false;
+      this.savedIcon = false;
+      this.errorIcon = true;
            this.validateError(e);
         });
     },
@@ -515,8 +582,14 @@ export default {
         .then((response) => {
            this.displaySmallMessage("success", "Dodano godziny urlopowe.")
           this.getWorkTimeAllFromDB();
+                    this.busyIcon = false;
+      this.savedIcon = true;
+      this.errorIcon = false;
         })
         .catch((e) => {
+               this.busyIcon = false;
+      this.savedIcon = false;
+      this.errorIcon = true;
             this.validateError(e);
         });
     },
