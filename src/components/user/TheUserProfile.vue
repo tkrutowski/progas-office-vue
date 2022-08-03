@@ -14,29 +14,29 @@
           <!-- IMIE -->
           <b-form-group id="input-group-firstname" label="Imię:" label-for="input-firstname" description="">
             <b-form-input id="input-firstname" autocomplete="first-name" v-model="user.firstName" type="text"
-              placeholder="wprowadź imię" required></b-form-input>
+              placeholder="wprowadź imię" required readonly></b-form-input>
           </b-form-group>
 
           <!-- NAZWISKO -->
           <b-form-group id="input-group-lastname" label="Nazwisko:" label-for="input-lastname" description="">
             <b-form-input id="input-lastname" autocomplete="last-name" v-model="user.lastName" type="text"
-              placeholder="wprowadź nazwisako" required></b-form-input>
+              placeholder="wprowadź nazwisako" required readonly></b-form-input>
           </b-form-group>
 
           <!-- LOGIN / USERNAME -->
           <b-form-group id="input-group-username" label="Nazwa użytkownika (login):" label-for="input-username"
             description="">
             <b-form-input id="input-username" v-model="user.username" autocomplete="username" type="text"
-              placeholder="wprowadź login" required></b-form-input>
+              placeholder="wprowadź login" required readonly></b-form-input>
           </b-form-group>
 
           <!-- EMAIL -->
           <b-form-group id="input-group-email" label="E-mail:" label-for="input-email" description="">
             <b-form-input id="input-email" autocomplete="email" v-model="user.email" type="email"
-              placeholder="example@org.com" required></b-form-input>
+              placeholder="example@org.com" required readonly></b-form-input>
           </b-form-group>
 
-          <b-button type="submit" variant="progas">Zapisz zmiany</b-button>
+          <!-- <b-button type="submit" variant="progas">Zapisz zmiany</b-button> -->
         </b-form>
       </b-tab>
 

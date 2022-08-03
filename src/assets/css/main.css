@@ -45,3 +45,13 @@ background-color: rgba(229, 200, 0, 0.883)!important;
 .select-text-color {
     color: rgba(255, 245, 0, 0.8);
 }
+
+.time-is-almost-up {
+    color: white;
+    background-color: rgb(247, 132, 17) !important;
+}
+
+.time-is-up {
+    color: white;
+    background-color: rgb(241, 63, 14) !important;
+}

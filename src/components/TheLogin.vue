@@ -10,7 +10,7 @@
       </div>
 
       <!-- LOGIN id="form-group-login"-->
-      <div class="form-group" >
+      <div class="form-group">
         <label for="login">Login</label>
         <input
           type="text"
@@ -40,9 +40,20 @@
       </div>
 
       <!-- BUTTON -->
-         <b-button class="mt-3" style="width: 100px" variant="progas" type="submit"
-              >Zaloguj
-            </b-button>
+      <b-button
+        class="mt-3"
+        style="width: 120px"
+        variant="progas"
+        type="submit"
+        :disabled="btnDisabled"
+        >Zaloguj
+        <b-icon
+          v-if="busyIcon"
+          icon="arrow-clockwise"
+          animation="spin-pulse"
+          font-scale="1"          
+        ></b-icon>
+      </b-button>
       <p class="forgot-password text-right mt-2 mb-4">
         <!-- <router-link to="/forgot-password">Nie pamiętam hasła</router-link> -->
       </p>
@@ -52,11 +63,11 @@
 
 <script>
 import axios from "axios";
-import {errorMixin} from "@/mixins/error"
-import {userMixin} from "@/mixins/user"
+import { errorMixin } from "@/mixins/error";
+import { userMixin } from "@/mixins/user";
 export default {
   name: "TheLogin",
-  mixins : [errorMixin, userMixin],
+  mixins: [errorMixin, userMixin],
   data() {
     return {
       error: false,
@@ -72,6 +83,8 @@ export default {
       password: "",
       heder: {},
       resp: {},
+      busyIcon: false,
+      btnDisabled: false,
     };
   },
   computed: {
@@ -82,14 +95,16 @@ export default {
     // this.userStateLogin = this.$store.getters.getAuthenticationState;
     // console.log("Czy zalogowano: " + this.userStateLogin.isAuthenticated);
     // this.isAuthenticated = this.state.userState.isAuthenticated;
-     this.$store.commit("updateToken", "null");
-      this.$store.commit("updateAuthenticateState", false);
-      this.$store.commit("updateUser", {});
+    this.$store.commit("updateToken", "null");
+    this.$store.commit("updateAuthenticateState", false);
+    this.$store.commit("updateUser", {});
   },
   methods: {
     // async login() {
     login() {
       console.log("login() - start");
+      this.busyIcon = true;
+      this.btnDisabled = true;
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -127,6 +142,9 @@ export default {
       this.$store.commit("updateAuthenticateState", true);
       this.$store.commit("updateUser", res.data);
 
+      this.busyIcon = false;
+      this.btnDisabled = false;
+
       this.$router.replace(this.$route.query.redirect || "/");
     },
     loginFailed(e) {
@@ -137,8 +155,10 @@ export default {
       this.$store.commit("updateAuthenticateState", false);
       this.$store.commit("updateUser", {});
 
-      this.validateError(e)
-    }
+      this.busyIcon = false;
+      this.btnDisabled = false;
+      this.validateError(e);
+    },
   },
 };
 </script>

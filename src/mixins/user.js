@@ -6,7 +6,7 @@ export const userMixin = {
       // urlUser: "http://localhost:8089",
       // urlUser: "http://localhost:8082",
       urlUser: "https://docker.focikhome.synology.me",
-      
+
       idUser: 0,
       isEdit: false,
       user: {
@@ -18,12 +18,11 @@ export const userMixin = {
         username: "",
         enabled: true,
         notLocked: true,
-        idEmployee: 0
+        idEmployee: 0,
       },
-   
     };
   },
-    methods: {
+  methods: {
     //
     //get user from DB
     //
@@ -32,16 +31,14 @@ export const userMixin = {
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-          'Authorization': "Bearer "+ this.$store.getters.getToken
+          Authorization: "Bearer " + this.$store.getters.getToken,
         },
       };
       axios
         .get(this.urlUser + `/api/user/` + userID, header)
         .then((response) => {
           this.user = response.data;
-          console.log(
-            "Odpowiedz HTTP: " + response.status + ", " + response.statusText
-          );
+          console.log("Odpowiedz HTTP: " + response.status + ", " + response.statusText);
           console.log("getUserFromDb(): " + this.user);
         })
         .catch((e) => {
@@ -53,11 +50,11 @@ export const userMixin = {
     //
     addUserDB() {
       console.log("addUserDB() - start");
-            console.log("updateUser() - employeeID: "+this.user.idEmployee);
+      console.log("updateUser() - employeeID: " + this.user.idEmployee);
       // console.log("updateUser() - employeeID: "+this.user.idEmployee);
       const headers = {
         "Content-type": "application/json; charset=UTF-8",
-        'Authorization': "Bearer "+ this.$store.getters.getToken
+        Authorization: "Bearer " + this.$store.getters.getToken,
       };
       axios
         .post(this.urlUser + `/api/user`, this.user, {
@@ -79,7 +76,7 @@ export const userMixin = {
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-         'Authorization': "Bearer "+ this.$store.getters.getToken
+          Authorization: "Bearer " + this.$store.getters.getToken,
         },
       };
       axios
@@ -87,14 +84,12 @@ export const userMixin = {
         .then((response) => {
           this.user = response.data;
           this.displaySmallMessage("success", "Zaaktualizowano użytkownika.");
-          console.log(
-            "Odpowiedz HTTP: " + response.status + ", " + response.statusText
-          );
+          console.log("Odpowiedz HTTP: " + response.status + ", " + response.statusText);
           console.log("after updateUser(): " + this.user);
         })
         .catch((e) => {
           this.validateError(e);
         });
     },
-    },
-}
+  },
+};

@@ -108,7 +108,8 @@
               required
             ></b-form-input>
             <b-form-invalid-feedback :state="validationPassword">
-              HAsło musi mieć powyżej 8 znaków.
+              Has
+              ło musi mieć powyżej 8 znaków.
             </b-form-invalid-feedback>
             <b-form-valid-feedback :state="validationPassword"> OK. </b-form-valid-feedback>
           </b-form-group>
@@ -321,7 +322,7 @@ export default {
       }
     },
     //
-    //pobiera użytkownika do edycji
+    //get user if edit
     //
     getUserifEdit() {
       console.log("getUserifEdit()) - start, ID = " + this.idUser);
@@ -347,59 +348,6 @@ export default {
       this.confirmPassword = "";
       this.isEmployee = false;
     },
-    //------------------------------------------EMPLOYEE DB--------------------------------------------------
-    //  //
-    // //get users from DB
-    // //
-    // getEmployeesFromDb() {
-    //   console.log("getEmployeeFromDb() - start");
-    //   const header = {
-    //     headers: {
-    //       "Content-type": "application/json; charset=UTF-8",
-    //       // 'Authorization': "Bearer "+ this.$store.getters.getToken
-    //     },
-    //   };
-    //   axios
-    //     .get(this.urlUser + `/api/employee/query?status=HIRED`, header)
-    //     .then((response) => {
-    //       // JSON responses are automatically parsed.
-    //       const employees = response.data;
-    //       console.log("getEmployeeFromDb(), znaleziono: " + employees.length);
-
-    //       if (employees.length > 0) {
-    //         this.convertToOptionsEmployees(employees);
-    //       }
-    //     })
-    //     .catch((e) => {
-    //       this.validateError(e);
-    //     });
-    // },
-
-    // //
-    // // get employee from DB
-    // //
-    // getEmployeeFromDb(employeeID) {
-    //   console.log("getEmployeeFromDb() - start, ID = " + employeeID);
-    //   const header = {
-    //     headers: {
-    //       "Content-type": "application/json; charset=UTF-8",
-    //       //'Authorization': "Bearer "+ this.$store.getters.getToken
-    //     },
-    //   };
-    //   axios
-    //     .get(this.urlUser + `/api/employee/query/` + employeeID, header)
-    //     .then((response) => {
-    //       console.log("Odpowiedz HTTP: " + response.status + ", " + response.statusText);
-    //       let employee = response.data;
-    //       this.user.firstName = employee.firstName;
-    //       this.user.lastName = employee.lastName;
-    //       this.user.email = employee.email == null ? "":employee.email;
-    //       this.user.idEmployee = employee.id;
-    //     })
-    //     .catch((e) => {
-    //       this.validateError(e);
-    //     });
-    // },
   },
 };
 </script>
