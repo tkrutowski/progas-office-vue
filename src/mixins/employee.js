@@ -113,8 +113,14 @@ export const employeeMixin = {
     //Get employeeType
     getEmployeeTypeFromDb() {
       console.log("getEmployeeTypeFromDb() - start");
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
       return axios
-        .get(this.urlEmpl + `/api/employee/employeetype`)
+        .get(this.urlEmpl + `/api/employee/employeetype`, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           console.log("getEmployeesFromDb() - Ilosc employeeType[]: " + response.data.length);
@@ -129,8 +135,14 @@ export const employeeMixin = {
     //Get employeeType
     getEmployeeWorktimeFromDb() {
       console.log("getEmployeeWorktimeFromDb() - start");
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
       return axios
-        .get(this.urlEmpl + `/api/employee/employeeworktime`)
+        .get(this.urlEmpl + `/api/employee/employeeworktime`, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           console.log("getEmployeesFromDb() - Ilosc employeeWorktime[]: " + response.data.length);
