@@ -537,7 +537,7 @@ export default {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
         return (
-          token2.authorities.includes("ROLE_HR_RATE_WRITE_ALL") ||
+          token2.authorities.includes("HR_RATE_WRITE_ALL") ||
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
@@ -549,7 +549,7 @@ export default {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
         return (
-          token2.authorities.includes("ROLE_HR_EMPLOYEE_WRITE_ALL") ||
+          token2.authorities.includes("HR_EMPLOYEE_WRITE_ALL") ||
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
@@ -561,7 +561,7 @@ export default {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
         return (
-          token2.authorities.includes("ROLE_HR_EMPLOYEE_READ_ALL") ||
+          token2.authorities.includes("HR_EMPLOYEE_READ_ALL") ||
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
