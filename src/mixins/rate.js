@@ -57,7 +57,7 @@ export const rateMixin = {
           },
       };
         return axios
-          .get(this.urlRate+`/api/rate/`+ idEmployee +`/regular`, header)
+          .get(this.urlRate+`/api/employee/rate/`+ idEmployee +`/regular`, header)
           .then((response) => {
             //  console.log(JSON.stringify(response.data));
               return response;
@@ -77,7 +77,7 @@ export const rateMixin = {
           },
       };
         return axios
-          .get(this.urlRate+`/api/rate/`+ idEmployee +`/regular/all`, header)
+          .get(this.urlRate+`/api/employee/rate/`+ idEmployee +`/regular/all`, header)
           .then((response) => {
             //  console.log(JSON.stringify(response.data));
               return response;
@@ -98,7 +98,7 @@ export const rateMixin = {
           },
       };
         return axios
-          .get(this.urlRate+`/api/rate/`+ idEmployee +`/overtime`, header)
+          .get(this.urlRate+`/api/employee/rate/`+ idEmployee +`/overtime`, header)
           .then((response) => {
             //  console.log(JSON.stringify(response.data));
               return response;
@@ -119,7 +119,7 @@ export const rateMixin = {
           },
       };
         return axios
-          .get(this.urlRate+`/api/rate/`+ idEmployee +`/overtime/all`, header)
+          .get(this.urlRate+`/api/employee/rate/`+ idEmployee +`/overtime/all`, header)
           .then((response) => {
             //  console.log(JSON.stringify(response.data));
               return response;
@@ -140,7 +140,7 @@ export const rateMixin = {
           },
         };
         return axios
-          .post(this.urlRate+`/api/rate/`+ idEmployee +`/regular`, this.rateRegular, header)
+          .post(this.urlRate+`/api/employee/rate/`+ idEmployee +`/regular`, this.rateRegular, header)
           .then((response) => {
             this.rateRegular = response.data;
             return response;
@@ -164,7 +164,7 @@ export const rateMixin = {
           },
         };
         return axios
-          .post(this.urlRate+`/api/rate/`+ idEmployee +`/overtime`, this.rateOvertime, header)
+          .post(this.urlRate+`/api/employee/rate/`+ idEmployee +`/overtime`, this.rateOvertime, header)
           .then((response) => {
             this.rateOvertime = response.data;
             return response;
