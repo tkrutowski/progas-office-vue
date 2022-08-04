@@ -262,7 +262,7 @@ export default {
     hasReadAll() {
       try {
         let token2 = jwt_decode(this.getToken);
-        return token2.authorities.includes("HR_SALARIES_READ_ALL");
+        return token2.authorities.includes("HR_SALARIES_READ_ALL") || token2.authorities.includes("ROLE_ADMIN");
       } catch (error) {
         return false;
       }

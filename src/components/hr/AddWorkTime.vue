@@ -5,198 +5,196 @@
       <h1>Wpisywanie godzin</h1>
       <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
       <b-row align-h="center">
-
         <b-col>
-        <form class="" @submit.prevent="addWorkTime">
-          <!--                    Pracownik-->
-          <div>
-            <label class="form-label mt-5 max-width" for="employeeSelect">
-              Wybierz pracownika:
-              <div style="display: flex">
-              <b-form-select
-                v-model="selectedEmployee"
-                :options="optionsEmployee"
-                class="mb-5"
-                id="employeeSelect"
-                @change="onEmployeeChange"
-                required
-              >
-                <!-- This slot appears above the options from 'options' prop -->
-                <template #first>
-                  <b-form-select-option :value="null" disabled
-                    >-- Wybierz pracownika --
-                  </b-form-select-option>
-                </template>
-              </b-form-select>
-                  <b-button
-                v-if="loading"
-                style="height: fit-content"
-                variant="progas"
-                class="ml-3"
-                disabled
-              >
-                <b-spinner small></b-spinner>
-                <span class="sr-only">Loading...</span>
-              </b-button>
-              </div>
-            </label>
-          </div>
-
-          <!--                    Data-->
-          <div>
-            <label for="date" class="max-width"
-              >Wybierz datę:
-              <b-form-datepicker
-                class="mb-5"
-                id="date"
-                v-model="workTimeDateString"
-                locale="pl"
-                placeholder="Wybierz datę"
-                @context="onContext"
-                style="width: 100%"
-              >
-              </b-form-datepicker>
-            </label>
-          </div>
-
-          <!--                     PRACA                       -->
-          <b-row>
-            <b-col>
-              <div class="form-check">
-                <label class="form-check-label mb-3" for="rbWork">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="flexRadioDefault"
-                    id="rbWork"
-                    checked
-                    @click="rbWork_click"
-                  />
-                  Praca
-                </label>
-              </div>
-              <b-input-group class="mb-3" style="justify-content: space-around">
-                <label for="workFrom-input"
-                  >Od:
-                  <b-form-input
-                    class="mr-3"
-                    id="workFrom-input"
-                    v-model="timeFrom"
-                    type="time"
-                    placeholder="HH:mm"
-                    :readonly="!isWork"
-                  ></b-form-input>
-                </label>
-                <label for="workTo-input"
-                  >Do:
-                  <b-form-input
-                    id="workTo-input"
-                    v-model="timeTo"
-                    type="time"
-                    placeholder="HH:mm"
-                    :readonly="!isWork"
-                  ></b-form-input>
-                </label>
-              </b-input-group>
-            </b-col>
-
-            <!--                            URLOP-->
-            <b-col>
-              <div class="form-check">
-                <label class="form-check-label mb-3" for="rbDayOff">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="flexRadioDefault"
-                    id="rbDayOff"
-                    @click="rbDayOff_click"
-                  />
-                  Urlop
-                </label>
-              </div>
-              <div>
-                <label class="form-label" for="dayOffTypeSelect">
-                  Wybierz rodzaj urlopu:
+          <form class="" @submit.prevent="addWorkTime">
+            <!--                    Pracownik-->
+            <div>
+              <label class="form-label mt-5 max-width" for="employeeSelect">
+                Wybierz pracownika:
+                <div style="display: flex">
                   <b-form-select
-                    v-model="selectedDayOffType"
-                    :options="optionDayOff"
-                    class="mb-3"
-                    id="dayOffTypeSelect"
+                    v-model="selectedEmployee"
+                    :options="optionsEmployee"
+                    class="mb-5"
+                    id="employeeSelect"
+                    @change="onEmployeeChange"
+                    required
                   >
                     <!-- This slot appears above the options from 'options' prop -->
-                    <!-- <template #first>
+                    <template #first>
+                      <b-form-select-option :value="null" disabled
+                        >-- Wybierz pracownika --
+                      </b-form-select-option>
+                    </template>
+                  </b-form-select>
+                  <b-button
+                    v-if="loading"
+                    style="height: fit-content"
+                    variant="progas"
+                    class="ml-3"
+                    disabled
+                  >
+                    <b-spinner small></b-spinner>
+                    <span class="sr-only">Loading...</span>
+                  </b-button>
+                </div>
+              </label>
+            </div>
+
+            <!--                    Data-->
+            <div>
+              <label for="date" class="max-width"
+                >Wybierz datę:
+                <b-form-datepicker
+                  class="mb-5"
+                  id="date"
+                  v-model="workTimeDateString"
+                  locale="pl"
+                  placeholder="Wybierz datę"
+                  @context="onContext"
+                  style="width: 100%"
+                >
+                </b-form-datepicker>
+              </label>
+            </div>
+
+            <!--                     PRACA                       -->
+            <b-row>
+              <b-col>
+                <div class="form-check">
+                  <label class="form-check-label mb-3" for="rbWork">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="flexRadioDefault"
+                      id="rbWork"
+                      checked
+                      @click="rbWork_click"
+                    />
+                    Praca
+                  </label>
+                </div>
+                <b-input-group class="mb-3" style="justify-content: space-around">
+                  <label for="workFrom-input"
+                    >Od:
+                    <b-form-input
+                      class="mr-3"
+                      id="workFrom-input"
+                      v-model="timeFrom"
+                      type="time"
+                      placeholder="HH:mm"
+                      :readonly="!isWork"
+                    ></b-form-input>
+                  </label>
+                  <label for="workTo-input"
+                    >Do:
+                    <b-form-input
+                      id="workTo-input"
+                      v-model="timeTo"
+                      type="time"
+                      placeholder="HH:mm"
+                      :readonly="!isWork"
+                    ></b-form-input>
+                  </label>
+                </b-input-group>
+              </b-col>
+
+              <!--                            URLOP-->
+              <b-col>
+                <div class="form-check">
+                  <label class="form-check-label mb-3" for="rbDayOff">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="flexRadioDefault"
+                      id="rbDayOff"
+                      @click="rbDayOff_click"
+                    />
+                    Urlop
+                  </label>
+                </div>
+                <div>
+                  <label class="form-label" for="dayOffTypeSelect">
+                    Wybierz rodzaj urlopu:
+                    <b-form-select
+                      v-model="selectedDayOffType"
+                      :options="optionDayOff"
+                      class="mb-3"
+                      id="dayOffTypeSelect"
+                    >
+                      <!-- This slot appears above the options from 'options' prop -->
+                      <!-- <template #first>
                       <b-form-select-option :value="null" disabled
                         >-- Wybierz rodzaj urlopu --
                       </b-form-select-option>
                     </template> -->
-                  </b-form-select>
-                </label>
-              </div>
-            </b-col>
+                    </b-form-select>
+                  </label>
+                </div>
+              </b-col>
 
-            <!--                            CHOROBA-->
-            <b-col>
-              <div class="form-check">
-                <label class="form-check-label mb-3" for="rbIllness">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="flexRadioDefault"
-                    id="rbIllness"
-                    @click="rbIllness_click"
-                  />
-                  Choroba</label
-                >
-              </div>
-              <div>
-                <label class="form-label" for="illnessTypeSelect"
-                  >Wybierz rodzaj zasiłku:
-                  <b-form-select
-                    v-model="selectedIllnessType"
-                    :options="optionIllness"
-                    class="mb-3"
-                    id="illnessTypeSelect"
+              <!--                            CHOROBA-->
+              <b-col>
+                <div class="form-check">
+                  <label class="form-check-label mb-3" for="rbIllness">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="flexRadioDefault"
+                      id="rbIllness"
+                      @click="rbIllness_click"
+                    />
+                    Choroba</label
                   >
-                    <!-- This slot appears above the options from 'options' prop -->
-                    <!-- <template #first>
+                </div>
+                <div>
+                  <label class="form-label" for="illnessTypeSelect"
+                    >Wybierz rodzaj zasiłku:
+                    <b-form-select
+                      v-model="selectedIllnessType"
+                      :options="optionIllness"
+                      class="mb-3"
+                      id="illnessTypeSelect"
+                    >
+                      <!-- This slot appears above the options from 'options' prop -->
+                      <!-- <template #first>
                       <b-form-select-option :value="null" disabled>
                         -- Wybierz rodzaj zasiłku --
                       </b-form-select-option>
                     </template> -->
-                  </b-form-select>
-                </label>
-              </div>
-            </b-col>
-          </b-row>
+                    </b-form-select>
+                  </label>
+                </div>
+              </b-col>
+            </b-row>
 
-         
-            <b-button class="mt-3" style="width: 120px" type="submin" variant="progas" 
+            <b-button class="mt-3" style="width: 120px" type="submin" variant="progas"
               >Dodaj
-          
-          <b-icon
-            v-if="savedIcon"
-            class="pl-2"
-            scale="2.6"
-            icon="check"
-            variant="success"
-            aria-hidden="true"
-          ></b-icon>
-          <b-icon
-            v-if="errorIcon"
-            class="pl-2"
-            scale="1.6"
-            icon="x-circle"
-            variant="danger"
-            aria-hidden="true"
-          ></b-icon>
-          <b-icon
-            v-if="busyIcon"
-            icon="arrow-clockwise"
-            animation="spin-pulse"
-            font-scale="1"
-          ></b-icon>
+
+              <b-icon
+                v-if="savedIcon"
+                class="pl-2"
+                scale="2.6"
+                icon="check"
+                variant="success"
+                aria-hidden="true"
+              ></b-icon>
+              <b-icon
+                v-if="errorIcon"
+                class="pl-2"
+                scale="1.6"
+                icon="x-circle"
+                variant="danger"
+                aria-hidden="true"
+              ></b-icon>
+              <b-icon
+                v-if="busyIcon"
+                icon="arrow-clockwise"
+                animation="spin-pulse"
+                font-scale="1"
+              ></b-icon>
             </b-button>
-        </form>
+          </form>
         </b-col>
 
         <!--                TABELA-->
@@ -209,19 +207,17 @@
               :tbody-tr-class="rowClass"
               id="table"
             >
-            <!-- ICON BUSY -->
-          <template #table-busy>
-            <div class="text-center text-progas my-2">
-              <b-spinner class="align-middle"></b-spinner>
-              <strong>Loading...</strong>
-            </div>
-          </template>
-          </b-table>
+              <!-- ICON BUSY -->
+              <template #table-busy>
+                <div class="text-center text-progas my-2">
+                  <b-spinner class="align-middle"></b-spinner>
+                  <strong>Loading...</strong>
+                </div>
+              </template>
+            </b-table>
           </div>
         </b-col>
       </b-row>
-
-    
     </b-container>
   </div>
 </template>
@@ -235,7 +231,7 @@ import { mapGetters } from "vuex";
 import jwt_decode from "jwt-decode";
 export default {
   name: "AddWorkTime",
-    mixins: [errorMixin, employeeMixin],
+  mixins: [errorMixin, employeeMixin],
   data() {
     return {
       fields: [
@@ -276,7 +272,6 @@ export default {
       busyIcon: false,
       savedIcon: false,
       errorIcon: false,
-
 
       workTimeList: [],
       employees: [],
@@ -335,7 +330,7 @@ export default {
     hasReadAll() {
       try {
         let token2 = jwt_decode(this.getToken);
-        return token2.authorities.includes("HR_WORKTIME_READ_ALL");
+        return token2.authorities.includes("HR_WORKTIME_READ_ALL") || token2.authorities.includes("ROLE_ADMIN");
       } catch (error) {
         return false;
       }
@@ -358,13 +353,12 @@ export default {
       //     classes: 'worktime-table',
       //     css: {"color": "blue"}
       // }
-      
     },
-   
+
     onEmployeeChange() {
       console.log("onEmployeeChange() - start");
-      console.log("selectedEmployee: "+this.selectedEmployee);
-      if(this.selectedEmployee != null){
+      console.log("selectedEmployee: " + this.selectedEmployee);
+      if (this.selectedEmployee != null) {
         this.getWorkTimeAllFromDB();
       }
     },
@@ -386,11 +380,10 @@ export default {
     onContext(ctx) {
       this.workTimeDateString = ctx.selectedYMD;
       this.workTimeDate = moment(this.workTimeDateString);
-         if(this.selectedEmployee != null){
+      if (this.selectedEmployee != null) {
         this.getWorkTimeAllFromDB();
       }
     },
-   
 
     addWorkTime() {
       this.busyIcon = true;
@@ -405,39 +398,37 @@ export default {
 
       this.addCalendarDay();
     },
- addCalendarDay() {
+    addCalendarDay() {
       console.log("addCalendarDay()");
       console.log("przed dodaniem dnia: " + this.workTimeDate.format("YYYY-MM-DD"));
 
       //if this is the last day of the month, don't add day and don't switch to nexzt month
-      if( this.workTimeDate.format('D')!=this.workTimeDate.daysInMonth() ){
-      this.workTimeDate.add(1, "day"); // setDate(day+1);
+      if (this.workTimeDate.format("D") != this.workTimeDate.daysInMonth()) {
+        this.workTimeDate.add(1, "day"); // setDate(day+1);
       }
       console.log("po dodaniu dnia: " + this.workTimeDate.format("YYYY-MM-DD"));
 
       this.workTimeDateString = this.workTimeDate.format("YYYY-MM-DD");
     },
 
-   //---------------------------------------------------- DB READ ---------------------------------------------------------
+    //---------------------------------------------------- DB READ ---------------------------------------------------------
     //
-    //pobranie rodzajów dni wolnych 
+    //pobranie rodzajów dni wolnych
     //
     getDayOffTypesFromDb() {
-      console.log("getDayOffTypesFromDb() - start");    
+      console.log("getDayOffTypesFromDb() - start");
       const header = {
-          headers: {
-              "Content-type": "application/json; charset=UTF-8",
-              'Authorization': "Bearer "+ this.$store.getters.getToken
-          },
-      }; 
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
       axios
-        .get(this.urlEmpl+`/api/employee/worktime/dayofftype`, header)
+        .get(this.urlEmpl + `/api/employee/worktime/dayofftype`, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.dayOffTypes = response.data;
-          console.log(
-            "getDayOffTypesFromDb() - Ilosc dayOffTypes[]: " + this.dayOffTypes.length
-          );
+          console.log("getDayOffTypesFromDb() - Ilosc dayOffTypes[]: " + this.dayOffTypes.length);
           if (this.dayOffTypes.length > 0) {
             this.convertToOptionsDayOff();
           }
@@ -446,19 +437,19 @@ export default {
           this.validateError(e);
         });
     },
-      //
-    //pobranie rodzajów dni chorobowych 
+    //
+    //pobranie rodzajów dni chorobowych
     //
     getIllnessTypesFromDb() {
       console.log("getIllnessTypesFromDb() - start");
-          const header = {
-          headers: {
-              "Content-type": "application/json; charset=UTF-8",
-              'Authorization': "Bearer "+ this.$store.getters.getToken
-          },
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
       };
       axios
-        .get(this.urlEmpl+`/api/employee/worktime/illnesstype`, header)
+        .get(this.urlEmpl + `/api/employee/worktime/illnesstype`, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           this.illnessTypes = response.data;
@@ -473,21 +464,22 @@ export default {
           this.validateError(e);
         });
     },
-      //
-    //pobranie czsu pracy 
+    //
+    //pobranie czsu pracy
     //
     getWorkTimeAllFromDB() {
       console.log("getWorkTimeAllFromDB() - start");
       this.isBusy = true;
-     console.log("selected employee: " + this.selectedEmployee);
-        const header = {
-              headers: {
-                  "Content-type": "application/json; charset=UTF-8",
-                  'Authorization': "Bearer "+ this.$store.getters.getToken
-              },
-          };
-     let url =
-        this.urlEmpl+"/api/employee/worktime/" +
+      console.log("selected employee: " + this.selectedEmployee);
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
+      let url =
+        this.urlEmpl +
+        "/api/employee/worktime/" +
         this.selectedEmployee +
         "?date=" +
         this.workTimeDate.format("YYYY-MM-DD");
@@ -498,70 +490,70 @@ export default {
           this.isBusy = false;
         })
         .catch((e) => {
-        this.validateError(e);
+          this.validateError(e);
         });
     },
-        //---------------------------------------------------- DB WRITE ---------------------------------------------------------
+    //---------------------------------------------------- DB WRITE ---------------------------------------------------------
     //
     //zapisanie godzin pracy
     //
     addWorkToDB() {
-       console.log("addWorkToDB() - start");
+      console.log("addWorkToDB() - start");
       console.log("add praca: " + this.timeFrom + " - " + this.timeTo);
       this.work.idEmployee = this.selectedEmployee;
       this.work.date = this.workTimeDate.format("YYYY-MM-DD");
       this.work.startTime = this.timeFrom;
       this.work.stopTime = this.timeTo;
       //  console.log(JSON.stringify(this.work));
-         const header = {
-              headers: {
-                  "Content-type": "application/json; charset=UTF-8",
-                  'Authorization': "Bearer "+ this.$store.getters.getToken
-              },
-          };
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
       axios
-        .post(this.urlEmpl+ "/api/employee/worktime?workType=WORK", this.work, header)
+        .post(this.urlEmpl + "/api/employee/worktime?workType=WORK", this.work, header)
         .then((response) => {
-          this.displaySmallMessage("success", "Dodano godziny pracy.")
+          this.displaySmallMessage("success", "Dodano godziny pracy.");
           this.getWorkTimeAllFromDB();
-              this.busyIcon = false;
-      this.savedIcon = true;
-      this.errorIcon = false;
+          this.busyIcon = false;
+          this.savedIcon = true;
+          this.errorIcon = false;
         })
         .catch((e) => {
-              this.busyIcon = false;
-      this.savedIcon = false;
-      this.errorIcon = true;
-         this.validateError(e);
+          this.busyIcon = false;
+          this.savedIcon = false;
+          this.errorIcon = true;
+          this.validateError(e);
         });
     },
     addIllnessToDB() {
-       console.log("addWorkToDB() - start");
+      console.log("addWorkToDB() - start");
       console.log("add illness: " + this.workTimeDate.format("YYYY-MM-DD"));
       this.illness.idEmployee = this.selectedEmployee;
       this.illness.date = this.workTimeDate.format("YYYY-MM-DD");
       this.illness.idIllnessType = this.selectedIllnessType;
-         const header = {
-              headers: {
-                  "Content-type": "application/json; charset=UTF-8",
-                  'Authorization': "Bearer "+ this.$store.getters.getToken
-              },
-          };
-       //  console.log(JSON.stringify(this.illness));
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
+      //  console.log(JSON.stringify(this.illness));
       axios
-        .post(this.urlEmpl+ "/api/employee/worktime?workType=ILLNESS", this.illness, header)
+        .post(this.urlEmpl + "/api/employee/worktime?workType=ILLNESS", this.illness, header)
         .then((response) => {
-           this.displaySmallMessage("success", "Dodano godziny chorobowe.")
+          this.displaySmallMessage("success", "Dodano godziny chorobowe.");
           this.getWorkTimeAllFromDB();
-                    this.busyIcon = false;
-      this.savedIcon = true;
-      this.errorIcon = false;
+          this.busyIcon = false;
+          this.savedIcon = true;
+          this.errorIcon = false;
         })
         .catch((e) => {
-               this.busyIcon = false;
-      this.savedIcon = false;
-      this.errorIcon = true;
-           this.validateError(e);
+          this.busyIcon = false;
+          this.savedIcon = false;
+          this.errorIcon = true;
+          this.validateError(e);
         });
     },
     addDayOffToDB() {
@@ -571,29 +563,29 @@ export default {
       this.dayOff.date = this.workTimeDate.format("YYYY-MM-DD");
       this.dayOff.idDayOffType = this.selectedDayOffType;
       //  console.log(JSON.stringify(this.dayOff));
-         const header = {
-              headers: {
-                  "Content-type": "application/json; charset=UTF-8",
-                  'Authorization': "Bearer "+ this.$store.getters.getToken
-              },
-          };
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
       axios
-        .post(this.urlEmpl+"/api/employee/worktime?workType=DAY_OFF", this.dayOff, header)
+        .post(this.urlEmpl + "/api/employee/worktime?workType=DAY_OFF", this.dayOff, header)
         .then((response) => {
-           this.displaySmallMessage("success", "Dodano godziny urlopowe.")
+          this.displaySmallMessage("success", "Dodano godziny urlopowe.");
           this.getWorkTimeAllFromDB();
-                    this.busyIcon = false;
-      this.savedIcon = true;
-      this.errorIcon = false;
+          this.busyIcon = false;
+          this.savedIcon = true;
+          this.errorIcon = false;
         })
         .catch((e) => {
-               this.busyIcon = false;
-      this.savedIcon = false;
-      this.errorIcon = true;
-            this.validateError(e);
+          this.busyIcon = false;
+          this.savedIcon = false;
+          this.errorIcon = true;
+          this.validateError(e);
         });
     },
-   //---------------------------------------  CONVERT TO OPTION ----------------------------------------------------
+    //---------------------------------------  CONVERT TO OPTION ----------------------------------------------------
     convertToOptionsEmployee() {
       console.log("convert to options...");
       this.employees.forEach((e) => {
