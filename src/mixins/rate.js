@@ -59,7 +59,7 @@ export const rateMixin = {
         return axios
           .get(this.urlRate+`/api/rate/`+ idEmployee +`/regular`, header)
           .then((response) => {
-             console.log(JSON.stringify(response.data));
+            //  console.log(JSON.stringify(response.data));
               return response;
           })
           .catch((e) => {
@@ -79,7 +79,7 @@ export const rateMixin = {
         return axios
           .get(this.urlRate+`/api/rate/`+ idEmployee +`/regular/all`, header)
           .then((response) => {
-             console.log(JSON.stringify(response.data));
+            //  console.log(JSON.stringify(response.data));
               return response;
           })
           .catch((e) => {
@@ -100,7 +100,7 @@ export const rateMixin = {
         return axios
           .get(this.urlRate+`/api/rate/`+ idEmployee +`/overtime`, header)
           .then((response) => {
-             console.log(JSON.stringify(response.data));
+            //  console.log(JSON.stringify(response.data));
               return response;
           })
           .catch((e) => {
@@ -121,7 +121,7 @@ export const rateMixin = {
         return axios
           .get(this.urlRate+`/api/rate/`+ idEmployee +`/overtime/all`, header)
           .then((response) => {
-             console.log(JSON.stringify(response.data));
+            //  console.log(JSON.stringify(response.data));
               return response;
           })
           .catch((e) => {

@@ -264,7 +264,7 @@
     <!-- RATE REGULAR -->
     <b-card
       class="mt-5"
-      v-if="hasAccessEmployeeRead"
+      v-if="hasAccessRateRead"
       :title="isEdit == 'false' ? 'Dodawanie stawki podstawowej' : 'Zmiana stawki podstawowej'"
       bg-variant="dark"
     >
@@ -364,7 +364,7 @@
 
     <!-- RATE OVERTIME-->
     <b-card
-      v-if="hasAccessEmployeeRead"
+      v-if="hasAccessRateRead"
       class="mt-5"
       :title="isEdit == 'false' ? 'Dodawanie stawki nadgodzinowej' : 'Edycja stawki nadgodzinowej'"
       bg-variant="dark"
@@ -532,6 +532,18 @@ export default {
   },
   computed: {
     ...mapGetters(["getToken"]),
+    hasAccessRateRead() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
+        return (
+          token2.authorities.includes("HR_RATE_READ_ALL") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
     hasAccessRateWrite() {
       try {
         let token2 = jwt_decode(this.getToken);
@@ -581,10 +593,10 @@ export default {
       return this.employee.city.length > 0 && this.employee.city.length <= 50;
     },
     validationZip() {
-        return ((this.employee.zip.length <= 6 &&
-      /(^\d{2}-\d{3}$)/.test(this.employee.zip)) || 
-      (this.employee.zip.length <= 5 &&
-      /(^\d{5})/.test(this.employee.zip)))
+      return (
+        (this.employee.zip.length <= 6 && /(^\d{2}-\d{3}$)/.test(this.employee.zip)) ||
+        (this.employee.zip.length <= 5 && /(^\d{5})/.test(this.employee.zip))
+      );
     },
     validationDayOffLeft() {
       return (
@@ -653,7 +665,7 @@ export default {
     saveEmployee() {
       this.empSaveDisabled = true;
       this.changeStatusIconEmp(true, false, false);
-      console.log("validEMployrr: "+this.validEmployee())
+      console.log("validEMployrr: " + this.validEmployee());
       if (!this.validEmployee()) {
         this.changeStatusIconEmp(false, false, true);
         this.empSaveDisabled = false;
@@ -771,7 +783,7 @@ export default {
       }
     },
 
-      //
+    //
     //zapisuje nową stawkę podstawową do DB
     //
     saveRateOvertime() {
@@ -807,8 +819,6 @@ export default {
       }
     },
 
-    
-
     changeStatusIconRateReg(busy, save, error) {
       this.rateRegBusyIcon = busy;
       this.rateRegErrorIcon = error;
@@ -820,7 +830,7 @@ export default {
       this.rateOverErrorIcon = error;
       this.rateOverSavedIcon = save;
     },
-   
+
     //
     //get employee if edit
     //
@@ -830,12 +840,14 @@ export default {
         this.getEmployeeFromDb(this.idEmployee).then((response) => {
           this.employee = response.data;
         });
-        this.getRateRegularFromDb(this.idEmployee).then((response) => {
-          this.rateRegular = response.data;
-        });
-        this.getRateOvertimeFromDb(this.idEmployee).then((response) => {
-          this.rateOvertime = response.data;
-        });
+        if (this.hasAccessRateRead) {
+            this.getRateRegularFromDb(this.idEmployee).then((response) => {
+            this.rateRegular = response.data;
+          });
+            this.getRateOvertimeFromDb(this.idEmployee).then((response) => {
+            this.rateOvertime = response.data;
+          });
+        }
       }
     },
     //---------------------------------------  CONVERT TO OPTION ----------------------------------------------------
