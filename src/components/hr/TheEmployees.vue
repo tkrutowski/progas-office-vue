@@ -133,7 +133,7 @@
               <b-row class="mb-2">
                 <b-col sm="3" class="text-sm-left">Pesel: {{ row.item.pesel }}</b-col>
                 <!-- <b-col>{{ row.item.pesel }}</b-col> -->
-                <b-col sm="3" class="text-sm-left">Inne info: {{ row.item.pesel }}</b-col>
+                <b-col sm="3" class="text-sm-left">Inne info: {{ row.item.otherInfo }}</b-col>
                 <!-- <b-col>{{ row.item.pesel }}</b-col> -->
               </b-row>
 

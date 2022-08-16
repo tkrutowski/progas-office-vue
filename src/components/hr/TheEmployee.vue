@@ -4,6 +4,16 @@
       :title="isEdit == 'false' ? 'Dodawanie nowego pracownika' : 'Edycja pracownika'"
       bg-variant="dark"
     >
+         <b-button
+               v-show="loading" 
+                style="height: fit-content"
+                variant="progas"
+                class="ml-3"
+                disabled
+              >
+                <b-spinner small></b-spinner>
+                <span class="sr-only">Loading...</span>
+              </b-button>
       <b-form @submit.stop.prevent="saveEmployee" autocomplete="off">
         <!-- ROW-1 -->
         <div class="row">
@@ -223,6 +233,25 @@
             ></b-form-select>
           </b-form-group>
         </div>
+
+         <!-- ROW-8 -->
+        <div class="row">
+          <!-- OTHER_INFO -->
+          <b-form-group class="col" label="Inne informacje:" label-for="other-info">
+            <b-form-textarea
+              id="other-info"
+              v-model="employee.otherInfo"
+                rows="3"
+                max-rows="6"
+              :state="validationInfo"
+            ></b-form-textarea>
+            <b-form-invalid-feedback :state="validationInfo">
+              Pole nie może mieć więcej niż 150 znaków.
+            </b-form-invalid-feedback>
+          </b-form-group>
+       
+        </div>
+
         <b-button class="pl-5 pr-3" variant="progas" :disabled="empSaveDisabled" type="submit"
           >Zapisz
           <!-- <b-icon class="pl-2"  scale="1.8" icon="arrow-bar-up" variant="success"  aria-hidden="true"></b-icon> -->
@@ -589,6 +618,9 @@ export default {
     validationStreet() {
       return this.employee.street.length > 0 && this.employee.street.length <= 50;
     },
+     validationInfo() {
+      return this.employee.otherInfo.length <= 150;
+    },
     validationCity() {
       return this.employee.city.length > 0 && this.employee.city.length <= 50;
     },
@@ -710,6 +742,7 @@ export default {
         this.validationLastName &&
         this.validationStreet &&
         this.validationCity &&
+        this.validationInfo &&
         this.validationZip &&
         this.validationDayOffLeft &&
         this.validationPesel &&
@@ -836,9 +869,11 @@ export default {
     //
     getEmployeeIfEdit() {
       console.log("getEmployeeIfEdit()) - start, ID = " + this.idEmployee);
+      this.loading = true;
       if (this.isEdit == "true") {
         this.getEmployeeFromDb(this.idEmployee).then((response) => {
           this.employee = response.data;
+          this.loading = false;
         });
         if (this.hasAccessRateRead) {
             this.getRateRegularFromDb(this.idEmployee).then((response) => {

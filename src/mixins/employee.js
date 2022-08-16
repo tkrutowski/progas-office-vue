@@ -8,6 +8,8 @@ export const employeeMixin = {
       // urlEmpl: "http://192.168.1.33:8082",
       urlEmpl: "https://docker.focikhome.synology.me",
 
+      loading: false,
+
       employee: {
         id: 0,
         firstName: "",
@@ -26,7 +28,8 @@ export const employeeMixin = {
         nextBhpTrainingDate: "",
         employeeType: "",
         worktime: "",
-        employmentStatus: ""
+        employmentStatus: "",
+        otherInfo:""
         //   enabled: true,
         //   notLocked: true,
         //   idEmployee: 0
