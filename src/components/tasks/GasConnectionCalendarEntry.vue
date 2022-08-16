@@ -198,6 +198,12 @@ export default {
     //-------------------------------------------------------DB--------------------------------------------------
     putCustomerDB() {
       console.log("putCustomerDB() - start");
+       const header = {
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+           'Authorization': "Bearer "+ this.$store.getters.getToken
+          },
+        };
       axios
         .put(
           this.urlTask +
@@ -206,7 +212,7 @@ export default {
             `?date=` +
             this.mailCustomerDate +
             "&status=" +
-            this.mailStatusCustomer
+            this.mailStatusCustomer, null, header
         )
         .then((response) => {
           // JSON responses are automatically parsed.
@@ -220,6 +226,12 @@ export default {
     },
     putSurveyorDB() {
       console.log("putSurveyorDB() - start");
+          const header = {
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+           'Authorization': "Bearer "+ this.$store.getters.getToken
+          },
+        };
       axios
         .put(
           this.urlTask +
@@ -228,7 +240,7 @@ export default {
             `?date=` +
             this.mailSurveyorDate +
             "&status=" +
-            this.mailStatusSurveyor
+            this.mailStatusSurveyor, null, header
         )
         .then((response) => {
           // JSON responses are automatically parsed.
@@ -242,6 +254,12 @@ export default {
     },
     putPgnDB() {
       console.log("putPgnDB() - start");
+          const header = {
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+           'Authorization': "Bearer "+ this.$store.getters.getToken
+          },
+        };
       axios
         .put(
           this.urlTask +
@@ -250,7 +268,7 @@ export default {
             `?date=` +
             this.mailPgnDate +
             "&status=" +
-            this.mailStatusPgn
+            this.mailStatusPgn, null, header
         )
         .then((response) => {
           // JSON responses are automatically parsed.
@@ -264,8 +282,14 @@ export default {
     },
     putMessageDB() {
       console.log("putMessageDB() - start");
+          const header = {
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+           'Authorization': "Bearer "+ this.$store.getters.getToken
+          },
+        };
       axios
-        .put(this.urlTask + `/api/taskcalendar/msg/` + this.idEntry + `?msg=` + this.msg)
+        .put(this.urlTask + `/api/taskcalendar/msg/` + this.idEntry + `?msg=` + this.msg, null, header)
         .then((response) => {
           // JSON responses are automatically parsed.
           let temp = response.data;

@@ -415,9 +415,9 @@ export default {
     calculateIsEdit(idTeam) {
       console.log("calculateIsEdit(idTeam: " + idTeam + ") - start");
       const write = this.hasWrite;
-      console.log("write: " + write);
+      // console.log("write: " + write);
       const writeAll = this.hasWriteAll;
-      console.log("writeAll: " + writeAll);
+      // console.log("writeAll: " + writeAll);
 
       // if user has WRITE_ALL
       if (writeAll) {
@@ -454,8 +454,7 @@ export default {
         }
       });
 
-      console.log(JSON.stringify(team));
-      console.log("tea m !{}: " + (team != {}));
+      // console.log(JSON.stringify(team));
       console.log("team idMembers lenght: " + team.idMembers.length);
       if (team != {} || team.idMembers.length > 0) {
         team.idMembers.forEach((idMember) => {
@@ -468,8 +467,9 @@ export default {
       }
       console.log("result: " + result);
       return result;
-      //   return false;
     },
+
+
     getTeams() {
       console.log("getTeams()");
       const readAll = this.hasReadAll;
@@ -490,6 +490,8 @@ export default {
       }
       console.log("getTeams() Ilosc teams[]: " + this.allTeams.length);
     },
+
+
     prevDate() {
       console.log("Preview date.");
       //block buttons
@@ -500,6 +502,8 @@ export default {
       this.fillWeekDays();
       this.getFromDb();
     },
+
+
     nextDate() {
       //block buttons
       this.isButtonDisabled = true;
@@ -510,6 +514,8 @@ export default {
       this.fillWeekDays();
       this.getFromDb();
     },
+
+
     calculateEndDate() {
       console.log("Calculate end date");
       let tempDate = this.startDate.format("YYYY-MM-DD");
@@ -517,10 +523,14 @@ export default {
       console.log("Start date: " + this.startDate.format("LLLL"));
       console.log("End date: " + this.endDate.format("LLLL"));
     },
+
+
     weekDay(value) {
       const entireWeek = moment(value).format("dddd");
       return entireWeek; // July 6 - 13 2020
     },
+
+
     calculateStartDate() {
       console.log("Calculate start date");
       let dateGiven = moment().format("YYYY-MM-DD");
@@ -530,38 +540,37 @@ export default {
       let given = moment(dateGiven).format("dddd");
       switch (given) {
         case "poniedziałek":
-          console.log("jestem w pon");
+          // console.log("jestem w pon");
           this.startDate = moment();
           break;
         case "wtorek":
-          console.log("jestem w wt");
+          // console.log("jestem w wt");
           this.startDate = moment(dateGiven).subtract(1, "days");
           break;
         case "środa":
-          console.log("jestem w sroda");
+          // console.log("jestem w sroda");
           this.startDate = moment(dateGiven).subtract(2, "days");
           break;
         case "czwartek":
-          console.log("jestem w czw");
+          // console.log("jestem w czw");
           this.startDate = moment(dateGiven).subtract(3, "days");
           break;
         case "piątek":
-          console.log("jestem w pt");
+          // console.log("jestem w pt");
           this.startDate = moment(dateGiven).subtract(4, "days");
           break;
         case "sobota":
-          console.log("jestem w sobota");
+          // console.log("jestem w sobota");
           this.startDate = moment(dateGiven).subtract(5, "days");
           break;
         case "niedziela":
-          console.log("jestem w niedz");
+          // console.log("jestem w niedz");
           this.startDate = moment(dateGiven).subtract(6, "days");
           break;
       }
-
       console.log(this.startDate.format("LLLL"));
-      // return dateReturn;
     },
+
     fillWeekDays() {
       let dateGiven = moment(this.startDate).format("YYYY-MM-DD");
       this.monday = moment(dateGiven).format("D MMMM");
@@ -571,14 +580,14 @@ export default {
       this.friday = moment(dateGiven).add(4, "days").format("D MMMM");
       this.saturday = moment(dateGiven).add(5, "days").format("D MMMM");
     },
-    test2() {
-      moment.locale("pl");
-      return moment(this.starttest1);
-    },
+
+
     addDate() {
       const date = moment(this.starttest1);
       console.log(date.add(1, "days").format("dddd, D-MMMM-YYYY"));
     },
+
+    
     //-------------------------------DB---------------------------------------------
     getFromDb() {
       console.log("getEntryFromDb() - start");
