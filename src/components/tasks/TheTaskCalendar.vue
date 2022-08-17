@@ -377,7 +377,8 @@ export default {
     hasReadAll() {
       try {
         let token2 = jwt_decode(this.getToken);
-        return token2.authorities.includes("TASK_CALENDAR_READ_ALL");
+        return token2.authorities.includes("TASK_CALENDAR_READ_ALL")
+        || token2.authorities.includes("ROLE_ADMIN");
       } catch (error) {
         return false;
       }
@@ -385,7 +386,8 @@ export default {
     hasWrite() {
       try {
         let token2 = jwt_decode(this.getToken);
-        return token2.authorities.includes("TASK_CALENDAR_WRITE");
+        return token2.authorities.includes("TASK_CALENDAR_WRITE")
+        || token2.authorities.includes("ROLE_ADMIN");
       } catch (error) {
         return false;
       }
@@ -393,7 +395,8 @@ export default {
     hasWriteAll() {
       try {
         let token2 = jwt_decode(this.getToken);
-        return token2.authorities.includes("TASK_CALENDAR_WRITE_ALL");
+        return token2.authorities.includes("TASK_CALENDAR_WRITE_ALL")
+         || token2.authorities.includes("ROLE_ADMIN");
       } catch (error) {
         return false;
       }
@@ -481,14 +484,13 @@ export default {
         this.getEmployeeFromDb(id)
           .then((response) => {
             let idTeam = response.data.idTeam;
-            console.log("idTeam from getTeams: " + idTeam);
+            console.log("idTeam from getTeams(): " + idTeam);
             this.getTeamFromDb(idTeam);
           })
           .catch((e) => {
             this.validateError(e);
           });
       }
-      console.log("getTeams() Ilosc teams[]: " + this.allTeams.length);
     },
 
 
@@ -587,7 +589,7 @@ export default {
       console.log(date.add(1, "days").format("dddd, D-MMMM-YYYY"));
     },
 
-    
+
     //-------------------------------DB---------------------------------------------
     getFromDb() {
       console.log("getEntryFromDb() - start");

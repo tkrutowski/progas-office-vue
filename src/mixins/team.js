@@ -12,6 +12,7 @@ export const teamMixin = {
     };
   },
     methods: {
+      
       getTeamsFromDb() {
         console.log("getTeamsFromDb() - start");
         const header = {
@@ -30,6 +31,8 @@ export const teamMixin = {
                 this.validateError(e);
             });
     },
+
+
     getTeamFromDb(idTeam) {
         console.log("getTeamFromDb(idTeam: "+idTeam+") - start");
           const header = {
