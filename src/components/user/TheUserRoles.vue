@@ -193,8 +193,8 @@ export default {
     //
     onRoleChange() {
       console.log("onRoleChange()");
-      console.log("userID: " + this.selectedUserID);
-      console.log("roleID: " + this.selectedRole);
+      // console.log("userID: " + this.selectedUserID);
+      // console.log("roleID: " + this.selectedRole);
       this.getPrivilegesByUserRoleDB(this.selectedUserID, this.selectedRole);
     },
     //
@@ -256,8 +256,8 @@ export default {
     //
     getPrivilegesByUserRoleDB(userID, roleID) {
       console.log("getPrivilegesByUserRoleDB() - start");
-      console.log("userID: " + userID);
-      console.log("roleID: " + roleID);
+      // console.log("userID: " + userID);
+      // console.log("roleID: " + roleID);
       // const token=this.$store.getters.getToken;
       let displayedPrivleges = [];
       const headers = {
@@ -365,7 +365,7 @@ export default {
           // JSON responses are automatically parsed.
           console.log("getAllRolesFromDb(): " + response.data.length);
           this.roles = response.data;
-          console.log("roles: " + this.roles.length);
+          // console.log("roles: " + this.roles.length);
         })
 
         .catch((e) => {
@@ -439,7 +439,7 @@ export default {
     //
     getUsersFromDb() {
       console.log("getUsersFromDb() - start");
-      console.log("token: "+ this.$store.getters.getToken);
+      // console.log("token: "+ this.$store.getters.getToken);
       // axios.get(`http://77.55.210.35:9090/api/teams`)
       // axios.get(`http://localhost:9090/api/teams`)
       const header = {
@@ -471,7 +471,7 @@ export default {
           text: e.lastName + " " + e.firstName,
         };
         this.optionsUsers.push(opt);
-        console.log(e.id + " " + e.lastName);
+        // console.log(e.id + " " + e.lastName);
       });
     },
   },   

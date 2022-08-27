@@ -217,7 +217,7 @@ export default {
         .then((response) => {
           // JSON responses are automatically parsed.
           let temp = response.data;
-          console.log("putCustomerDB() - Success: " + temp);
+          // console.log("putCustomerDB() - Success: " + temp);
           this.displaySmallMessage("success", "Zaaktualizowano dane.");
         })
         .catch((e) => {
@@ -245,7 +245,7 @@ export default {
         .then((response) => {
           // JSON responses are automatically parsed.
           let temp = response.data;
-          console.log("putSurveyorDB() - Success: " + temp);
+          // console.log("putSurveyorDB() - Success: " + temp);
           this.displaySmallMessage("success", "Zaaktualizowano dane.");
         })
         .catch((e) => {
@@ -273,7 +273,7 @@ export default {
         .then((response) => {
           // JSON responses are automatically parsed.
           let temp = response.data;
-          console.log("putPgnDB() - Success: " + temp);
+          // console.log("putPgnDB() - Success: " + temp);
           this.displaySmallMessage("success", "Zaaktualizowano dane.");
         })
         .catch((e) => {
@@ -293,7 +293,7 @@ export default {
         .then((response) => {
           // JSON responses are automatically parsed.
           let temp = response.data;
-          console.log("putMessageDB() - Success: " + temp);
+          // console.log("putMessageDB() - Success: " + temp);
           this.displaySmallMessage("success", "Zaaktualizowano dane.");
         })
         .catch((e) => {

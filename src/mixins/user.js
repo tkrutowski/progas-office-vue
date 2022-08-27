@@ -39,7 +39,7 @@ export const userMixin = {
         .then((response) => {
           this.user = response.data;
           console.log("Odpowiedz HTTP: " + response.status + ", " + response.statusText);
-          console.log("getUserFromDb(): " + this.user);
+          // console.log("getUserFromDb(): " + this.user);
         })
         .catch((e) => {
           this.validateError(e);
@@ -51,7 +51,6 @@ export const userMixin = {
     addUserDB() {
       console.log("addUserDB() - start");
       console.log("updateUser() - employeeID: " + this.user.idEmployee);
-      // console.log("updateUser() - employeeID: "+this.user.idEmployee);
       const headers = {
         "Content-type": "application/json; charset=UTF-8",
         Authorization: "Bearer " + this.$store.getters.getToken,
@@ -85,7 +84,7 @@ export const userMixin = {
           this.user = response.data;
           this.displaySmallMessage("success", "Zaaktualizowano użytkownika.");
           console.log("Odpowiedz HTTP: " + response.status + ", " + response.statusText);
-          console.log("after updateUser(): " + this.user);
+          // console.log("after updateUser(): " + this.user);
         })
         .catch((e) => {
           this.validateError(e);

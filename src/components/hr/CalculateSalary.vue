@@ -299,7 +299,7 @@ export default {
           text: e.lastName + " " + e.firstName,
         };
         this.options.push(opt);
-        console.log(e.id + " " + e.lastName);
+        // console.log(e.id + " " + e.lastName);
       });
     },
     //-------------------------------------------------- DB----------------------------------------------------------

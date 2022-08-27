@@ -43,8 +43,7 @@ export const teamMixin = {
         };
         axios.get(this.urlTeam + `/api/teams/` + idTeam, header)
             .then(response => {
-                // JSON responses are automatically parsed.
-                console.log(JSON.stringify(response.data));
+                // console.log(JSON.stringify(response.data));
                 this.allTeams = [];
                 this.allTeams.push(response.data);
                 console.log("getTeamFromDb() - Ilosc teams[]: " + this.allTeams.length);

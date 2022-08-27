@@ -297,7 +297,7 @@ export default {
     //set user active/inactive
     //
     setActiveUser(item, index, button) {
-      console.log("user id: " + item.id + ", isEnabled: " + item.enabled);
+      // console.log("user id: " + item.id + ", isEnabled: " + item.enabled);
       this.$bvModal
         .msgBoxConfirm(
           `Czy chcesz zmienić status użytkownika: 
@@ -327,7 +327,7 @@ export default {
     //set user lock/unlock
     //
     setLockUser(item, index, button) {
-      console.log("user id: " + item.id + ", isLock: " + item.notLocked);
+      // console.log("user id: " + item.id + ", isLock: " + item.notLocked);
       let lock = item.notLocked ? "zablokować" : "odblokować";
 
       this.$bvModal
@@ -412,7 +412,7 @@ export default {
     //
     setActiveUserDb(userID, isEnabled) {
       console.log("updateUser() - start");
-      console.log("user id: " + userID + ", isEnabled: " + isEnabled);
+      // console.log("user id: " + userID + ", isEnabled: " + isEnabled);
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -446,7 +446,7 @@ export default {
     setLockUserDb(userID, isLock) {
       console.log("setLockUserDb() - start");
       let lock = isLock ? "Odblokowano" : "Zablokowano";
-      console.log("user id: " + userID + ", isLock: " + isLock);
+      // console.log("user id: " + userID + ", isLock: " + isLock);
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",

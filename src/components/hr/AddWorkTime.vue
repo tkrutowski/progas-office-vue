@@ -333,6 +333,7 @@ export default {
         return token2.authorities.includes("HR_WORKTIME_READ_ALL") || token2.authorities.includes("ROLE_ADMIN");
       } catch (error) {
         return false;
+        // return true;
       }
     },
     hasRead() {
@@ -470,7 +471,7 @@ export default {
     getWorkTimeAllFromDB() {
       console.log("getWorkTimeAllFromDB() - start");
       this.isBusy = true;
-      console.log("selected employee: " + this.selectedEmployee);
+      // console.log("selected employee: " + this.selectedEmployee);
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -594,7 +595,7 @@ export default {
           text: e.lastName + " " + e.firstName,
         };
         this.optionsEmployee.push(opt);
-        console.log(e.id + " " + e.lastName);
+        // console.log(e.id + " " + e.lastName);
       });
     },
     convertToOptionsDayOff() {
@@ -605,7 +606,7 @@ export default {
           text: e.name,
         };
         this.optionDayOff.push(opt);
-        console.log(e.id + " " + e.name);
+        // console.log(e.id + " " + e.name);
       });
     },
     convertToOptionsIllness() {
@@ -616,7 +617,7 @@ export default {
           text: e.name,
         };
         this.optionIllness.push(opt);
-        console.log(e.id + " " + e.name);
+        // console.log(e.id + " " + e.name);
       });
     },
   },

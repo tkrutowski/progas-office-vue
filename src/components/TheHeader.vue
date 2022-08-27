@@ -12,10 +12,15 @@
           <b-nav-item-dropdown text="Pracownicy" right>
             <b-dropdown-item href="/hr/employee/all" :disabled="!hasAccessReadEmployees">Lista pracowników</b-dropdown-item>
             <b-dropdown-item href="/hr/AddWorkTime" :disabled="!hasAccessAddWorktime">Wpisywanie godzin</b-dropdown-item>
-            <b-dropdown-item href="#" disabled>Wpisywanie dodatków</b-dropdown-item>
+            <b-dropdown-item href="/hr/AddSalaryAdditions" :disabled="!hasAccessHrAddition">Wpisywanie dodatków</b-dropdown-item>
+            <!-- <b-dropdown-item href="/hr/employee/all">Lista pracowników</b-dropdown-item> -->
+            <!-- <b-dropdown-item href="/hr/AddWorkTime">Wpisywanie godzin</b-dropdown-item> -->
+            <!-- <b-dropdown-item href="/hr/AddSalaryAdditions">Wpisywanie dodatków</b-dropdown-item> -->
             <b-dropdown-item href="#" disabled>Wpisywanie zaliczek</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Wpisywanie pożyczek</b-dropdown-item>
-            <b-dropdown-item href="/hr/CalculateSalary" :disabled="!hasAccessCalculateSalary">Oblicznie wypłat</b-dropdown-item>
+            <b-dropdown-item href="/hr/CalculateSalary" :disabled="!hasAccessCalculateSalary"
+              >Oblicznie wypłat</b-dropdown-item
+            >
             <b-dropdown-item href="#" disabled>Lista pożyczek</b-dropdown-item>
           </b-nav-item-dropdown>
 
@@ -27,7 +32,9 @@
             <b-dropdown-item href="#" disabled>Przyłącze</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Wewnętrzna</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Terminarz</b-dropdown-item>
-            <b-dropdown-item href="/tasks/TaskCalendar" :disabled="!hasAccessTaskCalendar">Kalendarz</b-dropdown-item>
+            <b-dropdown-item href="/tasks/TaskCalendar" :disabled="!hasAccessTaskCalendar"
+              >Kalendarz</b-dropdown-item
+            >
             <b-dropdown-item href="#" disabled>Koordynator</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Geodeta</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Projektant</b-dropdown-item>
@@ -45,7 +52,6 @@
             <b-dropdown-item href="/user/all">Użytkownicy</b-dropdown-item>
             <b-dropdown-item href="/user/roles">Uprawnienia</b-dropdown-item>
           </b-nav-item-dropdown>
-
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
@@ -57,9 +63,7 @@
 
           <div v-if="!getAuthenticationState">
             <router-link :to="{ name: 'Login' }">
-              <b-button size="sm" class="my-2 ml-2 my-sm-0 btn-login">
-                Zaloguj się
-              </b-button>
+              <b-button size="sm" class="my-2 ml-2 my-sm-0 btn-login"> Zaloguj się </b-button>
             </router-link>
           </div>
 
@@ -103,16 +107,19 @@ export default {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_ADMIN: " + token2.authorities.includes('ROLE_ADMIN'))
-        return token2.authorities.includes('ROLE_ADMIN');
+        return token2.authorities.includes("ROLE_ADMIN");
       } catch (error) {
         return false;
       }
     },
-       hasAccessTaskCalendar() {
+    hasAccessTaskCalendar() {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_TASK_CALEDAR: " + token2.authorities.includes('ROLE_TASK_CALENDAR'))
-        return token2.authorities.includes('ROLE_TASK_CALENDAR') || token2.authorities.includes('ROLE_ADMIN');
+        return (
+          token2.authorities.includes("ROLE_TASK_CALENDAR") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
       } catch (error) {
         return false;
       }
@@ -121,25 +128,46 @@ export default {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_HR_EMPLOYEE: " + token2.authorities.includes('ROLE_HR_EMPLOYEE'))
-        return token2.authorities.includes('ROLE_HR_EMPLOYEE') || token2.authorities.includes('ROLE_ADMIN');
+        return (
+          token2.authorities.includes("ROLE_HR_EMPLOYEE") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
       } catch (error) {
         return false;
       }
     },
-      hasAccessAddWorktime() {
+    hasAccessAddWorktime() {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
-        return token2.authorities.includes('ROLE_HR_WORKTIME') || token2.authorities.includes('ROLE_ADMIN');
+        return (
+          token2.authorities.includes("ROLE_HR_WORKTIME") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
       } catch (error) {
         return false;
       }
     },
-     hasAccessCalculateSalary() {
+    hasAccessCalculateSalary() {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_HR_SALARIES: " + token2.authorities.includes('ROLE_HR_SALARIES'))
-        return token2.authorities.includes('ROLE_HR_SALARIES') || token2.authorities.includes('ROLE_ADMIN');
+        return (
+          token2.authorities.includes("ROLE_HR_SALARIES") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
+    hasAccessHrAddition() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_ADDITION: " + token2.authorities.includes('ROLE_HR_ADDITION'))
+        return (
+          token2.authorities.includes("ROLE_HR_ADDITION") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
       } catch (error) {
         return false;
       }
@@ -163,9 +191,7 @@ export default {
       this.$store.commit("updateUser", {});
       this.userFirstName = "";
       this.isAuthenticated = false;
-      console.log(
-        "Po wylogowaniu store: " + this.$store.getters.getAuthenticationState
-      );
+      console.log("Po wylogowaniu store: " + this.$store.getters.getAuthenticationState);
       // this.$router.push("/");
     },
   },

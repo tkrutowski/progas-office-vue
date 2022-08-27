@@ -178,7 +178,7 @@ export default {
           this.user = response.data;
           this.msgSuccess = "Zaaktualizowano profil użytkownika";
           console.log("Odpowiedz HTTP: " + response.status + ", " + response.statusText);
-          console.log("after updateUser(): " + this.user);
+          // console.log("after updateUser(): " + this.user);
         })
         .catch((e) => {
           this.validateError(e);
@@ -201,7 +201,7 @@ export default {
         .then((response) => {
           this.user = response.data;
           console.log("Odpowiedz HTTP: "+response.status+", "+response.statusText);
-          console.log("getUserFromDb(): " + this.user);
+          // console.log("getUserFromDb(): " + this.user);
         })
         .catch((e) => {
           this.validateError(e);

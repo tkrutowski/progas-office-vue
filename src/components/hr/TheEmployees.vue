@@ -326,31 +326,33 @@ export default {
        hasAccessRateRead() {
       try {
         let token2 = jwt_decode(this.getToken);
-        // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
+        // console.log("token: HR_RATE_READ_ALL: " + token2.authorities.includes('HR_RATE_READ_ALL'))
         return (
           token2.authorities.includes("HR_RATE_READ_ALL") ||
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
         return false;
-      }
+        // return true;
+        }
     },
        hasAccessEmployeeWrite() {
       try {
         let token2 = jwt_decode(this.getToken);
-        // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
+        // console.log("token: HR_EMPLOYEE_WRITE_ALL: " + token2.authorities.includes('HR_EMPLOYEE_WRITE_ALL'))
         return (
           token2.authorities.includes("HR_EMPLOYEE_WRITE_ALL") ||
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-        return false;
+         return false;
+        // return true;
       }
     },
      hasAccessEmployeeDelete() {
       try {
         let token2 = jwt_decode(this.getToken);
-        // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
+        // console.log("token: HR_EMPLOYEE_DELETE_ALL: " + token2.authorities.includes('HR_EMPLOYEE_DELETE_ALL'))
         return (
           token2.authorities.includes("HR_EMPLOYEE_DELETE_ALL") ||
           token2.authorities.includes("ROLE_ADMIN")
@@ -509,7 +511,7 @@ export default {
           }
         )
         .then((value) => {
-          console.log(value);
+          // console.log(value);
           if (value) {
             this.setEmploymentStatusDb(
               item.id,

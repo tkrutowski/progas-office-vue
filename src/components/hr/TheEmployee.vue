@@ -4,16 +4,10 @@
       :title="isEdit == 'false' ? 'Dodawanie nowego pracownika' : 'Edycja pracownika'"
       bg-variant="dark"
     >
-         <b-button
-               v-show="loading" 
-                style="height: fit-content"
-                variant="progas"
-                class="ml-3"
-                disabled
-              >
-                <b-spinner small></b-spinner>
-                <span class="sr-only">Loading...</span>
-              </b-button>
+      <b-button v-show="loading" style="height: fit-content" variant="progas" class="ml-3" disabled>
+        <b-spinner small></b-spinner>
+        <span class="sr-only">Loading...</span>
+      </b-button>
       <b-form @submit.stop.prevent="saveEmployee" autocomplete="off">
         <!-- ROW-1 -->
         <div class="row">
@@ -234,22 +228,21 @@
           </b-form-group>
         </div>
 
-         <!-- ROW-8 -->
+        <!-- ROW-8 -->
         <div class="row">
           <!-- OTHER_INFO -->
           <b-form-group class="col" label="Inne informacje:" label-for="other-info">
             <b-form-textarea
               id="other-info"
               v-model="employee.otherInfo"
-                rows="3"
-                max-rows="6"
+              rows="3"
+              max-rows="6"
               :state="validationInfo"
             ></b-form-textarea>
             <b-form-invalid-feedback :state="validationInfo">
               Pole nie może mieć więcej niż 150 znaków.
             </b-form-invalid-feedback>
           </b-form-group>
-       
         </div>
 
         <b-button class="pl-5 pr-3" variant="progas" :disabled="empSaveDisabled" type="submit"
@@ -491,7 +484,23 @@
       ok-only
     >
       <div>
-        <b-table :items="rateAll" :fields="fieldsRateAll" id="table"></b-table>
+        <b-table :items="rateAll" :fields="fieldsRateAll" id="table">
+          <!-- ----------------------------------AKCJA --------------------------------- -->
+          <template #cell(action)="row">
+            <b-button-group>
+              <!-- DELETE -->
+              <b-button
+                v-if="hasAccessRateDelete"
+                size="sm"
+                @click="deleteRate(row.item, row.index, $event.target)"
+                class="mr-2 bg-danger"
+                title="Usuń stawkę"
+              >
+                <b-icon icon="trash" aria-hidden="true"></b-icon>
+              </b-button>
+            </b-button-group>
+          </template>
+        </b-table>
       </div>
     </b-modal>
   </b-container>
@@ -512,7 +521,7 @@ export default {
     return {
       idEmployee: 0,
       isEdit: false,
-
+      whichRate: "",
       optionsNrDaysOffAnnually: [0, 20, 26],
       infoModal: {
         id: "info-modal",
@@ -561,6 +570,7 @@ export default {
   },
   computed: {
     ...mapGetters(["getToken"]),
+
     hasAccessRateRead() {
       try {
         let token2 = jwt_decode(this.getToken);
@@ -571,6 +581,7 @@ export default {
         );
       } catch (error) {
         return false;
+        // return true;
       }
     },
     hasAccessRateWrite() {
@@ -583,6 +594,20 @@ export default {
         );
       } catch (error) {
         return false;
+        // return true;
+      }
+    },
+    hasAccessRateDelete() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: HR_RATE_DELETE_ALL: " + token2.authorities.includes('HR_RATE_DELETE_ALL'))
+        return (
+          token2.authorities.includes("HR_RATE_DELETE_ALL") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+        // return true;
       }
     },
     hasAccessEmployeeWrite() {
@@ -595,18 +620,7 @@ export default {
         );
       } catch (error) {
         return false;
-      }
-    },
-    hasAccessEmployeeRead() {
-      try {
-        let token2 = jwt_decode(this.getToken);
-        // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
-        return (
-          token2.authorities.includes("HR_EMPLOYEE_READ_ALL") ||
-          token2.authorities.includes("ROLE_ADMIN")
-        );
-      } catch (error) {
-        return false;
+        // return true;
       }
     },
     validationFirstName() {
@@ -618,7 +632,7 @@ export default {
     validationStreet() {
       return this.employee.street.length > 0 && this.employee.street.length <= 50;
     },
-     validationInfo() {
+    validationInfo() {
       return this.employee.otherInfo.length <= 150;
     },
     validationCity() {
@@ -643,7 +657,7 @@ export default {
       return (
         this.rateRegular.rateValue.length > 0 &&
         this.rateRegular.rateValue.length <= 7 &&
-        (/(^([0-9]*[.])?[0-9]$)/.test(this.rateRegular.rateValue) ||
+        (/(^\d+\.\d{0,2}$)/.test(this.rateRegular.rateValue) ||
           /^[0-9]+$/.test(this.rateRegular.rateValue))
       );
     },
@@ -651,7 +665,7 @@ export default {
       return (
         this.rateOvertime.rateValue.length > 0 &&
         this.rateOvertime.rateValue.length <= 7 &&
-        (/(^([0-9]*[.])?[0-9]$)/.test(this.rateOvertime.rateValue) ||
+        (/(^\d+\.\d{0,2}$)/.test(this.rateOvertime.rateValue) ||
           /^[0-9]+$/.test(this.rateOvertime.rateValue))
       );
     },
@@ -675,6 +689,28 @@ export default {
     },
     //-------------------------------------------EMPLOYEE-------------------------------------------
 
+    //
+    //get employee if edit
+    //
+    getEmployeeIfEdit() {
+      console.log("getEmployeeIfEdit()) - start, ID = " + this.idEmployee);
+      if (this.isEdit == "true") {
+        this.loading = true;
+        this.getEmployeeFromDb(this.idEmployee).then((response) => {
+          this.employee = response.data;
+          this.loading = false;
+        });
+        if (this.hasAccessRateRead) {
+          this.getRateRegularFromDb(this.idEmployee).then((response) => {
+            this.rateRegular = response.data;
+          });
+          this.getRateOvertimeFromDb(this.idEmployee).then((response) => {
+            this.rateOvertime = response.data;
+          });
+        }
+      }
+    },
+
     getEmployee(id) {
       console.log("getEmployee() - start");
       this.employee = this.getEmployeesFromDb(id);
@@ -697,7 +733,7 @@ export default {
     saveEmployee() {
       this.empSaveDisabled = true;
       this.changeStatusIconEmp(true, false, false);
-      console.log("validEMployrr: " + this.validEmployee());
+      // console.log("validEMployee: " + this.validEmployee());
       if (!this.validEmployee()) {
         this.changeStatusIconEmp(false, false, true);
         this.empSaveDisabled = false;
@@ -709,7 +745,7 @@ export default {
             .then((response) => {
               this.employee.id = response.data;
               this.displaySmallMessage("success", "Dodano pracownika.");
-              console.log(JSON.stringify(response.data));
+              // console.log(JSON.stringify(response.data));
               this.changeStatusIconEmp(false, true, false);
               this.empSaveDisabled = false;
             })
@@ -723,7 +759,7 @@ export default {
             .then((response) => {
               this.employee = response.data;
               this.displaySmallMessage("success", "Zaktualizowano dane pracownika.");
-              console.log(JSON.stringify(response.data));
+              // console.log(JSON.stringify(response.data));
               this.changeStatusIconEmp(false, true, false);
               this.empSaveDisabled = false;
             })
@@ -763,8 +799,18 @@ export default {
     showRateRagularHistoryModal() {
       this.rateHistoryModal.title = "Stawka podstawowa";
       this.getRateRegularAllFromDb(this.idEmployee).then((response) => {
-        console.log(JSON.stringify(response.data));
-        this.rateAll = response.data;
+        // console.log(JSON.stringify(response.data));
+        this.whichRate = "regular";
+        this.rateAll = [];
+        response.data.forEach((e) => {
+          let rateType = e.rateType == "PER_HOUR" ? " zł/h" : " zł/mc";
+          let rate = {
+            idRate: e.idRate,
+            rateValue: e.rateValue + rateType,
+            dateFrom: moment(e).format("MMMM YYYY"),
+          };
+          this.rateAll.push(rate);
+        });
         this.$refs["rateHistoryModal"].show();
       });
     },
@@ -774,9 +820,20 @@ export default {
     //
     showRateOvertimeHistoryModal() {
       this.rateHistoryModal.title = "Stawka nadgodzinowa";
-      this.getRateOvertimeAllFromDb(this.idEmployee).then((rate) => {
-        //  console.log(JSON.stringify(response.data));
-        this.rateAll = rate.data;
+      this.getRateOvertimeAllFromDb(this.idEmployee).then((response) => {
+        // console.log(JSON.stringify(response.data));
+        this.rateOvertime.idRate = "";
+        this.rateAll = [];
+        response.data.forEach((e) => {
+          // console.log(e);
+          let rate = {
+            idRate: e.idRate,
+            rateType: e.rateType,
+            dateFrom: moment(e).format("MMMM YYYY"),
+            rateValue: e.rateValue,
+          };
+          this.rateAll.push(rate);
+        });
         this.$refs["rateHistoryModal"].show();
       });
     },
@@ -794,15 +851,23 @@ export default {
         if (this.validationRateRegular) {
           this.addNewRateRagularDb(this.employee.id)
             .then((response) => {
+              console.log("SUCCESS");
               this.displaySmallMessage("success", "Dodano stawkę podstawową.");
-              console.log(JSON.stringify(response.data));
+              // console.log(JSON.stringify(response.data));
               this.changeStatusIconRateReg(false, true, false);
               this.rateRegSaveDisabled = false;
             })
             .catch((e) => {
               this.changeStatusIconRateReg(false, false, true);
               this.rateRegSaveDisabled = false;
-              this.validateError(e);
+              if (e.response.status == 409) {
+                console.log(JSON.stringify("ERROR 409"));
+                // console.log(JSON.stringify(e.response.data));
+                let rate = e.response.data;
+                this.editRate(rate);
+              } else {
+                this.validateError(e);
+              }
             });
         } else {
           this.changeStatusIconRateReg(false, false, true);
@@ -830,8 +895,7 @@ export default {
           this.addNewRateOvertimeDb(this.employee.id)
             .then((response) => {
               this.displaySmallMessage("success", "Dodano stawkę nadgodzinową.");
-              //to comment
-              console.log(JSON.stringify(response.data));
+              // console.log(JSON.stringify(response.data));
               this.changeStatusIconRateOver(false, true, false);
               this.rateOverSaveDisabled = false;
             })
@@ -852,6 +916,53 @@ export default {
       }
     },
 
+    //
+    //edit rate
+    //
+    editRate(rate) {
+      this.$bvModal
+        .msgBoxConfirm(
+          `Stawka obowiązująca od tej daty (${moment(rate.dateFrom).format(
+            "MMM YYYY"
+          )}) już istnieje.Czy chcesz ją zastąpić?`,
+          {
+            title: "Potwierdzenie",
+            size: "sm",
+            buttonSize: "sm",
+            okVariant: "danger",
+            okTitle: "TAK",
+            cancelTitle: "NIE",
+            footerClass: "p-2",
+            hideHeaderClose: false,
+            centered: true,
+          }
+        )
+        .then((value) => {
+          if (value) {
+            console.log("which rate: " + this.whichRate);
+            if (this.whichRate == "regular") {
+              //  console.log("przed EDIT: "+rate);
+              this.editRateRegularDB(this.idEmployee, rate).then((response) => {
+                // console.log("po EDIT: "+JSON.stringify(response.data));
+                this.displaySmallMessage("success", "Zaaktualizowano stawkę podstawową.");
+                this.changeStatusIconRateReg(false, true, false);
+              });
+            }
+            if (this.whichRate == "overtime") {
+              // console.log("przed EDIT: "+rate);
+              this.editRateRegularDB(this.idEmployee, rate).then((response) => {
+                // console.log("po EDIT: "+JSON.stringify(response.data));
+                this.displaySmallMessage("success", "Zaaktualizowano stawkę nadgodzinową.");
+                this.changeStatusIconRateReg(false, true, false);
+              });
+            }
+          }
+        })
+        .catch((err) => {
+          this.validateError(e);
+        });
+    },
+
     changeStatusIconRateReg(busy, save, error) {
       this.rateRegBusyIcon = busy;
       this.rateRegErrorIcon = error;
@@ -865,50 +976,72 @@ export default {
     },
 
     //
-    //get employee if edit
+    //delete rate
     //
-    getEmployeeIfEdit() {
-      console.log("getEmployeeIfEdit()) - start, ID = " + this.idEmployee);
-      this.loading = true;
-      if (this.isEdit == "true") {
-        this.getEmployeeFromDb(this.idEmployee).then((response) => {
-          this.employee = response.data;
-          this.loading = false;
+    deleteRate(item, index, button) {
+      this.$bvModal
+        .msgBoxConfirm(`Czy chcesz usunąć stawkę:\n ${item.rateValue} zł od ${item.dateFrom}?`, {
+          title: "Potwierdzenie",
+          size: "sm",
+          buttonSize: "sm",
+          okVariant: "danger",
+          okTitle: "TAK",
+          cancelTitle: "NIE",
+          footerClass: "p-2",
+          hideHeaderClose: false,
+          centered: true,
+        })
+        .then((value) => {
+          if (value) {
+            if (this.whichRate == "regular") {
+              this.deleteRateRegularDB(item.idRate).then((response) => {
+                this.getRateRegularAllFromDb(this.idEmployee).then((response) => {
+                  // console.log(JSON.stringify(response.data));
+                  this.rateAll = response.data;
+                });
+                this.displaySmallMessage("success", "Usunięto stawkę podstawową.");
+              });
+            }
+            if (this.whichRate == "overtime") {
+              this.deleteRateOvertimeDB(item.idRate).then((response) => {
+                this.getRateOvertimeAllFromDb(this.idEmployee).then((response) => {
+                  // console.log(JSON.stringify(response.data));
+                  this.rateAll = response.data;
+                });
+                this.displaySmallMessage("success", "Usunięto stawkę nadgodzinową.");
+              });
+            }
+          }
+        })
+        .catch((err) => {
+          // An error occurred
         });
-        if (this.hasAccessRateRead) {
-            this.getRateRegularFromDb(this.idEmployee).then((response) => {
-            this.rateRegular = response.data;
-          });
-            this.getRateOvertimeFromDb(this.idEmployee).then((response) => {
-            this.rateOvertime = response.data;
-          });
-        }
-      }
     },
+
     //---------------------------------------  CONVERT TO OPTION ----------------------------------------------------
     convertToOptionsEmployeeType(types) {
       console.log("convert to convertToOptionsEmployeeType...");
-      console.log(JSON.stringify(types));
+      // console.log(JSON.stringify(types));
       types.forEach((e) => {
         let opt = {
           value: e.name,
           text: e.viewName,
         };
         this.optionsEmployeesTypes.push(opt);
-        console.log(e.name + " - " + e.viewName);
+        // console.log(e.name + " - " + e.viewName);
       });
     },
 
     convertToOptionsEmployeeWorktime(wt) {
       console.log("convert to convertToOptionsEmployeeWorktime...");
-      console.log(JSON.stringify(wt));
+      // console.log(JSON.stringify(wt));
       wt.forEach((e) => {
         let opt = {
           value: e.name,
           text: e.viewName,
         };
         this.optionsWorktime.push(opt);
-        console.log(e.name + " - " + e.viewName);
+        // console.log(e.name + " - " + e.viewName);
       });
     },
   },

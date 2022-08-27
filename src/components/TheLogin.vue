@@ -88,7 +88,7 @@ export default {
     };
   },
   computed: {
-    // jeżeli coś sięzmieni w tych polach to strona się odświerzy
+    // jeżeli coś się zmieni w tych polach to strona się odświerzy
   },
   created() {
     // console.log("Czy zalogowano: " + this.userStateLogin.isAuthenticated);

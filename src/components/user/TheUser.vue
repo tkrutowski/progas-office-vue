@@ -208,7 +208,7 @@ export default {
   mounted() {
     let idTemp = this.$route.params.idUser;
     this.isEdit = this.$route.params.isEdit;
-    console.log("TempID: " + idTemp + ", edit: " + this.$route.params.isEdit);
+    // console.log("TempID: " + idTemp + ", edit: " + this.$route.params.isEdit);
     this.idUser = idTemp;
     this.getUserifEdit();
   },
@@ -285,7 +285,7 @@ export default {
           text: e.lastName + " " + e.firstName,
         };
         this.optionsEmployees.push(opt);
-        console.log(e.id + " " + e.lastName);
+        // console.log(e.id + " " + e.lastName);
       });
     },
     //-------------------------------------------USER-------------------------------------------

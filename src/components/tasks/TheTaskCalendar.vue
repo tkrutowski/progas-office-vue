@@ -448,7 +448,7 @@ export default {
 
     //sprawdza czy uzytkownik jest w teamie
     isInTeam(idEmployee, idTeam) {
-      console.log("isInTeam(idEmp: " + idEmployee + ", idTeam: " + idTeam);
+      // console.log("isInTeam(idEmp: " + idEmployee + ", idTeam: " + idTeam);
       let team = {};
       let result = false;
       this.allTeams.forEach((element) => {
@@ -458,17 +458,16 @@ export default {
       });
 
       // console.log(JSON.stringify(team));
-      console.log("team idMembers lenght: " + team.idMembers.length);
+      // console.log("team idMembers lenght: " + team.idMembers.length);
       if (team != {} || team.idMembers.length > 0) {
         team.idMembers.forEach((idMember) => {
           if (idMember == idEmployee) {
-            console.log("idMember: " + (idMember == idEmployee));
-            // return true;
+            // console.log("idMember: " + (idMember == idEmployee));
             result = true;
           }
         });
       }
-      console.log("result: " + result);
+      // console.log("result: " + result);
       return result;
     },
 
@@ -477,7 +476,7 @@ export default {
       console.log("getTeams()");
       const readAll = this.hasReadAll;
       const id = this.$store.getters.getUser.idEmployee;
-      console.log("idEmp from store: " + id + " hasALL: " + readAll);
+      // console.log("idEmp from store: " + id + " hasALL: " + readAll);
       if (id == 0 || readAll) {
         this.getTeamsFromDb();
       } else {
@@ -522,8 +521,8 @@ export default {
       console.log("Calculate end date");
       let tempDate = this.startDate.format("YYYY-MM-DD");
       this.endDate = moment(tempDate, "YYYY-MM-DD").add(6, "days");
-      console.log("Start date: " + this.startDate.format("LLLL"));
-      console.log("End date: " + this.endDate.format("LLLL"));
+      // console.log("Start date: " + this.startDate.format("LLLL"));
+      // console.log("End date: " + this.endDate.format("LLLL"));
     },
 
 
@@ -537,8 +536,8 @@ export default {
       console.log("Calculate start date");
       let dateGiven = moment().format("YYYY-MM-DD");
 
-      console.log(dateGiven);
-      console.log(moment(dateGiven).format("dddd"));
+      // console.log(dateGiven);
+      // console.log(moment(dateGiven).format("dddd"));
       let given = moment(dateGiven).format("dddd");
       switch (given) {
         case "poniedziałek":

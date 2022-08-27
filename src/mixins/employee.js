@@ -43,8 +43,8 @@ export const employeeMixin = {
     getEmployees() {
       console.log("getEmployees() - start");
       this.loading = true;
-      // console.log("hasRead: " + this.hasRead);
-      // console.log("hasReadAll: " + this.hasReadAll);
+      console.log("hasRead: " + this.hasRead);
+      console.log("hasReadAll: " + this.hasReadAll);
       if (this.hasRead && !this.hasReadAll) {
         let idEmp = this.$store.getters.getUser.idEmployee;
         console.log("idEmpl: " + idEmp);
@@ -83,6 +83,8 @@ export const employeeMixin = {
           console.log("Odpowiedz HTTP: " + response.status + ", " + response.statusText);
           //   let employee = response.data;
           // console.log(JSON.stringify(response.data));
+          console.log("getEmployeeFromDb() - end");
+          
           return response;
         })
         .catch((e) => {
