@@ -12,8 +12,8 @@
           <b-nav-item-dropdown text="Pracownicy" right>
             <b-dropdown-item href="/hr/employee/all" :disabled="!hasAccessReadEmployees">Lista pracowników</b-dropdown-item>
             <b-dropdown-item href="/hr/AddWorkTime" :disabled="!hasAccessAddWorktime">Wpisywanie godzin</b-dropdown-item>
-            <b-dropdown-item href="/hr/AddSalaryAdditions" :disabled="!hasAccessHrAddition">Wpisywanie dodatków</b-dropdown-item>
-            <b-dropdown-item href="/hr/AddAdvance" :disabled="!hasAccessHrAdvance">Wpisywanie zaliczek</b-dropdown-item>
+            <b-dropdown-item href="/hr/AddAdditions" :disabled="!hasAccessHrAddition">Wpisywanie dodatków</b-dropdown-item>
+            <b-dropdown-item href="/hr/AddAdvances" :disabled="!hasAccessHrAdvance">Wpisywanie zaliczek</b-dropdown-item>
             <!-- <b-dropdown-item href="/hr/employee/all">Lista pracowników</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddWorkTime">Wpisywanie godzin</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddAdditions">Wpisywanie dodatków</b-dropdown-item> -->
@@ -130,7 +130,7 @@ export default {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: ROLE_HR_EMPLOYEE: " + token2.authorities.includes('ROLE_HR_EMPLOYEE'))
         return (
-          token2.authorities.includes("ROLE_HR_EMPLOYEE") ||
+          token2.authorities.includes("HR_EMPLOYEE_READ_ALL") ||
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
