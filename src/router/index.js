@@ -3,7 +3,8 @@ import VueRouter from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import HrCalculateSalaryView from '../views/HrCalculateSalaryView';
 import HrAddWorkTimeView from '../views/HrAddWorkTimeView.vue';
-import HrSalaryAdditionsView from '../views/HrAddSalaryAdditionsView.vue';
+import HrAdditionsView from '../views/HrAddAdditionsView.vue';
+import HrAdvancesView from '../views/HrAddAdvencesView.vue';
 import HrEmployeesView from '../views/HrEmployeesView.vue';
 import TaskCalendarView from '../views/TaskCalendarView.vue'
 import MapsView from '@/views/MapsView.vue';
@@ -35,10 +36,16 @@ const routes = [
       props: true
   },
   {
-    path: '/hr/AddSalaryAdditions',
-    name: 'AddSalaryAdditions',
-    component: HrSalaryAdditionsView,
+    path: '/hr/AddAdditions',
+    name: 'AddAdditions',
+    component: HrAdditionsView,
     props: true
+},
+{
+  path: '/hr/AddAdvances',
+  name: 'AddAdvances',
+  component: HrAdvancesView,
+  props: true
 },
   {
     path: '/hr/employee/all',

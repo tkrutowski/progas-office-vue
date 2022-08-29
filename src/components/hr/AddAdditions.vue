@@ -181,7 +181,7 @@
                     @click="editAddition(row.item, row.index, $event.target)"
                     class="mr-2"
                     variant="progas"
-                    title="Edycja pracownika"
+                    title="Edycja dodatku."
                   >
                     Edit
                   </b-button>
@@ -191,7 +191,7 @@
                     size="sm"
                     @click="deleteAddition(row.item, row.index, $event.target)"
                     class="mr-2 bg-danger"
-                    title="Usuń pracownika"
+                    title="Usuń dodatek."
                   >
                     <b-icon icon="trash" aria-hidden="true"></b-icon>
                   </b-button>
@@ -433,7 +433,7 @@ export default {
         this.salaryAddition.idEmployee = this.selectedEmployee;
         this.salaryAddition.date = this.additionDateString;
         this.salaryAddition.additionType = this.selectedAdditionType;
-        console.log(JSON.stringify(this.salaryAddition));
+        // console.log(JSON.stringify(this.salaryAddition));
         if (this.isEdit) {
             this.editAdditionDB()
             .then((response) => {
@@ -486,11 +486,11 @@ export default {
     },
 
     //  
-    //edit eddition
+    //edit addition
     //
     editAddition(item, index, button) {
       console.log("editAddition(): " + item.id);
-      console.log(JSON.stringify(item));
+      // console.log(JSON.stringify(item));
       this.employeeDisabled = true;
       this.isEdit=true;
       this.btnSaveTitle = "Zapisz";
@@ -507,7 +507,7 @@ export default {
     //
     deleteAddition(item, index, button) {
       this.infoModal.title = `Row index: ${index}`;
-      this.infoModal.content = JSON.stringify(item, null, 2);
+      // this.infoModal.content = JSON.stringify(item, null, 2);
       this.$bvModal
         .msgBoxConfirm(`Czy chcesz usunąć dodatek:\n z dnia ${item.date} na kwotę ${item.amount} zł?`, {
           title: "Potwierdzenie",

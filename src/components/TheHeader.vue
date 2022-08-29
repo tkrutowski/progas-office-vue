@@ -13,10 +13,11 @@
             <b-dropdown-item href="/hr/employee/all" :disabled="!hasAccessReadEmployees">Lista pracowników</b-dropdown-item>
             <b-dropdown-item href="/hr/AddWorkTime" :disabled="!hasAccessAddWorktime">Wpisywanie godzin</b-dropdown-item>
             <b-dropdown-item href="/hr/AddSalaryAdditions" :disabled="!hasAccessHrAddition">Wpisywanie dodatków</b-dropdown-item>
+            <b-dropdown-item href="/hr/AddAdvance" :disabled="!hasAccessHrAdvance">Wpisywanie zaliczek</b-dropdown-item>
             <!-- <b-dropdown-item href="/hr/employee/all">Lista pracowników</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddWorkTime">Wpisywanie godzin</b-dropdown-item> -->
-            <!-- <b-dropdown-item href="/hr/AddSalaryAdditions">Wpisywanie dodatków</b-dropdown-item> -->
-            <b-dropdown-item href="#" disabled>Wpisywanie zaliczek</b-dropdown-item>
+            <!-- <b-dropdown-item href="/hr/AddAdditions">Wpisywanie dodatków</b-dropdown-item> -->
+            <!-- <b-dropdown-item href="/hr/AddAdvances" >Wpisywanie zaliczek</b-dropdown-item> -->
             <b-dropdown-item href="#" disabled>Wpisywanie pożyczek</b-dropdown-item>
             <b-dropdown-item href="/hr/CalculateSalary" :disabled="!hasAccessCalculateSalary"
               >Oblicznie wypłat</b-dropdown-item
@@ -166,6 +167,18 @@ export default {
         // console.log("token: ROLE_HR_ADDITION: " + token2.authorities.includes('ROLE_HR_ADDITION'))
         return (
           token2.authorities.includes("ROLE_HR_ADDITION") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
+       hasAccessHrAdvance() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_ADVANCE: " + token2.authorities.includes('ROLE_HR_ADVANCE'))
+        return (
+          token2.authorities.includes("ROLE_HR_ADVANCE") ||
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {

@@ -1,16 +1,16 @@
 <template>
   <div>
-    <AddSalaryAdditions />
+    <AddAdditions />
   </div>
 </template>
 
 <script>
-import AddSalaryAdditions from "@/components/hr/AddSalaryAdditions.vue";
+import AddAdditions from "@/components/hr/AddAdditions.vue";
 
 export default {
   name: "HrAddSalaryAddition",
   components: {
-    AddSalaryAdditions,
+    AddAdditions,
   },
 };
 </script>
