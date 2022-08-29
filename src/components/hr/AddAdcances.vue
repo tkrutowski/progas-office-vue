@@ -467,6 +467,7 @@ export default {
     resetForm() {
       this.salaryAdvance.otherInfo = "";
       this.salaryAdvance.amount = "";
+      this.salaryAdvance.id = null;
     },
      resetInfoModal() {
       this.infoModal.title = "";

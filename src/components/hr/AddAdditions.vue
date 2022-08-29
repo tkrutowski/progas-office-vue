@@ -433,7 +433,7 @@ export default {
         this.salaryAddition.idEmployee = this.selectedEmployee;
         this.salaryAddition.date = this.additionDateString;
         this.salaryAddition.additionType = this.selectedAdditionType;
-        // console.log(JSON.stringify(this.salaryAddition));
+        console.log(JSON.stringify(this.salaryAddition));
         if (this.isEdit) {
             this.editAdditionDB()
             .then((response) => {
@@ -455,7 +455,7 @@ export default {
             .then((response) => {
               this.displaySmallMessage("success", "Dodano dodatek.");
               this.getAdditionsFromDB(this.selectedEmployee, this.additionDateString);
-              // console.log(JSON.stringify(response.data));
+              console.log(JSON.stringify(response.data));
               this.changeIconStatus(false, true, false);
               this.btnDisabled = false;
               //reset
@@ -561,6 +561,7 @@ export default {
       this.selectedAdditionType = null;
       this.salaryAddition.otherInfo = "";
       this.salaryAddition.amount = "";
+      this.salaryAddition.id = null;
     },
      resetInfoModal() {
       this.infoModal.title = "";
