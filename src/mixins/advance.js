@@ -4,9 +4,9 @@ export const advanceMixin = {
   data() {
     return {
       // urlEmpl: "http://localhost:8089",
-      urlEmpl: "http://localhost:8082",
+      // urlEmpl: "http://localhost:8082",
       // urlEmpl: "http://192.168.1.33:8082",
-      // urlEmpl: "https://docker.focikhome.synology.me",
+      urlEmpl: "https://docker.focikhome.synology.me",
 
       salaryAdvance: {
         id: 0,
