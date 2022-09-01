@@ -235,15 +235,14 @@ export const employeeMixin = {
            Authorization: "Bearer "+ this.$store.getters.getToken
         },
       };
-      const params = {
-        status: newStatus,
-      };
+      // const param ={
+        let params = {
+          value: newStatus,
+        } 
+      // };
       return axios
-        .put(this.urlEmpl + `/api/employee/employeetype/` + employeeID, null, {
-          params,
-          header,
-        })
-        .then((response) => {
+        .put(this.urlEmpl + `/api/employee/employeetype/` + employeeID, params, header)
+      .then((response) => {
           // JSON responses are automatically parsed.
           this.displaySmallMessage("success", "Zaaktualizowano status pracownika.");
           return response;
