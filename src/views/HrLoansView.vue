@@ -1,16 +1,16 @@
 <template>
   <div>
-    <AddAdvances />
+    <TheLoans />
   </div>
 </template>
 
 <script>
-import AddAdvances from "@/components/hr/AddAdvances.vue";
+import TheLoans from "@/components/hr/TheLoans.vue";
 
 export default {
-  name: "HrAdvances",
+  name: "HrLoans",
   components: {
-    AddAdvances,
+    TheLoans,
   },
 };
 </script>

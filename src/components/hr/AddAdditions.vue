@@ -28,7 +28,7 @@
                     </template>
                   </b-form-select>
                   <b-button
-                    v-if="loading"
+                    v-if="loadingEmployee"
                     style="height: fit-content"
                     variant="progas"
                     class="ml-3"
@@ -280,7 +280,7 @@ export default {
       ],
       busyIcon: false,
       btnDisabled: false,
-      // loading: false,
+   
       isBusy: false,
       isEdit: false,
 
@@ -315,7 +315,7 @@ export default {
   },
   created() {
     moment.locale("pl");
-    this.getEmployees();
+    this.getEmployees("HIRED");
     this.getAdditionTypesFromDb();
     this.selectedEmployee = null;
     // this.selectedAdditionType = 1;

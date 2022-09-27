@@ -4,8 +4,10 @@ import HomeView from '../views/HomeView.vue';
 import HrCalculateSalaryView from '../views/HrCalculateSalaryView';
 import HrAddWorkTimeView from '../views/HrAddWorkTimeView.vue';
 import HrAdditionsView from '../views/HrAddAdditionsView.vue';
+import HrAddLoanInstallmentView from '../views/HrAddLoanInstallmentView.vue';
 import HrAdvancesView from '../views/HrAddAdvencesView.vue';
 import HrEmployeesView from '../views/HrEmployeesView.vue';
+import HrLoansView from '../views/HrLoansView.vue';
 import TaskCalendarView from '../views/TaskCalendarView.vue'
 import MapsView from '@/views/MapsView.vue';
 import LoginView from '@/views/LoginView.vue';
@@ -15,6 +17,7 @@ import UserRolesView from '@/views/UserRolesView.vue';
 import UserView from '@/views/UserView.vue';
 import ErrorView from '@/views/ErrorView.vue'
 import HrEmployeeView from '../views/HrEmployeeView.vue';
+import HrLoanView from '../views/HrLoanView.vue';
 Vue.use(VueRouter);
 
 const routes = [
@@ -42,6 +45,12 @@ const routes = [
     props: true
 },
 {
+  path: '/hr/AddLoanInstallment',
+  name: 'AddLoanInstallment',
+  component: HrAddLoanInstallmentView,
+  props: true
+},
+{
   path: '/hr/AddAdvances',
   name: 'AddAdvances',
   component: HrAdvancesView,
@@ -57,6 +66,18 @@ const routes = [
   path: '/hr/employee',
   name: 'TheEmployee',
   component: HrEmployeeView,
+  props: true
+},
+{
+  path: '/hr/loan/all',
+  name: 'TheLoans',
+  component: HrLoansView,
+  props: true
+},
+{
+  path: '/hr/loan',
+  name: 'TheLoan',
+  component: HrLoanView,
   props: true
 },
   {

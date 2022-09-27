@@ -11,18 +11,20 @@
         <b-navbar-nav id="test">
           <b-nav-item-dropdown text="Pracownicy" right>
             <b-dropdown-item href="/hr/employee/all" :disabled="!hasAccessReadEmployees">Lista pracowników</b-dropdown-item>
+            <b-dropdown-item href="/hr/loan/all" :disabled="!hasAccessReadLoans">Lista pożyczek</b-dropdown-item>
             <b-dropdown-item href="/hr/AddWorkTime" :disabled="!hasAccessAddWorktime">Wpisywanie godzin</b-dropdown-item>
             <b-dropdown-item href="/hr/AddAdditions" :disabled="!hasAccessHrAddition">Wpisywanie dodatków</b-dropdown-item>
             <b-dropdown-item href="/hr/AddAdvances" :disabled="!hasAccessHrAdvance">Wpisywanie zaliczek</b-dropdown-item>
+            <b-dropdown-item href="/hr/AddLoanInstallment" :disabled="!hasAccessReadLoans"> Wpisywanie pożyczek</b-dropdown-item>
             <!-- <b-dropdown-item href="/hr/employee/all">Lista pracowników</b-dropdown-item> -->
+            <!-- <b-dropdown-item href="/hr/loan/all">Lista pożyczek</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddWorkTime">Wpisywanie godzin</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddAdditions">Wpisywanie dodatków</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddAdvances" >Wpisywanie zaliczek</b-dropdown-item> -->
-            <b-dropdown-item href="#" disabled>Wpisywanie pożyczek</b-dropdown-item>
+            <!-- <b-dropdown-item href="/hr/AddLoanInstallment" > Wpisywanie pożyczek</b-dropdown-item> -->
             <b-dropdown-item href="/hr/CalculateSalary" :disabled="!hasAccessCalculateSalary"
               >Oblicznie wypłat</b-dropdown-item
             >
-            <b-dropdown-item href="#" disabled>Lista pożyczek</b-dropdown-item>
           </b-nav-item-dropdown>
 
           <b-nav-item href="#" disabled>Klienci</b-nav-item>
@@ -131,6 +133,19 @@ export default {
         // console.log("token: ROLE_HR_EMPLOYEE: " + token2.authorities.includes('ROLE_HR_EMPLOYEE'))
         return (
           token2.authorities.includes("HR_EMPLOYEE_READ_ALL") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
+    hasAccessReadLoans() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_EMPLOYEE: " + token2.authorities.includes('ROLE_HR_EMPLOYEE'))
+        return (
+          token2.authorities.includes("HR_LOAN_READ_ALL") ||
+          token2.authorities.includes("HR_LOAN_READ") ||
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {

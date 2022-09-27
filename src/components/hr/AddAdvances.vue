@@ -1,7 +1,7 @@
 <template>
   <div id="main">
     <b-container fluid="" id="container">
-      <h1>Wpisywanie dodatków</h1>
+      <h1>Wpisywanie zaliczek</h1>
       <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
       <b-row align-h="center">
         <b-col>
@@ -215,7 +215,7 @@ export default {
       ],
       busyIcon: false,
       btnDisabled: false,
-    
+   
       isBusy: false,
       isEdit: false,
 
@@ -457,7 +457,7 @@ export default {
     },
 
  
-    cancelAdvancen() {
+    cancelAdvance() {
       console.log("cancelAdvance()");
       this.employeeDisabled = false;
       this.btnSaveTitle = "Dodaj";

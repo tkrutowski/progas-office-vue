@@ -1,4 +1,3 @@
-
 .btn-progas {
     background-color: rgba(255, 245, 0, 0.8) !important;
  color: #2c3e50 !important;
@@ -13,6 +12,42 @@ background-color: rgba(229, 200, 0, 0.883)!important;
 }
 
 .btn-progas:focus {
+ outline: none  !important;
+ box-shadow: none  !important;
+}
+
+
+.btn-progas-cancel {
+    background-color: rgba(255, 245, 0, 0.8) !important;
+ color: #2c3e50 !important;
+ border-color: rgb(108, 117, 125) !important;
+ /* font-weight: bold; */
+}
+
+.btn-progas-cancel:hover {
+ color: white  ;
+ background-color: rgb(108, 117, 125) ;
+background-color: rgba(229, 200, 0, 0.883)!important;
+}
+
+.btn-progas-cancel:focus {
+ outline: none  !important;
+ box-shadow: none  !important;
+}
+
+.btn-progas-save {
+    background-color: rgb(247, 47, 47) !important;
+ color: #2c3e50 ;
+ border-color: rgb(108, 117, 125) !important;
+ /* font-weight: bold; */
+}
+
+.btn-progas-save:hover {
+ color: white !important ;
+background-color: rgba(229, 0, 0, 0.883)!important;
+}
+
+.btn-progas-save:focus {
  outline: none  !important;
  box-shadow: none  !important;
 }

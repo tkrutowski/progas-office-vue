@@ -4,7 +4,7 @@
       :title="isEdit == 'false' ? 'Dodawanie nowego pracownika' : 'Edycja pracownika'"
       bg-variant="dark"
     >
-      <b-button v-show="loading" style="height: fit-content" variant="progas" class="ml-3" disabled>
+      <b-button v-show="loadingEmployee" style="height: fit-content" variant="progas" class="ml-3" disabled>
         <b-spinner small></b-spinner>
         <span class="sr-only">Loading...</span>
       </b-button>
@@ -695,10 +695,10 @@ export default {
     getEmployeeIfEdit() {
       console.log("getEmployeeIfEdit()) - start, ID = " + this.idEmployee);
       if (this.isEdit == "true") {
-        this.loading = true;
+        this.loadingEmployee = true;
         this.getEmployeeFromDb(this.idEmployee).then((response) => {
           this.employee = response.data;
-          this.loading = false;
+          this.loadingEmployee = false;
         });
         if (this.hasAccessRateRead) {
           this.getRateRegularFromDb(this.idEmployee).then((response) => {

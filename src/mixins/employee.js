@@ -8,7 +8,7 @@ export const employeeMixin = {
       // urlEmpl: "http://192.168.1.33:8082",
       urlEmpl: "https://docker.focikhome.synology.me",
 
-      loading: false,
+      loadingEmployee: false,
 
       employee: {
         id: 0,
@@ -30,47 +30,45 @@ export const employeeMixin = {
         worktime: "",
         employmentStatus: "",
         otherInfo:""
-        //   enabled: true,
-        //   notLocked: true,
-        //   idEmployee: 0
       },
     };
   },
   methods: {
     //
-    //Pobiera pracowników w zależności od uprawnień
+    //Pobiera pracowników w zależności od uprawnień (do droplist)
     //
-    getEmployees() {
-      console.log("getEmployees() - start");
-      this.loading = true;
+    async getEmployees(status) {
+      console.log("START - getEmployees()");
+      this.loadingEmployee = true;
       console.log("hasRead: " + this.hasRead);
       console.log("hasReadAll: " + this.hasReadAll);
       if (this.hasRead && !this.hasReadAll) {
         let idEmp = this.$store.getters.getUser.idEmployee;
         console.log("idEmpl: " + idEmp);
-        this.getEmployeeFromDb(idEmp).then((response) => {
+        await this.getEmployeeFromDb(idEmp).then((response) => {
           // console.log(JSON.stringify(response.data));
-          this.employees = [];
-          this.employees.push(response.data);
+          this.employees = response.data;
           this.convertToOptionsEmployee();
-          this.loading=false;
+          this.loadingEmployee=false;
         });
       } else {
         if (this.hasReadAll) {
-          this.getEmployeesFromDb("HIRED").then((response) => {
+          await this.getEmployeesFromDb(status).then((response) => {
             this.employees = response.data;
             this.convertToOptionsEmployee();
-            this.loading=false;
+            this.loadingEmployee=false;
           });
         }
       }
+      console.log("END - getEmployees()");
+      return;
     },
     //------------------------------------------------DB-------------------------------------------
     //
     //get employee by ID from DB
     //
-    getEmployeeFromDb(employeeID) {
-      console.log("getEmployeeFromDb() - start, ID = " + employeeID);
+    async getEmployeeFromDb(employeeID) {
+      console.log("START - getEmployeeFromDb() ID = " + employeeID);
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -83,7 +81,7 @@ export const employeeMixin = {
           console.log("Odpowiedz HTTP: " + response.status + ", " + response.statusText);
           //   let employee = response.data;
           // console.log(JSON.stringify(response.data));
-          console.log("getEmployeeFromDb() - end");
+          console.log("END - getEmployeeFromDb()");
           
           return response;
         })
@@ -93,9 +91,9 @@ export const employeeMixin = {
     },
 
     //
-    //Get HIRED/FIRED employees
-    getEmployeesFromDb(empStatus) {
-      console.log("getEmployeesFromDb(" + empStatus + ") - start");
+    //Get HIRED/FIRED/ALL employees
+    async getEmployeesFromDb(empStatus) {
+      console.log("START - getEmployeesFromDb(" + empStatus + ")");
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -103,10 +101,11 @@ export const employeeMixin = {
         },
       };
       return axios
-        .get(this.urlEmpl + `/api/employee/query?status=` + empStatus, header)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          console.log("getEmployeesFromDb() - Ilosc employees[]: " + response.data.length);
+      .get(this.urlEmpl + `/api/employee/query?status=` + empStatus, header)
+      .then((response) => {
+        // JSON responses are automatically parsed.
+        console.log("getEmployeesFromDb() - Ilosc employees[]: " + response.data.length);
+        console.log("END - getEmployeesFromDb(" + empStatus + ")");
           return response;
         })
         .catch((e) => {
@@ -117,7 +116,7 @@ export const employeeMixin = {
     //
     //Get employeeType
     getEmployeeTypeFromDb() {
-      console.log("getEmployeeTypeFromDb() - start");
+      console.log("START - getEmployeeTypeFromDb()");
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -125,10 +124,11 @@ export const employeeMixin = {
         },
       };
       return axios
-        .get(this.urlEmpl + `/api/employee/employeetype`, header)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          console.log("getEmployeesFromDb() - Ilosc employeeType[]: " + response.data.length);
+      .get(this.urlEmpl + `/api/employee/employeetype`, header)
+      .then((response) => {
+        // JSON responses are automatically parsed.
+        console.log("getEmployeesFromDb() - Ilosc employeeType[]: " + response.data.length);
+        console.log("END - getEmployeeTypeFromDb()");
           return response;
         })
         .catch((e) => {
@@ -137,9 +137,9 @@ export const employeeMixin = {
     },
 
     //
-    //Get employeeType
+    //Get worktime
     getEmployeeWorktimeFromDb() {
-      console.log("getEmployeeWorktimeFromDb() - start");
+      console.log("START - getEmployeeWorktimeFromDb()");
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -147,11 +147,12 @@ export const employeeMixin = {
         },
       };
       return axios
-        .get(this.urlEmpl + `/api/employee/employeeworktime`, header)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          console.log("getEmployeesFromDb() - Ilosc employeeWorktime[]: " + response.data.length);
-          return response;
+      .get(this.urlEmpl + `/api/employee/employeeworktime`, header)
+      .then((response) => {
+        // JSON responses are automatically parsed.
+        console.log("getEmployeesFromDb() - Ilosc employeeWorktime[]: " + response.data.length);
+        console.log("END - getEmployeeWorktimeFromDb()");
+        return response;
         })
         .catch((e) => {
           this.validateError(e);
@@ -162,17 +163,18 @@ export const employeeMixin = {
     //add EMPLOYEE into db
     //
     addEmployeeDB() {
-      console.log("addEmployeeDB() - start");
+      console.log("START - addEmployeeDB()");
       const headers = {
         "Content-type": "application/json; charset=UTF-8",
         Authorization: "Bearer " + this.$store.getters.getToken,
       };
       return axios
-        .post(this.urlEmpl + `/api/employee`, this.employee, {
+      .post(this.urlEmpl + `/api/employee`, this.employee, {
           headers,
         })
         .then((response) => {
           this.employee.id = response.data;
+          console.log("END - addEmployeeDB()");
           return response;
         })
         .catch((e) => {
@@ -183,7 +185,7 @@ export const employeeMixin = {
     //update EMPLOYEE
     //
     updateEmployeeDb() {
-      console.log("updateEmployeeDb() - start");
+      console.log("START - updateEmployeeDb()");
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -193,7 +195,7 @@ export const employeeMixin = {
       return axios
         .put(this.urlEmpl + `/api/employee`, this.employee, header)
         .then((response) => {
-          console.log("end updateEmployeeDb()");
+          console.log("END - updateEmployeeDb()");
          return response;
         })
         .catch((e) => {
@@ -205,18 +207,19 @@ export const employeeMixin = {
     //delete employee from db
     //
     deleteEmployeeDB(employeeID) {
-      console.log("deleteEmployeeDB() - start");
+      console.log("START - deleteEmployeeDB()");
       // const token=this.$store.getters.getToken;
       const headers = {
         "Content-type": "application/json; charset=UTF-8",
         'Authorization': "Bearer "+ this.$store.getters.getToken
       };
-
+      
       return axios
-        .delete(this.urlEmpl + `/api/employee/` + employeeID, {
-          headers,
-        })
-        .then((response) => {
+      .delete(this.urlEmpl + `/api/employee/` + employeeID, {
+        headers,
+      })
+      .then((response) => {
+          console.log("END - deleteEmployeeDB()");
           return response;
         })
         .catch((e) => {
@@ -227,25 +230,24 @@ export const employeeMixin = {
     //update employment status
     //
     setEmploymentStatusDb(employeeID, newStatus) {
-      console.log("setEmploymentStatusDb() - start");
+      console.log("START - setEmploymentStatusDb()");
       console.log("employee id: " + employeeID + ", status: " + newStatus);
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-           Authorization: "Bearer "+ this.$store.getters.getToken
+          Authorization: "Bearer "+ this.$store.getters.getToken
         },
       };
-      // const param ={
-        let params = {
-          value: newStatus,
-        } 
-      // };
+      let params={
+        value : newStatus
+      }
       return axios
-        .put(this.urlEmpl + `/api/employee/employeetype/` + employeeID, params, header)
+      .put(this.urlEmpl + `/api/employee/employeetype/` + employeeID, params, header)
       .then((response) => {
-          // JSON responses are automatically parsed.
-          this.displaySmallMessage("success", "Zaaktualizowano status pracownika.");
-          return response;
+        // JSON responses are automatically parsed.
+        this.displaySmallMessage("success", "Zaaktualizowano status pracownika.");
+        console.log("END - setEmploymentStatusDb()");
+        return response;
         })
         .catch((e) => {
           this.validateError(e);

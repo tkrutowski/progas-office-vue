@@ -332,8 +332,8 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-        return false;
-        // return true;
+        // return false;
+        return true;
         }
     },
        hasAccessEmployeeWrite() {
@@ -345,8 +345,8 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-         return false;
-        // return true;
+        //  return false;
+        return true;
       }
     },
      hasAccessEmployeeDelete() {
@@ -491,7 +491,7 @@ export default {
     //set employment status hired/fired
     //
     setEmploymentStatus(item, index, button) {
-      console.log("setEmploymentStatus id: " + item.id + ", isEnabled: " + item.enabled);
+      console.log("setEmploymentStatus id: " + item.id + ", status: " + item.employmentStatus);
        if(this.hasAccessEmployeeWrite){
       this.$bvModal
         .msgBoxConfirm(
