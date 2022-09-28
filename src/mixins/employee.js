@@ -11,7 +11,7 @@ export const employeeMixin = {
       loadingEmployee: false,
 
       employees:[],
-      
+
       employee: {
         id: 0,
         firstName: "",
@@ -49,7 +49,9 @@ export const employeeMixin = {
         console.log("idEmpl: " + idEmp);
         await this.getEmployeeFromDb(idEmp).then((response) => {
           // console.log(JSON.stringify(response.data));
-          this.employees = response.data;
+          this.employees = [];
+          this.employee = response.data;
+          this.employees.push(employee);
           this.convertToOptionsEmployee();
           this.loadingEmployee=false;
         });
