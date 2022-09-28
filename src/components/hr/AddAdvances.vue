@@ -272,6 +272,7 @@ export default {
         return token2.authorities.includes("HR_ADVANCE_READ");
       } catch (error) {
         return false;
+        // return true;
       }
     },
     hasAccessAdvanceWrite() {

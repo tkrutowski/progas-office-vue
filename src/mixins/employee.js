@@ -4,9 +4,9 @@ export const employeeMixin = {
   data() {
     return {
       // urlTeam: "http://localhost:8089",
-      // urlEmpl: "http://localhost:8082",
+      urlEmpl: "http://localhost:8082",
       // urlEmpl: "http://192.168.1.33:8082",
-      urlEmpl: "https://docker.focikhome.synology.me",
+      // urlEmpl: "https://docker.focikhome.synology.me",
 
       loadingEmployee: false,
 
@@ -40,7 +40,7 @@ export const employeeMixin = {
     //Pobiera pracowników w zależności od uprawnień (do droplist)
     //
     async getEmployees(status) {
-      console.log("START - getEmployees()");
+      console.log("START - getEmployees("+status+")");
       this.loadingEmployee = true;
       console.log("hasRead: " + this.hasRead);
       console.log("hasReadAll: " + this.hasReadAll);
@@ -50,8 +50,7 @@ export const employeeMixin = {
         await this.getEmployeeFromDb(idEmp).then((response) => {
           // console.log(JSON.stringify(response.data));
           this.employees = [];
-          this.employee = response.data;
-          this.employees.push(employee);
+          this.employees.push(response.data);
           this.convertToOptionsEmployee();
           this.loadingEmployee=false;
         });
@@ -83,7 +82,6 @@ export const employeeMixin = {
         .get(this.urlEmpl + `/api/employee/query/` + employeeID, header)
         .then((response) => {
           console.log("Odpowiedz HTTP: " + response.status + ", " + response.statusText);
-          //   let employee = response.data;
           // console.log(JSON.stringify(response.data));
           console.log("END - getEmployeeFromDb()");
           
