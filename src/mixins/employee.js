@@ -10,6 +10,8 @@ export const employeeMixin = {
 
       loadingEmployee: false,
 
+      employees:[],
+      
       employee: {
         id: 0,
         firstName: "",
