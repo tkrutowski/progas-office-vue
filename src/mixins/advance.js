@@ -22,7 +22,7 @@ export const advanceMixin = {
   methods: {
  
     getAdvancesFromDB(idEmployee, date) {
-      console.log("getAdvancesFromDB() - start");
+      console.log("START getAdvancesFromDB("+idEmployee+", "+date+")");
       this.isBusy = true;
       console.log("selected employee: " + this.selectedEmployee);
       const header = {
@@ -40,10 +40,33 @@ export const advanceMixin = {
           this.advancesAll = response.data;
           let sum = 0;
           response.data.forEach((element) => {
-            sum = sum + parseFloat(element.amount);
+            sum = sum + parseFloat(element.amount.replace(",","."));
           });
           this.advancesSum = sum.toFixed(2);
           this.isBusy = false;
+          console.log("END getAdvancesFromDB("+idEmployee+", "+date+")");
+        })
+        .catch((e) => {
+          this.validateError(e);
+        });
+    },
+    //uses: calculateSalary.vue
+    getAdvancesByEmployeeAndDateFromDB(idEmployee, date) {
+      console.log("START getAdvancesByEmployeeAndDateFromDB("+idEmployee+", "+date+")");
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
+      return axios
+      .get(
+        this.urlEmpl + `/api/employee/salary/advance/` + idEmployee + `/all?date=` + date,
+        header
+        )
+        .then((response) => {
+          console.log("END getAdvancesByEmployeeAndDateFromDB("+idEmployee+", "+date+")");
+          return response;
         })
         .catch((e) => {
           this.validateError(e);

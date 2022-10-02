@@ -1,13 +1,19 @@
 <template>
   <b-container id="container">
     <div class="text-left">
-  <b-link class="text-progas" href="/hr/loan/all">--powrót do listy pożyczek--</b-link>
-</div>
+      <b-link class="text-progas" href="/hr/loan/all">--powrót do listy pożyczek--</b-link>
+    </div>
     <b-card
       :title="isEdit == 'false' ? 'Dodawanie nowej pożyczki pracownika' : 'Edycja pożyczki'"
       bg-variant="dark"
     >
-      <b-button v-show="loadingLoan" style="height: fit-content" variant="progas" class="ml-3" disabled>
+      <b-button
+        v-show="loadingLoan"
+        style="height: fit-content"
+        variant="progas"
+        class="ml-3"
+        disabled
+      >
         <b-spinner small></b-spinner>
         <span class="sr-only">Loading...</span>
       </b-button>
@@ -17,34 +23,34 @@
           <!-- EMPLOYEE -->
           <b-form-group class="col" label="Pracownik:" label-for="input-employee">
             <div style="display: flex">
-                  <b-form-select
-                    v-model="loan.idEmployee"
-                    :options="optionsEmployee"
-                    :disabled="employeeDisabled"
-                    class="mb-3"
-                    id="employeeSelect"
-                    required
-                  >
-                    <!-- This slot appears above the options from 'options' prop -->
-                    <template #first>
-                      <b-form-select-option :value="null" disabled
-                        >-- Wybierz pracownika --
-                      </b-form-select-option>
-                    </template>
-                  </b-form-select>
-                  <b-button
-                    v-if="loadingEmployee"
-                    style="height: fit-content"
-                    variant="progas"
-                    class="ml-3"
-                    disabled
-                  >
-                    <b-spinner small></b-spinner>
-                    <span class="sr-only">Loading...</span>
-                  </b-button>
-                </div>
+              <b-form-select
+                v-model="loan.idEmployee"
+                :options="optionsEmployee"
+                :disabled="employeeDisabled"
+                class="mb-3"
+                id="employeeSelect"
+                required
+              >
+                <!-- This slot appears above the options from 'options' prop -->
+                <template #first>
+                  <b-form-select-option :value="null" disabled
+                    >-- Wybierz pracownika --
+                  </b-form-select-option>
+                </template>
+              </b-form-select>
+              <b-button
+                v-if="loadingEmployee"
+                style="height: fit-content"
+                variant="progas"
+                class="ml-3"
+                disabled
+              >
+                <b-spinner small></b-spinner>
+                <span class="sr-only">Loading...</span>
+              </b-button>
+            </div>
           </b-form-group>
-        </div>        
+        </div>
 
         <!-- ROW-2 -->
         <div class="row">
@@ -67,48 +73,43 @@
         <div class="row">
           <!-- DATE -->
           <b-form-group class="col" label="Data:" label-for="input-date">
-                <b-form-input
-                  id="input-date"
-                  v-model="loan.date"
-                  type="date"
-                  required
-                ></b-form-input>
-              </b-form-group>
+            <b-form-input id="input-date" v-model="loan.date" type="date" required></b-form-input>
+          </b-form-group>
         </div>
 
         <!-- ROW-4 -->
         <div class="row">
-         <!--                    AMOUNT  LOAN       -->
-         <b-form-group class="col" label="Kwota:" label-for="input-amount">
-                <b-form-input
-                  id="input-amount"
-                  v-model="loan.amount"
-                  :state="validationAmountLoan"
-                  placeholder=""
-                  required
-                ></b-form-input>
-                <b-form-invalid-feedback :state="validationAmountLoan">
-                  Kwota np: 1048.52 lub 3280
-                </b-form-invalid-feedback>
-              </b-form-group>
+          <!--                    AMOUNT  LOAN       -->
+          <b-form-group class="col" label="Kwota:" label-for="input-amount">
+            <b-form-input
+              id="input-amount"
+              v-model="loan.amount"
+              :state="validationAmountLoan"
+              placeholder=""
+              required
+            ></b-form-input>
+            <b-form-invalid-feedback :state="validationAmountLoan">
+              Kwota np: 1048.52 lub 3280
+            </b-form-invalid-feedback>
+          </b-form-group>
         </div>
 
         <!-- ROW-5 -->
         <div class="row">
           <!--                    AMOUNT LOAN INSTALLMENT        -->
           <b-form-group class="col" label="Wysokość raty:" label-for="input-amount">
-                <b-form-input
-                  id="input-amount"
-                  v-model="loan.installmentAmount"
-                  :state="validationAmountInstallment"
-                  placeholder=""
-                  required
-                  title="Proponowna wysokość raty."
-                ></b-form-input>
-                <b-form-invalid-feedback :state="validationAmountInstallment">
-                  Kwota np: 1048.52 lub 3280
-                </b-form-invalid-feedback>
-              </b-form-group>
+            <b-form-input
+              id="input-amount"
+              v-model="loan.installmentAmount"
+              :state="validationAmountInstallment"
+              placeholder=""
+              required
+              title="Proponowna wysokość raty."
+            ></b-form-input>
+            <b-form-invalid-feedback :state="validationAmountInstallment">
+              Kwota np: 1048.52 lub 3280
+            </b-form-invalid-feedback>
+          </b-form-group>
         </div>
 
         <!-- ROW-6 -->
@@ -165,7 +166,6 @@
       </b-form>
       <template #footer> </template>
     </b-card>
-
   </b-container>
 </template>
 
@@ -184,7 +184,7 @@ export default {
     return {
       idLoan: 0,
       isEdit: false,
-     
+
       //employee
       selectedEmployee: 0,
       employeeDisabled: false,
@@ -195,7 +195,6 @@ export default {
       iconSaved: false,
       btnSaveDisabled: false,
       iconError: false,
-
     };
   },
   mounted() {
@@ -232,7 +231,7 @@ export default {
         return false;
       }
     },
-   
+
     validationName() {
       return this.loan.name.length > 0 && this.loan.name.length <= 50;
     },
@@ -244,8 +243,7 @@ export default {
       return (
         this.loan.amount.length > 0 &&
         this.loan.amount.length <= 7 &&
-        (/(^\d+\.\d{0,2}$)/.test(this.loan.amount) ||
-          /^[0-9]+$/.test(this.loan.amount))
+        (/(^\d+\.\d{0,2}$)/.test(this.loan.amount) || /^[0-9]+$/.test(this.loan.amount))
       );
     },
     validationAmountInstallment() {
@@ -258,30 +256,28 @@ export default {
     },
   },
   methods: {
-    
     //-------------------------------------------LOAN-------------------------------------------
 
     //
-    //get employee if edit
+    //get loan if edit
     //
     async getLoanIfEdit() {
-      console.log("START - getLoanIfEdit()), idLoan = " + this.idLoan+", isEdit: "+this.isEdit);
-        if (this.isEdit == "true") {
-          this.loadingLoan = true;
-          await this.getEmployees("ALL");
-          this.getLoanByIdFromDb(this.idLoan).then((response) => {
-            this.loan = response.data;
-            // console.log(JSON.stringify(this.loan));
-            this.employeeDisabled=true;
-            this.loadingLoan = false;
-          });
-        }else{
-          this.getEmployees("HIRED");
-        }
-        console.log("END - getLoanIfEdit()), ID = " + this.idLoan);
+      console.log("START - getLoanIfEdit()), idLoan = " + this.idLoan + ", isEdit: " + this.isEdit);
+      if (this.isEdit == "true") {
+        this.loadingLoan = true;
+        await this.getEmployees("ALL");
+        this.getLoanByIdFromDb(this.idLoan).then((response) => {
+          this.loan = response.data;
+          // console.log(JSON.stringify(this.loan));
+          this.employeeDisabled = true;
+          this.loadingLoan = false;
+        });
+      } else {
+        this.getEmployees("HIRED");
+      }
+      console.log("END - getLoanIfEdit()), ID = " + this.idLoan);
     },
 
- 
     saveLoan() {
       this.btnSaveDisabled = true;
       this.changeStatusIcon(true, false, false);
@@ -337,8 +333,8 @@ export default {
       this.iconError = error;
       this.iconSaved = save;
     },
-   //---------------------------------------  CONVERT TO OPTION ----------------------------------------------------
-   convertToOptionsEmployee() {
+    //---------------------------------------  CONVERT TO OPTION ----------------------------------------------------
+    convertToOptionsEmployee() {
       console.log("START - convertToOptionsEmployee()");
       this.employees.forEach((e) => {
         let opt = {

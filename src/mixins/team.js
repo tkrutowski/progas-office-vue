@@ -34,23 +34,24 @@ export const teamMixin = {
 
 
     getTeamFromDb(idTeam) {
-        console.log("getTeamFromDb(idTeam: "+idTeam+") - start");
-          const header = {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-                'Authorization': "Bearer " + this.$store.getters.getToken
-            },
+        console.log("START - getTeamFromDb(idTeam: "+idTeam+")");
+        const header = {
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            'Authorization': "Bearer " + this.$store.getters.getToken
+          },
         };
         axios.get(this.urlTeam + `/api/teams/` + idTeam, header)
-            .then(response => {
-                // console.log(JSON.stringify(response.data));
-                this.allTeams = [];
-                this.allTeams.push(response.data);
-                console.log("getTeamFromDb() - Ilosc teams[]: " + this.allTeams.length);
-            })
-            .catch(e => {
-                this.validateError(e);
-            });
-    },
+        .then(response => {
+          // console.log(JSON.stringify(response.data));
+          this.allTeams = [];
+          this.allTeams.push(response.data);
+          console.log("getTeamFromDb() - Ilosc teams[]: " + this.allTeams.length);
+        })
+        .catch(e => {
+          this.validateError(e);
+        });
+        console.log("END - getTeamFromDb(idTeam: "+idTeam+")");
+      },
     },
 }

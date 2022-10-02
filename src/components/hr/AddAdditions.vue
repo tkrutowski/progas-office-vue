@@ -3,6 +3,26 @@
     <b-container fluid="" id="container">
       <h1>Wpisywanie dodatków</h1>
       <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
+      <div>
+        <b-button
+          class="mr-2"
+          variant="outline-progas"
+          href="/hr/AddWorkTime"
+          :disabled="!hasAccessAddWorktime"
+          >Godzin</b-button
+        >
+        <b-button
+          class="mr-2"
+          variant="outline-progas"
+          href="/hr/AddLoanInstallment"
+          :disabled="!hasAccessReadLoans"
+          >Pożyczek</b-button
+        >
+        <b-button variant="outline-progas" href="/hr/AddAdvances" :disabled="!hasAccessHrAdvance"
+          >Zaliczek</b-button
+        >
+      </div>
+      <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
       <b-row align-h="center">
         <b-col>
           <b-form class="" @submit.prevent="addAddition">
@@ -90,10 +110,13 @@
                 </b-form-select>
               </b-form-group>
               <div id="btn-new-addition">
-                <b-button class="mt-3"  style="width: 100px" 
-                variant="progas"
-                 v-b-modal.newAdditionTypeModal
-                  >Nowy</b-button>
+                <b-button
+                  class="mt-3"
+                  style="width: 100px"
+                  variant="progas"
+                  v-b-modal.newAdditionTypeModal
+                  >Nowy</b-button
+                >
               </div>
             </div>
 
@@ -202,50 +225,49 @@
           </div>
         </b-col>
       </b-row>
-          <!-- Info modal -->
-    <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-      <pre>{{ infoModal.content }}</pre>
-    </b-modal>
-       <!-- MODAL - NEW ADDITION TYPE -->
-    <b-modal
-      id="newAdditionTypeModal"
-      centered
-      title="Nowy rodzaj dodatku"
-      header-bg-variant="dark"
-      header-text-variant="progas"
-      body-bg-variant="dark"
-      body-text-variant="progas"
-      footer-bg-variant="dark"
-      footer-text-variant="progas"
-      ok-title="Zapisz"
-      ok-variant="progas"
-      cancel-title="Anuluj"
-      cancel-variant="progas"
-      @ok="addNewAdditionType"
-    >
-      <div>
-  <b-form-group class="max-width" label="Nazwa:" label-for="input-new-type">
-              <b-form-input
-                ref="focusThis"
-                id="input-new-type"
-                v-model="newAdditionTypeName"
-                :state="validationAdditionType"
-                placeholder="wpisz nazwę..."
-                autofocus
-              ></b-form-input>
-              <b-form-invalid-feedback :state="validationAdditionType">
-                Pole musi mieć między 3 a 30 znaków.
-              </b-form-invalid-feedback>
-            </b-form-group>
-      </div>
-    </b-modal>
+      <!-- Info modal -->
+      <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+        <pre>{{ infoModal.content }}</pre>
+      </b-modal>
+      <!-- MODAL - NEW ADDITION TYPE -->
+      <b-modal
+        id="newAdditionTypeModal"
+        centered
+        title="Nowy rodzaj dodatku"
+        header-bg-variant="dark"
+        header-text-variant="progas"
+        body-bg-variant="dark"
+        body-text-variant="progas"
+        footer-bg-variant="dark"
+        footer-text-variant="progas"
+        ok-title="Zapisz"
+        ok-variant="progas"
+        cancel-title="Anuluj"
+        cancel-variant="progas"
+        @ok="addNewAdditionType"
+      >
+        <div>
+          <b-form-group class="max-width" label="Nazwa:" label-for="input-new-type">
+            <b-form-input
+              ref="focusThis"
+              id="input-new-type"
+              v-model="newAdditionTypeName"
+              :state="validationAdditionType"
+              placeholder="wpisz nazwę..."
+              autofocus
+            ></b-form-input>
+            <b-form-invalid-feedback :state="validationAdditionType">
+              Pole musi mieć między 3 a 30 znaków.
+            </b-form-invalid-feedback>
+          </b-form-group>
+        </div>
+      </b-modal>
     </b-container>
   </div>
 </template>
 
 <script>
 import moment from "moment";
-import axios from "axios";
 import { errorMixin } from "@/mixins/error";
 import { additionMixin } from "@/mixins/additions";
 import { mapGetters } from "vuex";
@@ -280,7 +302,7 @@ export default {
       ],
       busyIcon: false,
       btnDisabled: false,
-   
+
       isBusy: false,
       isEdit: false,
 
@@ -304,9 +326,9 @@ export default {
 
       additionSum: 0,
 
-      newAdditionTypeName:"",
+      newAdditionTypeName: "",
 
-       infoModal: {
+      infoModal: {
         id: "info-modal",
         title: "",
         content: "",
@@ -371,6 +393,43 @@ export default {
         // return true;
       }
     },
+    hasAccessAddWorktime() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
+        return (
+          token2.authorities.includes("ROLE_HR_WORKTIME") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
+    hasAccessHrAdvance() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_ADVANCE: " + token2.authorities.includes('ROLE_HR_ADVANCE'))
+        return (
+          token2.authorities.includes("ROLE_HR_ADVANCE") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
+    hasAccessReadLoans() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_EMPLOYEE: " + token2.authorities.includes('ROLE_HR_EMPLOYEE'))
+        return (
+          token2.authorities.includes("HR_LOAN_READ_ALL") ||
+          token2.authorities.includes("HR_LOAN_READ") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
     validationAmount() {
       return (
         this.salaryAddition.amount.length > 0 &&
@@ -408,7 +467,7 @@ export default {
     },
 
     onDateChange() {
-       this.changeIconStatus(false, false, false);
+      this.changeIconStatus(false, false, false);
       if (this.selectedEmployee != null) {
         this.additionDate = moment(this.additionDateString);
         let newMonth = moment(this.additionDateString).format("MM");
@@ -433,9 +492,9 @@ export default {
         this.salaryAddition.idEmployee = this.selectedEmployee;
         this.salaryAddition.date = this.additionDateString;
         this.salaryAddition.additionType = this.selectedAdditionType;
-        console.log(JSON.stringify(this.salaryAddition));
+        // console.log(JSON.stringify(this.salaryAddition));
         if (this.isEdit) {
-            this.editAdditionDB()
+          this.editAdditionDB()
             .then((response) => {
               this.displaySmallMessage("success", "Zaktualizowano dodatek.");
               this.getAdditionsFromDB(this.selectedEmployee, this.additionDateString);
@@ -455,7 +514,7 @@ export default {
             .then((response) => {
               this.displaySmallMessage("success", "Dodano dodatek.");
               this.getAdditionsFromDB(this.selectedEmployee, this.additionDateString);
-              console.log(JSON.stringify(response.data));
+              // console.log(JSON.stringify(response.data));
               this.changeIconStatus(false, true, false);
               this.btnDisabled = false;
               //reset
@@ -485,21 +544,21 @@ export default {
       this.savedIcon = save;
     },
 
-    //  
+    //
     //edit addition
     //
     editAddition(item, index, button) {
       console.log("editAddition(): " + item.id);
       // console.log(JSON.stringify(item));
       this.employeeDisabled = true;
-      this.isEdit=true;
+      this.isEdit = true;
       this.btnSaveTitle = "Zapisz";
       this.additionDateString = item.date;
       this.selectedAdditionType = item.additionTypeId;
       this.salaryAddition.amount = item.amount;
       this.salaryAddition.otherInfo = item.otherInfo;
       this.salaryAddition.additionTypeId = item.additionTypeId;
-      this.salaryAddition.id=item.id;
+      this.salaryAddition.id = item.id;
     },
 
     //
@@ -509,17 +568,20 @@ export default {
       this.infoModal.title = `Row index: ${index}`;
       // this.infoModal.content = JSON.stringify(item, null, 2);
       this.$bvModal
-        .msgBoxConfirm(`Czy chcesz usunąć dodatek:\n z dnia ${item.date} na kwotę ${item.amount} zł?`, {
-          title: "Potwierdzenie",
-          size: "sm",
-          buttonSize: "sm",
-          okVariant: "danger",
-          okTitle: "TAK",
-          cancelTitle: "NIE",
-          footerClass: "p-2",
-          hideHeaderClose: true,
-          centered: true,
-        })
+        .msgBoxConfirm(
+          `Czy chcesz usunąć dodatek:\n z dnia ${item.date} na kwotę ${item.amount} zł?`,
+          {
+            title: "Potwierdzenie",
+            size: "sm",
+            buttonSize: "sm",
+            okVariant: "danger",
+            okTitle: "TAK",
+            cancelTitle: "NIE",
+            footerClass: "p-2",
+            hideHeaderClose: true,
+            centered: true,
+          }
+        )
         .then((value) => {
           if (value) {
             this.deleteAdditionDB(item.id).then((response) => {
@@ -536,18 +598,17 @@ export default {
     //
     // add new additionType
     //
-    addNewAdditionType(){
-  
-      console.log("New addition type: "+ this.newAdditionTypeName);
-            this.addAdditionTypeDB(this.newAdditionTypeName).then((response) => {
-              console.log("id dodatku: " + response.data);
-              this.getAdditionTypesFromDb();
-              this.displaySmallMessage("success", "Dodano nowy rodzaj dodatku.");
-            })
-             .catch((e) => {
+    addNewAdditionType() {
+      console.log("New addition type: " + this.newAdditionTypeName);
+      this.addAdditionTypeDB(this.newAdditionTypeName)
+        .then((response) => {
+          console.log("id dodatku: " + response.data);
+          this.getAdditionTypesFromDb();
+          this.displaySmallMessage("success", "Dodano nowy rodzaj dodatku.");
+        })
+        .catch((e) => {
           this.validateError(e);
-        });;
-         
+        });
     },
 
     cancelAddition() {
@@ -563,7 +624,7 @@ export default {
       this.salaryAddition.amount = "";
       this.salaryAddition.id = null;
     },
-     resetInfoModal() {
+    resetInfoModal() {
       this.infoModal.title = "";
       this.infoModal.content = "";
     },
@@ -581,7 +642,7 @@ export default {
     },
     convertToOptionsAdditionTypes() {
       console.log("convertToOptionsAdditionTypes() ...");
-      this.optionAdditionType=[];
+      this.optionAdditionType = [];
       this.additionTypes.forEach((e) => {
         let opt = {
           value: e.id,

@@ -1,10 +1,19 @@
 <template>
   <b-container id="container">
+    <div class="text-left">
+      <b-link class="text-progas" href="/hr/employee/all">--powrót do listy pracowników--</b-link>
+    </div>
     <b-card
       :title="isEdit == 'false' ? 'Dodawanie nowego pracownika' : 'Edycja pracownika'"
       bg-variant="dark"
     >
-      <b-button v-show="loadingEmployee" style="height: fit-content" variant="progas" class="ml-3" disabled>
+      <b-button
+        v-show="loadingEmployee"
+        style="height: fit-content"
+        variant="progas"
+        class="ml-3"
+        disabled
+      >
         <b-spinner small></b-spinner>
         <span class="sr-only">Loading...</span>
       </b-button>
@@ -533,7 +542,6 @@ export default {
       selectedRate: 0,
       optionsEmployeesTypes: [],
       optionsWorktime: [],
-      // isEmployee: false,
 
       empSaveIcon: true,
       empBusyIcon: false,
@@ -807,7 +815,7 @@ export default {
           let rate = {
             idRate: e.idRate,
             rateValue: e.rateValue + rateType,
-            dateFrom: moment(e).format("MMMM YYYY"),
+            dateFrom: moment(e.dateFrom).format("MMMM YYYY"),
           };
           this.rateAll.push(rate);
         });
@@ -828,9 +836,8 @@ export default {
           // console.log(e);
           let rate = {
             idRate: e.idRate,
-            rateType: e.rateType,
-            dateFrom: moment(e).format("MMMM YYYY"),
-            rateValue: e.rateValue,
+            dateFrom: moment(e.dateFrom).format("MMMM YYYY"),
+            rateValue: e.rateValue + " zł/h",
           };
           this.rateAll.push(rate);
         });

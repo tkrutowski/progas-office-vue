@@ -4,6 +4,26 @@
     <b-container fluid="" id="container">
       <h1>Wpisywanie godzin</h1>
       <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
+      <div>
+        <b-button
+          class="mr-2"
+          variant="outline-progas"
+          href="/hr/AddAdditions"
+          :disabled="!hasAccessHrAddition"
+          >Dodatków</b-button
+        >
+        <b-button
+          class="mr-2"
+          variant="outline-progas"
+          href="/hr/AddLoanInstallment"
+          :disabled="!hasAccessReadLoans"
+          >Pożyczek</b-button
+        >
+        <b-button variant="outline-progas" href="/hr/AddAdvances" :disabled="!hasAccessHrAdvance"
+          >Zaliczek</b-button
+        >
+      </div>
+      <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
       <b-row align-h="center">
         <b-col>
           <form class="" @submit.prevent="addWorkTime">
@@ -266,7 +286,7 @@ export default {
       ],
       busyIcon: false,
       btnDisabled: false,
-     
+
       isBusy: false,
 
       busyIcon: false,
@@ -317,20 +337,21 @@ export default {
     this.getDayOffTypesFromDb();
     this.getIllnessTypesFromDb();
     moment.locale("pl");
-    // this.workTimeDate = new Date();
     this.workTimeDateString = this.workTimeDate.format("YYYY-MM-DD");
     this.isWork = true;
     this.selectedEmployee = null;
     this.selectedDayOffType = 2;
     this.selectedIllnessType = 1;
-    //this.getWorkTimeAllFromDB();
   },
   computed: {
     ...mapGetters(["getAuthenticationState", "getToken"]),
     hasReadAll() {
       try {
         let token2 = jwt_decode(this.getToken);
-        return token2.authorities.includes("HR_WORKTIME_READ_ALL") || token2.authorities.includes("ROLE_ADMIN");
+        return (
+          token2.authorities.includes("HR_WORKTIME_READ_ALL") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
       } catch (error) {
         return false;
         // return true;
@@ -340,6 +361,44 @@ export default {
       try {
         let token2 = jwt_decode(this.getToken);
         return token2.authorities.includes("HR_WORKTIME_READ");
+      } catch (error) {
+        return false;
+      }
+    },
+    hasAccessHrAddition() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_ADDITION: " + token2.authorities.includes('ROLE_HR_ADDITION'))
+        return (
+          token2.authorities.includes("ROLE_HR_ADDITION") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
+    hasAccessHrAdvance() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_ADVANCE: " + token2.authorities.includes('ROLE_HR_ADVANCE'))
+        return (
+          token2.authorities.includes("ROLE_HR_ADVANCE") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+        // return true;
+      }
+    },
+    hasAccessReadLoans() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_EMPLOYEE: " + token2.authorities.includes('ROLE_HR_EMPLOYEE'))
+        return (
+          token2.authorities.includes("HR_LOAN_READ_ALL") ||
+          token2.authorities.includes("HR_LOAN_READ") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
       } catch (error) {
         return false;
       }
@@ -408,7 +467,6 @@ export default {
         this.workTimeDate.add(1, "day"); // setDate(day+1);
       }
       console.log("po dodaniu dnia: " + this.workTimeDate.format("YYYY-MM-DD"));
-
       this.workTimeDateString = this.workTimeDate.format("YYYY-MM-DD");
     },
 
@@ -466,7 +524,7 @@ export default {
         });
     },
     //
-    //pobranie czsu pracy
+    //get worktime
     //
     getWorkTimeAllFromDB() {
       console.log("getWorkTimeAllFromDB() - start");
@@ -496,7 +554,7 @@ export default {
     },
     //---------------------------------------------------- DB WRITE ---------------------------------------------------------
     //
-    //zapisanie godzin pracy
+    //save worktime in DB
     //
     addWorkToDB() {
       console.log("addWorkToDB() - start");

@@ -166,8 +166,6 @@
           <b-card-text class="text-left pl-3 mb-1 color-red"
             >Zwolnieni / {{ calculateFired }}</b-card-text
           >
-          <!-- <div class="text-center px-xl-3"> -->
-          <!-- </div> -->
           <hr class="my-4" style="color: yellow; background-color: yellow" />
 
           <b-form-group label="Wyświetl:">
@@ -245,10 +243,6 @@ export default {
     return {
       timeAlmostUp: 30,
       fields: [
-        // {
-        //   key: "id",
-        //   label: "Id",
-        // },
         {
           key: "firstName",
           label: "Imie",
@@ -322,8 +316,8 @@ export default {
     moment.locale("pl");
   },
   computed: {
-      ...mapGetters(["getToken"]),
-       hasAccessRateRead() {
+    ...mapGetters(["getToken"]),
+    hasAccessRateRead() {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: HR_RATE_READ_ALL: " + token2.authorities.includes('HR_RATE_READ_ALL'))
@@ -332,11 +326,11 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-        // return false;
-        return true;
-        }
+        return false;
+        // return true;
+      }
     },
-       hasAccessEmployeeWrite() {
+    hasAccessEmployeeWrite() {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: HR_EMPLOYEE_WRITE_ALL: " + token2.authorities.includes('HR_EMPLOYEE_WRITE_ALL'))
@@ -345,11 +339,11 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-        //  return false;
-        return true;
+         return false;
+        // return true;
       }
     },
-     hasAccessEmployeeDelete() {
+    hasAccessEmployeeDelete() {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: HR_EMPLOYEE_DELETE_ALL: " + token2.authorities.includes('HR_EMPLOYEE_DELETE_ALL'))
@@ -394,7 +388,7 @@ export default {
       var now = moment();
       var date = moment(date);
       let result = date.diff(now, "days");
-      if (result < 0 ) return "true";
+      if (result < 0) return "true";
       else return "false";
     },
 
@@ -406,7 +400,7 @@ export default {
       else return "false";
     },
 
-    convertRateDate(date){
+    convertRateDate(date) {
       return moment(date).format("MMMM YYYY");
     },
     getAllEmployees() {
@@ -423,13 +417,12 @@ export default {
     //
     newEmployee() {
       console.log("newEmployee()");
-      if(this.hasAccessEmployeeWrite){
+      if (this.hasAccessEmployeeWrite) {
         router.push({
           name: "TheEmployee",
-        params: { idEmployee: 0, isEdit: "false" },
-      });
-        }else
-         this.displaySmallMessage("danger", "Nie masz uprawnień do dodawania pracowników.");
+          params: { idEmployee: 0, isEdit: "false" },
+        });
+      } else this.displaySmallMessage("danger", "Nie masz uprawnień do dodawania pracowników.");
     },
 
     //
@@ -446,9 +439,6 @@ export default {
     //delete employee
     //
     deleteEmployee(item, index, button) {
-      this.infoModal.title = `Row index: ${index}`;
-      this.infoModal.content = JSON.stringify(item, null, 2);
-      // this.$root.$emit('bv::show::modal', this.infoModal.id, button)
       this.$bvModal
         .msgBoxConfirm(`Czy chcesz usunąć pracownika:\n ${item.firstName} ${item.lastName}?`, {
           title: "Potwierdzenie",
@@ -473,18 +463,18 @@ export default {
           // An error occurred
         });
     },
-     //
+    //
     //Display rate in separate window
     //
     showEmployeeRate(item, index, button) {
       this.getRateRegularFromDb(item.id).then((response) => {
         // console.log(JSON.stringify(response.data));
         this.rateRegular = response.data;
-         this.getRateOvertimeFromDb(item.id).then((response) => {
-        // console.log(JSON.stringify(response.data));
-        this.rateOvertime = response.data;
-        this.$refs["employeeRateModal"].show();
-      });
+        this.getRateOvertimeFromDb(item.id).then((response) => {
+          // console.log(JSON.stringify(response.data));
+          this.rateOvertime = response.data;
+          this.$refs["employeeRateModal"].show();
+        });
       });
     },
     //
@@ -492,40 +482,39 @@ export default {
     //
     setEmploymentStatus(item, index, button) {
       console.log("setEmploymentStatus id: " + item.id + ", status: " + item.employmentStatus);
-       if(this.hasAccessEmployeeWrite){
-      this.$bvModal
-        .msgBoxConfirm(
-          `Czy chcesz zmienić status pracownika:
+      if (this.hasAccessEmployeeWrite) {
+        this.$bvModal
+          .msgBoxConfirm(
+            `Czy chcesz zmienić status pracownika:
         ${item.firstName} ${item.lastName} na
          ${item.employmentStatus == "HIRED" ? "ZWOLNIONY" : "ZATRUDNIONY"}?`,
-          {
-            title: "Potwierdzenie",
-            size: "sm",
-            buttonSize: "sm",
-            okVariant: "danger",
-            okTitle: "TAK",
-            cancelTitle: "NIE",
-            footerClass: "p-2",
-            hideHeaderClose: false,
-            centered: true,
-          }
-        )
-        .then((value) => {
-          // console.log(value);
-          if (value) {
-            this.setEmploymentStatusDb(
-              item.id,
-              item.employmentStatus == "HIRED" ? "FIRED" : "HIRED"
-            ).then((response) => {
-              this.getAllEmployees();
-            });
-          }
-        })
-        .catch((err) => {
-          // An error occurred
-        });
-         }else
-         this.displaySmallMessage("danger", "Nie masz uprawnień do zmiany statusu pracownika.");
+            {
+              title: "Potwierdzenie",
+              size: "sm",
+              buttonSize: "sm",
+              okVariant: "danger",
+              okTitle: "TAK",
+              cancelTitle: "NIE",
+              footerClass: "p-2",
+              hideHeaderClose: false,
+              centered: true,
+            }
+          )
+          .then((value) => {
+            // console.log(value);
+            if (value) {
+              this.setEmploymentStatusDb(
+                item.id,
+                item.employmentStatus == "HIRED" ? "FIRED" : "HIRED"
+              ).then((response) => {
+                this.getAllEmployees();
+              });
+            }
+          })
+          .catch((err) => {
+            // An error occurred
+          });
+      } else this.displaySmallMessage("danger", "Nie masz uprawnień do zmiany statusu pracownika.");
     },
 
     resetInfoModal() {

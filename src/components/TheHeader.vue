@@ -16,15 +16,15 @@
             <b-dropdown-item href="/hr/AddAdditions" :disabled="!hasAccessHrAddition">Wpisywanie dodatków</b-dropdown-item>
             <b-dropdown-item href="/hr/AddAdvances" :disabled="!hasAccessHrAdvance">Wpisywanie zaliczek</b-dropdown-item>
             <b-dropdown-item href="/hr/AddLoanInstallment" :disabled="!hasAccessReadLoans"> Wpisywanie pożyczek</b-dropdown-item>
+            <b-dropdown-item href="/hr/CalculateSalary" :disabled="!hasAccessCalculateSalary"
+              >Oblicznie wypłat</b-dropdown-item>
             <!-- <b-dropdown-item href="/hr/employee/all">Lista pracowników</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/loan/all">Lista pożyczek</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddWorkTime">Wpisywanie godzin</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddAdditions">Wpisywanie dodatków</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddAdvances" >Wpisywanie zaliczek</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddLoanInstallment" > Wpisywanie pożyczek</b-dropdown-item> -->
-            <b-dropdown-item href="/hr/CalculateSalary" :disabled="!hasAccessCalculateSalary"
-              >Oblicznie wypłat</b-dropdown-item
-            >
+            <!-- <b-dropdown-item href="/hr/CalculateSalary">Oblicznie wypłat</b-dropdown-item> -->
           </b-nav-item-dropdown>
 
           <b-nav-item href="#" disabled>Klienci</b-nav-item>
@@ -36,8 +36,8 @@
             <b-dropdown-item href="#" disabled>Wewnętrzna</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Terminarz</b-dropdown-item>
             <b-dropdown-item href="/tasks/TaskCalendar" :disabled="!hasAccessTaskCalendar"
-              >Kalendarz</b-dropdown-item
-            >
+              >Kalendarz</b-dropdown-item>
+              <!-- <b-dropdown-item href="/tasks/TaskCalendar">Kalendarz</b-dropdown-item> -->
             <b-dropdown-item href="#" disabled>Koordynator</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Geodeta</b-dropdown-item>
             <b-dropdown-item href="#" disabled>Projektant</b-dropdown-item>

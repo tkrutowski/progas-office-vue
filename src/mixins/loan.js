@@ -234,11 +234,35 @@ export const loanMixin = {
           // console.log(JSON.stringify("Ilość: "+this.loanInsallments.size()));
           let sum = 0;
           response.data.forEach((element) => {
-            sum = sum + parseFloat(element.amount);
+            sum = sum + parseFloat(element.amount.replace(",","."));
           });
           this.loanInstallmentSum = sum.toFixed(2);
           this.isBusy = false;
           console.log("END - getLoanInstallmentsAllByEmployeeFromDB(idEmployee: "+idEmployee+",date: "+date+")");
+        })
+        .catch((e) => {
+          this.validateError(e);
+        });
+    },
+
+    //get loan installment from all loans in given date without own repaymant (witn loan name)
+    getLoanInstallmentsAllByEmployeeAndDateFromDB(idEmployee, date) {
+      console.log("START - getLoanInstallmentsAllByEmployeeAndDateFromDB(idEmployee: "+idEmployee+",date: "+date+")");
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
+      return axios
+      .get(
+        this.urlEmpl + `/api/employee/loan/query/installment/` + idEmployee + `/all?date=` + date,
+        header
+        )
+        .then((response) => {
+          // console.log(JSON.stringify(response.data));
+          console.log("END - getLoanInstallmentsAllByEmployeeFromDB(idEmployee: "+idEmployee+",date: "+date+")");
+          return response;          
         })
         .catch((e) => {
           this.validateError(e);

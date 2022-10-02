@@ -1,25 +1,17 @@
 <template>
-  <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <!-- <Menu/> -->
-
-    <div style="margin-top: 200px;">
-      <img src="../assets/under-construction.png" alt="Girl in a jacket" height="343" width="686">
-      <h1 class="mt-5">Część już działa. Można używać.</h1>
-      <h3>Najpierw się zaloguj...</h3>
-  </div>
-
+  <div>
+   <HomePage/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-// import Menu from '@/components/TheHeader.vue';
+import HomePage from '@/components/TheHomePage.vue';
 
 export default {
   name: 'HomeView',
   components: {
-    // Menu,
+    HomePage
   },
 };
 </script>

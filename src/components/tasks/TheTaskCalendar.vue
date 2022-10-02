@@ -2,18 +2,18 @@
   <div>
     <b-container fluid="" id="container">
       <div style="display: flex; justify-content: center">
-      <h1>Kalendarz zadań</h1>
-      <b-button
-               v-show="loading" 
-                style="height: fit-content"
-                variant="progas"
-                class="ml-3"
-                disabled
-              >
-                <b-spinner small></b-spinner>
-                <span class="sr-only">Loading...</span>
-              </b-button>
-              </div>
+        <h1>Kalendarz zadań</h1>
+        <b-button
+          v-show="loading"
+          style="height: fit-content"
+          variant="progas"
+          class="ml-3"
+          disabled
+        >
+          <b-spinner small></b-spinner>
+          <span class="sr-only">Loading...</span>
+        </b-button>
+      </div>
       <!--            <h2>Przełączanie daty</h2>-->
       <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
       <b-container id="dateSwitch">
@@ -345,7 +345,6 @@ import axios from "axios";
 import moment from "moment";
 import { mapGetters } from "vuex";
 import jwt_decode from "jwt-decode";
-import router from "@/router";
 import { errorMixin } from "@/mixins/error";
 import { teamMixin } from "@/mixins/team";
 import { employeeMixin } from "@/mixins/employee";
@@ -377,8 +376,10 @@ export default {
     hasReadAll() {
       try {
         let token2 = jwt_decode(this.getToken);
-        return token2.authorities.includes("TASK_CALENDAR_READ_ALL")
-        || token2.authorities.includes("ROLE_ADMIN");
+        return (
+          token2.authorities.includes("TASK_CALENDAR_READ_ALL") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
       } catch (error) {
         return false;
       }
@@ -386,8 +387,10 @@ export default {
     hasWrite() {
       try {
         let token2 = jwt_decode(this.getToken);
-        return token2.authorities.includes("TASK_CALENDAR_WRITE")
-        || token2.authorities.includes("ROLE_ADMIN");
+        return (
+          token2.authorities.includes("TASK_CALENDAR_WRITE") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
       } catch (error) {
         return false;
       }
@@ -395,8 +398,10 @@ export default {
     hasWriteAll() {
       try {
         let token2 = jwt_decode(this.getToken);
-        return token2.authorities.includes("TASK_CALENDAR_WRITE_ALL")
-         || token2.authorities.includes("ROLE_ADMIN");
+        return (
+          token2.authorities.includes("TASK_CALENDAR_WRITE_ALL") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
       } catch (error) {
         return false;
       }
@@ -416,7 +421,7 @@ export default {
   methods: {
     //idTeam = idTeam TaskCalendarEntry
     calculateIsEdit(idTeam) {
-      console.log("calculateIsEdit(idTeam: " + idTeam + ") - start");
+      // console.log("calculateIsEdit(idTeam: " + idTeam + ") - start");
       const write = this.hasWrite;
       // console.log("write: " + write);
       const writeAll = this.hasWriteAll;
@@ -471,17 +476,17 @@ export default {
       return result;
     },
 
-
     getTeams() {
-      console.log("getTeams()");
+      console.log("START - getTeams()");
       const readAll = this.hasReadAll;
       const id = this.$store.getters.getUser.idEmployee;
-      // console.log("idEmp from store: " + id + " hasALL: " + readAll);
+      console.log("idEmp from store: " + id + " hasALL: " + readAll);
       if (id == 0 || readAll) {
         this.getTeamsFromDb();
       } else {
         this.getEmployeeFromDb(id)
           .then((response) => {
+            console.log(JSON.stringify(response.data));
             let idTeam = response.data.idTeam;
             console.log("idTeam from getTeams(): " + idTeam);
             this.getTeamFromDb(idTeam);
@@ -490,8 +495,8 @@ export default {
             this.validateError(e);
           });
       }
+      console.log("END - getTeams()");
     },
-
 
     prevDate() {
       console.log("Preview date.");
@@ -504,7 +509,6 @@ export default {
       this.getFromDb();
     },
 
-
     nextDate() {
       //block buttons
       this.isButtonDisabled = true;
@@ -516,7 +520,6 @@ export default {
       this.getFromDb();
     },
 
-
     calculateEndDate() {
       console.log("Calculate end date");
       let tempDate = this.startDate.format("YYYY-MM-DD");
@@ -525,12 +528,10 @@ export default {
       // console.log("End date: " + this.endDate.format("LLLL"));
     },
 
-
     weekDay(value) {
       const entireWeek = moment(value).format("dddd");
       return entireWeek; // July 6 - 13 2020
     },
-
 
     calculateStartDate() {
       console.log("Calculate start date");
@@ -582,16 +583,14 @@ export default {
       this.saturday = moment(dateGiven).add(5, "days").format("D MMMM");
     },
 
-
     addDate() {
       const date = moment(this.starttest1);
       console.log(date.add(1, "days").format("dddd, D-MMMM-YYYY"));
     },
 
-
     //-------------------------------DB---------------------------------------------
     getFromDb() {
-      console.log("getEntryFromDb() - start");
+      console.log("START - getEntryFromDb()");
       this.loading = true;
       const header = {
         headers: {
@@ -615,6 +614,7 @@ export default {
           this.loading = false;
           this.validateError(e);
         });
+      console.log("END - getEntryFromDb()");
     },
   },
 };

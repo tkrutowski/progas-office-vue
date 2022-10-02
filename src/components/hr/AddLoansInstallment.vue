@@ -3,6 +3,25 @@
     <b-container fluid="" id="container">
       <h1>Wpisywanie pożyczek</h1>
       <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
+      <div>
+        <b-button
+          class="mr-2"
+          variant="outline-progas"
+          href="/hr/AddAdditions"
+          :disabled="!hasAccessHrAddition"
+          >Dodatków</b-button
+        >
+        <b-button
+          class="mr-2"
+          variant="outline-progas"
+          href="/hr/AddWorkTime"
+          :disabled="!hasAccessAddWorktime"
+          >Godzin</b-button
+        >
+        <b-button variant="outline-progas" href="/hr/AddAdvances" :disabled="!hasAccessHrAdvance"
+          >Zaliczek</b-button
+        >
+      </div>
       <b-row align-h="center">
         <b-col>
           <b-form class="" @submit.prevent="addLoanInstallment">
@@ -342,6 +361,42 @@ export default {
         // return true;
       }
     },
+    hasAccessHrAddition() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_ADDITION: " + token2.authorities.includes('ROLE_HR_ADDITION'))
+        return (
+          token2.authorities.includes("ROLE_HR_ADDITION") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
+    hasAccessAddWorktime() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
+        return (
+          token2.authorities.includes("ROLE_HR_WORKTIME") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
+    hasAccessHrAdvance() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_ADVANCE: " + token2.authorities.includes('ROLE_HR_ADVANCE'))
+        return (
+          token2.authorities.includes("ROLE_HR_ADVANCE") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
     validationAmount() {
       return (
         parseFloat(this.loanInsallment.amount) <= this.amountLeftToPay &&
@@ -392,9 +447,11 @@ export default {
             this.loan = response.data;
             this.loanInsallment.amount = this.loan.installmentAmount;
             response.data.installmentDtoList.forEach((element) => {
-              leftToPay = leftToPay + parseFloat(element.amount);
+              leftToPay = leftToPay + parseFloat(element.amount.replace(",", "."));
             });
-            this.amountLeftToPay = (parseFloat(response.data.amount) - leftToPay).toFixed(2);
+            this.amountLeftToPay = (
+              parseFloat(response.data.amount.replace(",", ".")) - leftToPay
+            ).toFixed(2);
           })
           .catch((e) => {
             this.validateError(e);
@@ -431,8 +488,6 @@ export default {
           this.editLoanInstallmentDB()
             .then((response) => {
               // console.log(JSON.stringify(response.data));
-              console.log(JSON.stringify("Selected loan: " + this.selectedLoan));
-              console.log(JSON.stringify("data: " + this.loanDateString));
               this.getLoanInstallmentsAllByEmployeeFromDB(
                 this.selectedEmployee,
                 this.loanDateString
@@ -445,10 +500,12 @@ export default {
               this.getLoanByIdFromDb(this.loanInsallment.idLoan).then((response) => {
                 let leftToPay = 0;
                 response.data.installmentDtoList.forEach((element) => {
-                  leftToPay = leftToPay + parseFloat(element.amount);
+                  leftToPay = leftToPay + parseFloat(element.amount.replace(",", "."));
                 });
-                this.amountLeftToPay = (parseFloat(response.data.amount) - leftToPay).toFixed(2);
-                if (this.amountLeftToPay == 0.00) {
+                this.amountLeftToPay = (
+                  parseFloat(response.data.amount.replace(",", ".")) - leftToPay
+                ).toFixed(2);
+                if (this.amountLeftToPay == 0.0) {
                   this.payedLoan(this.loan.name, this.loan.amount, this.loan.idLoan);
                 }
               });
@@ -474,10 +531,12 @@ export default {
               this.getLoanByIdFromDb(this.loanInsallment.idLoan).then((response) => {
                 let leftToPay = 0;
                 response.data.installmentDtoList.forEach((element) => {
-                  leftToPay = leftToPay + parseFloat(element.amount);
+                  leftToPay = leftToPay + parseFloat(element.amount.replace(",", "."));
                 });
-                this.amountLeftToPay = (parseFloat(response.data.amount) - leftToPay).toFixed(2);
-                if (this.amountLeftToPay == 0.00) {
+                this.amountLeftToPay = (
+                  parseFloat(response.data.amount.replace(",", ".")) - leftToPay
+                ).toFixed(2);
+                if (this.amountLeftToPay == 0.0) {
                   this.payedLoan(this.loan.name, this.loan.amount, this.loan.idLoan);
                 }
               });
@@ -555,15 +614,20 @@ export default {
         let leftToPay = 0;
         this.loan = response.data;
         response.data.installmentDtoList.forEach((element) => {
-          leftToPay = leftToPay + parseFloat(element.amount);
+          leftToPay = leftToPay + parseFloat(element.amount.replace(",", "."));
         });
-        this.amountLeftToPay = (parseFloat(response.data.amount) - leftToPay).toFixed(2);
+        this.amountLeftToPay = (
+          parseFloat(response.data.amount.replace(",", ".")) - leftToPay
+        ).toFixed(2);
 
-        if(this.amountLeftToPay == 0.00){
+        if (this.amountLeftToPay == 0.0) {
           this.amountLeftToPay = item.amount;
           this.setLoanStatusDb(item.idLoan, "TO_PAY");
-        }else{
-          this.amountLeftToPay = (parseFloat(this.amountLeftToPay) + parseFloat(item.amount)).toFixed(2);
+        } else {
+          this.amountLeftToPay = (
+            parseFloat(this.amountLeftToPay.replace(",", ".")) +
+            parseFloat(item.amount.replace(",", "."))
+          ).toFixed(2);
         }
       });
     },
@@ -598,9 +662,11 @@ export default {
               await this.getLoanByIdFromDb(item.idLoan).then((response) => {
                 let leftToPay = 0;
                 response.data.installmentDtoList.forEach((element) => {
-                  leftToPay = leftToPay + parseFloat(element.amount);
+                  leftToPay = leftToPay + parseFloat(element.amount.replace(",", "."));
                 });
-                this.amountLeftToPay = (parseFloat(response.data.amount) - leftToPay).toFixed(2);
+                this.amountLeftToPay = (
+                  parseFloat(response.data.amount.replace(",", ".")) - leftToPay
+                ).toFixed(2);
               });
 
               this.displaySmallMessage("success", "Usunięto ratę pożyczki.");

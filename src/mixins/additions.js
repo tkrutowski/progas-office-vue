@@ -46,10 +46,10 @@ export const additionMixin = {
         });
     },
 
+    //used in AddAdditions.vue
     getAdditionsFromDB(idEmployee, date) {
-      console.log("getAdditionsFromDB() - start");
+      console.log("START - getAdditionsFromDB("+idEmployee+", "+date+")");
       this.isBusy = true;
-      console.log("selected employee: " + this.selectedEmployee);
       const header = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -57,18 +57,42 @@ export const additionMixin = {
         },
       };
       axios
-        .get(
-          this.urlEmpl + `/api/employee/salary/addition/` + idEmployee + `/all?date=` + date,
-          header
+      .get(
+        this.urlEmpl + `/api/employee/salary/addition/` + idEmployee + `/all?date=` + date,
+        header
         )
         .then((response) => {
           this.additionsAll = response.data;
           let sum = 0;
           response.data.forEach((element) => {
-            sum = sum + parseFloat(element.amount);
+            sum = sum + parseFloat(element.amount.replace(",","."));
           });
           this.additionSum = sum.toFixed(2);
           this.isBusy = false;
+          console.log("END - getAdditionsFromDB("+idEmployee+", "+date+")");
+        })
+        .catch((e) => {
+          this.validateError(e);
+        });
+    },
+
+     //used in AddAdditions.vue
+     getAdditionsByIdEmployeeAndDateFromDB(idEmployee, date) {
+      console.log("START - getAdditionsByIdEmployeeAndDateFromDB("+idEmployee+", "+date+")");
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
+      return axios
+      .get(
+        this.urlEmpl + `/api/employee/salary/addition/` + idEmployee + `/all?date=` + date,
+        header
+        )
+        .then((response) => {
+          console.log("END - getAdditionsByIdEmployeeAndDateFromDB("+idEmployee+", "+date+")");
+          return response;
         })
         .catch((e) => {
           this.validateError(e);

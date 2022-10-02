@@ -22,7 +22,6 @@
             </div>
           </template>
 
-
           <template #cell(status)="row">
             <!-- ---------------------------- Status icons -------------------------------- -->
             <div>
@@ -73,8 +72,8 @@
               >
                 <b-icon icon="three-dots" aria-hidden="true"></b-icon>
               </b-button>
-                <!-- OWN PAYMENT -->
-                <b-button
+              <!-- OWN PAYMENT -->
+              <b-button
                 v-if="hasAccessLoanWrite"
                 size="sm"
                 @click="showOwnPaymentModal(row.item)"
@@ -195,21 +194,21 @@
           <!-- ----------------------------------AKCJA --------------------------------- -->
           <template #cell(ownRepayment)="row">
             <div>
-               <b-icon
-                  v-if="row.item.ownRepayment"
-                  class="pr-4 pt-1"
-                  scale="1.9"
-                  icon="check"
-                  variant="success"
-                  aria-hidden="true"
-                ></b-icon>
+              <b-icon
+                v-if="row.item.ownRepayment"
+                class="pr-4 pt-1"
+                scale="1.9"
+                icon="check"
+                variant="success"
+                aria-hidden="true"
+              ></b-icon>
             </div>
           </template>
 
           <template #cell(action)="row">
             <b-button-group>
-                  <!-- DETAILS -->
-                  <b-button
+              <!-- DETAILS -->
+              <b-button
                 size="sm"
                 @click="row.toggleDetails"
                 variant="progas"
@@ -230,11 +229,13 @@
               </b-button>
             </b-button-group>
           </template>
-            <!-- --------------------DETAILS----------------------- -->
-            <template #row-details="row">
+          <!-- --------------------DETAILS----------------------- -->
+          <template #row-details="row">
             <b-card id="details">
               <b-row class="mb-2">
-                <b-col sm="12" class="text-sm-left">Inne informacje: {{ row.item.otherInfo }}</b-col>
+                <b-col sm="12" class="text-sm-left"
+                  >Inne informacje: {{ row.item.otherInfo }}</b-col
+                >
               </b-row>
             </b-card>
           </template>
@@ -242,42 +243,48 @@
       </div>
     </b-modal>
 
-<!-- Add own payment -->
-<b-modal ref="ownPaymentModal" centered title="Wpłata własna" 
-    header-bg-variant="dark" header-text-variant="progas"
-    body-bg-variant="dark" body-text-variant="progas"
-    footer-bg-variant="dark" footer-text-variant="progas"
+    <!-- Add own payment -->
+    <b-modal
+      ref="ownPaymentModal"
+      centered
+      title="Wpłata własna"
+      header-bg-variant="dark"
+      header-text-variant="progas"
+      body-bg-variant="dark"
+      body-text-variant="progas"
+      footer-bg-variant="dark"
+      footer-text-variant="progas"
     >
       <div>
-       <h5 class="text-danger text-center">"Wpłata własna" nie odejmuje się od wypłaty!"</h5>
-       <b-form class="" @submit.prevent="addOwnPaymant">
-        <!--                    DATE         -->
-        <div id="date-amount">
-              <b-form-group class="max-width" label="Data:" label-for="input-date">
-                <b-form-input
-                  id="input-date"
-                  v-model="loanInsallment.date"
-                  type="date"
-                  required
-                ></b-form-input>
-              </b-form-group>
+        <h5 class="text-danger text-center">"Wpłata własna" nie odejmuje się od wypłaty!"</h5>
+        <b-form class="" @submit.prevent="addOwnPaymant">
+          <!--                    DATE         -->
+          <div id="date-amount">
+            <b-form-group class="max-width" label="Data:" label-for="input-date">
+              <b-form-input
+                id="input-date"
+                v-model="loanInsallment.date"
+                type="date"
+                required
+              ></b-form-input>
+            </b-form-group>
 
-              <!--                    AMOUNT         -->
-              <b-form-group class="max-width" label="Kwota:" label-for="input-amount">
-                <b-form-input
-                  id="input-amount"
-                  v-model="loanInsallment.amount"
-                  :state="validationAmount"
-                  placeholder=""
-                  required
-                  autofocus
-                ></b-form-input>
-                <b-form-invalid-feedback :state="validationAmount">
-                  Kwota np: 1048.52 lub 3280 nie większa niż {{amountLeftToPay}}.
-                </b-form-invalid-feedback>
-              </b-form-group>
+            <!--                    AMOUNT         -->
+            <b-form-group class="max-width" label="Kwota:" label-for="input-amount">
+              <b-form-input
+                id="input-amount"
+                v-model="loanInsallment.amount"
+                :state="validationAmount"
+                placeholder=""
+                required
+                autofocus
+              ></b-form-input>
+              <b-form-invalid-feedback :state="validationAmount">
+                Kwota np: 1048.52 lub 3280 nie większa niż {{ amountLeftToPay }}.
+              </b-form-invalid-feedback>
+            </b-form-group>
 
-                 <!-- OTHER INFO -->
+            <!-- OTHER INFO -->
             <b-form-group class="max-width" label="Dodatkowe informacje:" label-for="input-info">
               <b-form-input
                 id="input-info"
@@ -289,19 +296,14 @@
                 Pole nie może mieć więcej niż 100 znaków.
               </b-form-invalid-feedback>
             </b-form-group>
-            </div>
-       </b-form>
-            <p>* pozostało do spłaty: {{amountLeftToPay}} zł.</p>
+          </div>
+        </b-form>
+        <p>* pozostało do spłaty: {{ amountLeftToPay }} zł.</p>
       </div>
       <template #modal-footer>
-      <b-button  variant="progas-cancel" @click="resetLoanInstallmentModal" >
-        Anuluj
-      </b-button>
-      <b-button type="submin"  variant="progas-save" @click="addOwnPaymant">
-        Zapisz
-      </b-button>
-     
-    </template>
+        <b-button variant="progas-cancel" @click="resetLoanInstallmentModal"> Anuluj </b-button>
+        <b-button type="submin" variant="progas-save" @click="addOwnPaymant"> Zapisz </b-button>
+      </template>
     </b-modal>
 
     <!-- Info modal -->
@@ -375,7 +377,7 @@ export default {
         {
           key: "ownRepayment",
           label: "Wpłata własna",
-          class: 'text-center'
+          class: "text-center",
         },
         {
           key: "action",
@@ -386,8 +388,8 @@ export default {
       loanListDisplay: [],
       loanInstallmentSum: 0,
       selectedDisplay: "TO_PAY",
-      amountLeftToPay:0,
-      
+      amountLeftToPay: 0,
+
       infoModal: {
         id: "info-modal",
         title: "",
@@ -400,8 +402,8 @@ export default {
     moment.locale("pl");
   },
   computed: {
-      ...mapGetters(["getToken"]),
-      hasReadAll() {
+    ...mapGetters(["getToken"]),
+    hasReadAll() {
       try {
         let token2 = jwt_decode(this.getToken);
         return (
@@ -421,7 +423,7 @@ export default {
         return false;
       }
     },
-       hasAccessLoanRead() {
+    hasAccessLoanRead() {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: HR_LOAN_READ_ALL: " + token2.authorities.includes('HR_LOAN_READ_ALL'))
@@ -431,11 +433,11 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-        // return false;
-        return true;
-        }
+        return false;
+        // return true;
+      }
     },
-       hasAccessLoanWrite() {
+    hasAccessLoanWrite() {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: HR_LOAN_WRITE_ALL: " + token2.authorities.includes('HR_LOAN_WRITE_ALL'))
@@ -444,11 +446,11 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-         return false;
+        return false;
         // return true;
       }
     },
-     hasAccessLoanDelete() {
+    hasAccessLoanDelete() {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: HR_LOAN_DELETE_ALL: " + token2.authorities.includes('HR_LOAN_DELETE_ALL'))
@@ -503,33 +505,33 @@ export default {
     },
 
     showLoanInstallmentHistoryModal(item) {
-      this.getLoanInstallmentsByLoanIdFromDB(item.idLoan).then((response) => {
-        // console.log(JSON.stringify(response.data));
-        response.data.forEach((element) => {
-          let sum = 0;
-            sum = sum + parseFloat(element.amount);   
-             this.loanInstallmentSum = sum.toFixed(2);
-          });          
+      this.getLoanInstallmentsByLoanIdFromDB(item.idLoan)
+        .then((response) => {
+          // console.log(JSON.stringify(response.data));
+          response.data.forEach((element) => {
+            let sum = 0;
+            sum = sum + parseFloat(element.amount.replace(",", "."));
+            this.loanInstallmentSum = sum.toFixed(2);
+          });
           this.loanInsallments = response.data;
-        this.$refs["loanInstallmentHistoryModal"].show();
-      })
+          this.$refs["loanInstallmentHistoryModal"].show();
+        })
         .catch((e) => {
           this.validateError(e);
-        });;
+        });
     },
-   
+
     //
     //add new loan
     //
     newLoan() {
       console.log("newLoan()");
-      if(this.hasAccessLoanWrite){
+      if (this.hasAccessLoanWrite) {
         router.push({
           name: "TheLoan",
-        params: { idLoan: 0, isEdit: "false" },
-      });
-        }else
-         this.displaySmallMessage("danger", "Nie masz uprawnień do dodawania pożyczek.");
+          params: { idLoan: 0, isEdit: "false" },
+        });
+      } else this.displaySmallMessage("danger", "Nie masz uprawnień do dodawania pożyczek.");
     },
 
     //
@@ -538,44 +540,46 @@ export default {
     showOwnPaymentModal(item) {
       console.log("START - showOwnPaymentModal()");
       this.getLoanByIdFromDb(item.idLoan).then((response) => {
-        this.loan =  response.data;
+        this.loan = response.data;
         let leftToPay = 0;
-          response.data.installmentDtoList.forEach((element) => {
-            leftToPay = leftToPay + parseFloat(element.amount);
-          });
-          this.amountLeftToPay = (parseFloat(response.data.amount) - leftToPay).toFixed(2);
-          this.loanInsallment.date=moment().format("YYYY-MM-DD");
-          this.loanInsallment.idLoan = item.idLoan,
-          this.loanInsallment.ownRepayment = true,
-          this.loanInsallment.amount= "",
-          this.loanInsallment.othetInfo= "",
-        this.$refs["ownPaymentModal"].show();
+        response.data.installmentDtoList.forEach((element) => {
+          leftToPay = leftToPay + parseFloat(element.amount.replace(",", "."));
+        });
+        this.amountLeftToPay = (
+          parseFloat(response.data.amoun.replace(",", ".")) - leftToPay
+        ).toFixed(2);
+        this.loanInsallment.date = moment().format("YYYY-MM-DD");
+        (this.loanInsallment.idLoan = item.idLoan),
+          (this.loanInsallment.ownRepayment = true),
+          (this.loanInsallment.amount = ""),
+          (this.loanInsallment.othetInfo = ""),
+          this.$refs["ownPaymentModal"].show();
       });
       console.log("END - showOwnPaymentModal()");
     },
-    
-    async addOwnPaymant(){
-      console.log("START - addOwnPaymant()");
-      if(this.validationAmount && this.validationLoanInstalmentInfo){
 
+    async addOwnPaymant() {
+      console.log("START - addOwnPaymant()");
+      if (this.validationAmount && this.validationLoanInstalmentInfo) {
         // console.log(JSON.stringify(this.loanInsallment));
         await this.addLoanInstallmentToDB();
         this.$refs["ownPaymentModal"].hide();
-        
-        this.getLoanByIdFromDb(this.loanInsallment.idLoan).then((response) => {
-        let leftToPay = 0;
-          response.data.installmentDtoList.forEach((element) => {
-            leftToPay = leftToPay + parseFloat(element.amount);
-          });
-          this.amountLeftToPay = (parseFloat(response.data.amount) - leftToPay).toFixed(2);
-          if(this.amountLeftToPay == 0.00){
-            this.payedLoan(this.loan.name, this.loan.amount, this.loan.idLoan);
-          }else{
 
+        this.getLoanByIdFromDb(this.loanInsallment.idLoan).then((response) => {
+          let leftToPay = 0;
+          response.data.installmentDtoList.forEach((element) => {
+            leftToPay = leftToPay + parseFloat(element.amount.replace(",", "."));
+          });
+          this.amountLeftToPay = (
+            parseFloat(response.data.amount.replace(",", ".")) - leftToPay
+          ).toFixed(2);
+          if (this.amountLeftToPay == 0.0) {
+            this.payedLoan(this.loan.name, this.loan.amount, this.loan.idLoan);
+          } else {
             this.getLoansByAccess("ALL");
           }
         });
-    }
+      }
       console.log("END - addOwnPaymant()");
     },
 
@@ -590,11 +594,11 @@ export default {
       });
     },
 
-     //
+    //
     //change payed loan status
     //
     payedLoan(name, amount, idLoan) {
-      let msg=`Spłaciłeś pożyczkę ${name} na kwotę ${amount}zł? \n 
+      let msg = `Spłaciłeś pożyczkę ${name} na kwotę ${amount}zł? \n 
         Czy chcesz oznaczyć pożyczkę jako spłaconą?`;
       this.$bvModal
         .msgBoxConfirm(msg, {
@@ -622,67 +626,66 @@ export default {
         });
     },
 
-
     //
     //change status loan
     //
     changeLoanStatus(item) {
       console.log("START - changeLoanStatus id: " + item.idLoan + ", status: " + item.loanStatus);
-       if(this.hasAccessLoanWrite){
-      this.$bvModal
-        .msgBoxConfirm(
-          `Czy chcesz zmienić status pożyczki: ${item.name} pracownika:
+      if (this.hasAccessLoanWrite) {
+        this.$bvModal
+          .msgBoxConfirm(
+            `Czy chcesz zmienić status pożyczki: ${item.name} pracownika:
         ${item.employee} na
          ${item.loanStatus == "TO_PAY" ? "SPŁACONA" : "NIE SPŁACONA"}?`,
-          {
-            title: "Potwierdzenie",
-            size: "sm",
-            buttonSize: "sm",
-            okVariant: "danger",
-            okTitle: "TAK",
-            cancelTitle: "NIE",
-            footerClass: "p-2",
-            hideHeaderClose: false,
-            centered: true,
-          }
-        )
-        .then((value) => {
-          // console.log(value);
-          if (value) {
-            this.setLoanStatusDb(
-              item.idLoan,
-              item.loanStatus == "TO_PAY" ? "PAID_OFF" : "TO_PAY"
-            ).then((response) => {
-              this.getLoansByAccess("ALL");
-            });
-          }
-        })
-        .catch((err) => {
-          // An error occurred
-        });
-         }else
-         this.displaySmallMessage("danger", "Nie masz uprawnień do zmiany statusu pożyczki.");
+            {
+              title: "Potwierdzenie",
+              size: "sm",
+              buttonSize: "sm",
+              okVariant: "danger",
+              okTitle: "TAK",
+              cancelTitle: "NIE",
+              footerClass: "p-2",
+              hideHeaderClose: false,
+              centered: true,
+            }
+          )
+          .then((value) => {
+            // console.log(value);
+            if (value) {
+              this.setLoanStatusDb(
+                item.idLoan,
+                item.loanStatus == "TO_PAY" ? "PAID_OFF" : "TO_PAY"
+              ).then((response) => {
+                this.getLoansByAccess("ALL");
+              });
+            }
+          })
+          .catch((err) => {
+            // An error occurred
+          });
+      } else this.displaySmallMessage("danger", "Nie masz uprawnień do zmiany statusu pożyczki.");
     },
 
     //
     //delete loan
     //
     deleteLoan(item, index, button) {
-      this.infoModal.title = `Row index: ${index}`;
-      this.infoModal.content = JSON.stringify(item, null, 2);
       this.$bvModal
-        .msgBoxConfirm(`Czy chcesz usunąć pożyczkę pracownika\n ${item.employee} na kwotę ${item.amount}zł?`, {
-          title: "Potwierdzenie",
-          size: "sm",
-          buttonSize: "sm",
-          okVariant: "progas-save",
-          okTitle: "TAK",
-          cancelTitle: "NIE",
-          cancelVariant: "progas-cancel",
-          footerClass: "p-2",
-          hideHeaderClose: false,
-          centered: true,
-        })
+        .msgBoxConfirm(
+          `Czy chcesz usunąć pożyczkę pracownika\n ${item.employee} na kwotę ${item.amount}zł?`,
+          {
+            title: "Potwierdzenie",
+            size: "sm",
+            buttonSize: "sm",
+            okVariant: "progas-save",
+            okTitle: "TAK",
+            cancelTitle: "NIE",
+            cancelVariant: "progas-cancel",
+            footerClass: "p-2",
+            hideHeaderClose: false,
+            centered: true,
+          }
+        )
         .then((value) => {
           if (value) {
             this.deleteLoanDB(item.idLoan).then((response) => {
@@ -695,36 +698,39 @@ export default {
           // An error occurred
         });
     },
- 
-        //
+
+    //
     //delete loan installment
     //
     deleteLoanInstallment(item) {
       this.$bvModal
-        .msgBoxConfirm(`Czy chcesz usunąć ratę pożyczki z dnia ${item.date} na kwotę ${item.amount}zł?`, {
-          title: "Potwierdzenie",
-          size: "sm",
-          buttonSize: "sm",
-          okVariant: "progas-save",
-          okTitle: "TAK",
-          cancelTitle: "NIE",
-          cancelVariant: "progas-cancel",
-          footerClass: "p-2",
-          hideHeaderClose: false,
-          centered: true,
-        })
+        .msgBoxConfirm(
+          `Czy chcesz usunąć ratę pożyczki z dnia ${item.date} na kwotę ${item.amount}zł?`,
+          {
+            title: "Potwierdzenie",
+            size: "sm",
+            buttonSize: "sm",
+            okVariant: "progas-save",
+            okTitle: "TAK",
+            cancelTitle: "NIE",
+            cancelVariant: "progas-cancel",
+            footerClass: "p-2",
+            hideHeaderClose: false,
+            centered: true,
+          }
+        )
         .then((value) => {
           if (value) {
             this.deleteLoanInstallmentDB(item.idLoanInstallment).then(async (response) => {
               this.getLoanInstallmentsByLoanIdFromDB(item.idLoan).then((response) => {
-                  this.loanInsallments = response.data;
-                });
-                this.displaySmallMessage("success", "Usunięto ratę pożyczki.");
-                if(response.status == 204){
-                  await this.setLoanStatusDb(item.idLoan, "TO_PAY")
-                }
-                this.getLoansByAccess("ALL");
-              });              
+                this.loanInsallments = response.data;
+              });
+              this.displaySmallMessage("success", "Usunięto ratę pożyczki.");
+              if (response.status == 204) {
+                await this.setLoanStatusDb(item.idLoan, "TO_PAY");
+              }
+              this.getLoansByAccess("ALL");
+            });
           }
         })
         .catch((err) => {
@@ -732,14 +738,14 @@ export default {
         });
     },
 
-    resetLoanInstallmentModal(){
-      this.loanInsallment.date=moment().format("YYYY-MM-DD");
-          this.idLoan = 0;
-          this.ownRepayment = false;
-          this.amount= "";
-          this.date="";
-          this.othetInfo= "";
-          this.$refs["ownPaymentModal"].hide();
+    resetLoanInstallmentModal() {
+      this.loanInsallment.date = moment().format("YYYY-MM-DD");
+      this.idLoan = 0;
+      this.ownRepayment = false;
+      this.amount = "";
+      this.date = "";
+      this.othetInfo = "";
+      this.$refs["ownPaymentModal"].hide();
     },
     resetInfoModal() {
       this.infoModal.title = "";
@@ -753,14 +759,14 @@ export default {
         this.loansAll.forEach((loan) => {
           this.loanListDisplay.push(loan);
         });
-      }else if (event == "PAID_OFF") {
+      } else if (event == "PAID_OFF") {
         this.loanListDisplay = [];
         this.loansAll.forEach((loan) => {
           if (loan.loanStatus == "PAID_OFF") {
             this.loanListDisplay.push(loan);
           }
         });
-      }else if (event == "TO_PAY") {
+      } else if (event == "TO_PAY") {
         this.loanListDisplay = [];
         this.loansAll.forEach((loan) => {
           if (loan.loanStatus == "TO_PAY") {
@@ -786,7 +792,6 @@ export default {
 #table {
   color: rgba(255, 245, 0, 0.8);
 }
-
 
 #details {
   background-color: #343a40;

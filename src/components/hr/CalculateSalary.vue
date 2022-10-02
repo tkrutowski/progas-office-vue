@@ -8,7 +8,12 @@
           <div>
             <label class="form-label" for="employee">Wybierz pracownika: </label>
             <div style="display: flex">
-              <b-form-select v-model="selected" :options="options" class="mb-3" id="employee">
+              <b-form-select
+                v-model="selectedEmployee"
+                :options="options"
+                class="mb-3"
+                id="employee"
+              >
                 <!-- This slot appears above the options from 'options' prop -->
                 <template #first>
                   <b-form-select-option :value="null" disabled>
@@ -71,7 +76,7 @@
         </b-row>
 
         <b-row class="mt-5">
-          <!--obliczanie wypłąt lewa-->
+          <!--calculate LEFT-->
           <div class="col-md-4 mb-5" style="float: left">
             <div class="main">
               <p class="text">Godziny urlopowe (płatne):</p>
@@ -107,7 +112,7 @@
             </div>
           </div>
 
-          <!--obliczanie wypłąt środek-->
+          <!--calculate MIDDLE  -->
           <div class="col-md-4 mb-5" style="float: left">
             <div class="main">
               <p class="text">Za godziny:</p>
@@ -139,47 +144,111 @@
             </div>
           </div>
 
-          <!-- obliczenia wypłat prawa               -->
+          <!-- calculate RIGHT              -->
           <div class="col-md-4 mb-5" style="float: left">
             <div class="main">
               <p class="text">Normatywny czas pracy:</p>
-              <p class="value">...</p>
+              <p class="value">{{ salary.hoursToWork }}</p>
             </div>
             <div class="main">
               <p class="text">Pozostało urlopu:</p>
-              <p class="value">...</p>
+              <p class="value">{{ salary.daysOffLeft }}</p>
             </div>
             <div class="main">
               <p class="text">Do oddania (pożyczka):</p>
-              <p class="value">...</p>
+              <p class="value">{{ salary.loansToPay }}</p>
             </div>
             <div class="main">
-              <p class="text">Zaliczki:</p>
-              <p class="value">{{ salary.advancesSum }}</p>
+              <div class="view-button">
+                <b-button
+                  @click="showSalaryListModal('advance')"
+                  class="pl-0 ml-0"
+                  variant="outline"
+                  title="Historia wpłat"
+                  size="sm"
+                  :disabled="parseFloat(salary.advancesSum) > 0 ? false : true"
+                >
+                  <b-icon icon="list" variant="progas" aria-hidden="true" scale="1.2"></b-icon>
+                </b-button>
+                <p class="text">Zaliczki:</p>
+                <p class="value">{{ salary.advancesSum }}</p>
+              </div>
             </div>
             <div class="main">
-              <p class="text">Dodatki:</p>
-              <p class="value">{{ salary.additionsSum }}</p>
+              <div class="view-button">
+                <b-button
+                  @click="showSalaryListModal('addition')"
+                  class="pl-0 ml-0"
+                  variant="outline"
+                  title="Historia wpłat"
+                  size="sm"
+                  :disabled="parseFloat(salary.additionsSum) > 0 ? false : true"
+                >
+                  <b-icon icon="list" variant="progas" aria-hidden="true" scale="1.2"></b-icon>
+                </b-button>
+                <p class="text">Dodatki:</p>
+                <p class="value">{{ salary.additionsSum }}</p>
+              </div>
             </div>
+
             <div class="main">
-              <p class="text">Pożyczki:</p>
-              <p class="value">{{ salary.loanInstallmentSum }}</p>
+              <div class="view-button">
+                <b-button
+                  @click="showSalaryListModal('loan')"
+                  class="pl-0 ml-0"
+                  variant="outline"
+                  title="Historia wpłat"
+                  size="sm"
+                  :disabled="parseFloat(salary.loanInstallmentSum) > 0 ? false : true"
+                >
+                  <b-icon icon="list" variant="progas" aria-hidden="true" scale="1.2"></b-icon>
+                </b-button>
+                <p class="text">Pożyczki:</p>
+                <p class="value">{{ salary.loanInstallmentSum }}</p>
+              </div>
             </div>
+
             <div class="main">
               <p class="text">Stawka:</p>
-              <p class="value">...</p>
+              <p class="value">{{ salary.rateRegular }}</p>
             </div>
             <div class="main">
               <p class="text">Stawka nadgodzinowa:</p>
-              <p class="value">...</p>
+              <p class="value">{{ salary.rateOvertime }}</p>
             </div>
             <div class="main" style="font-size: 25px">
               <p class="text">Do wypłaty:</p>
-              <p class="value">{{ salary.forAll }}</p>
+              <p class="value">{{ salary.paycheckAmount }}</p>
             </div>
           </div>
         </b-row>
       </b-container>
+      <!-- Display detail items -->
+      <b-modal
+        ref="salaryListModal"
+        centered
+        header-bg-variant="dark"
+        header-text-variant="progas"
+        body-bg-variant="dark"
+        body-text-variant="progas"
+        footer-bg-variant="dark"
+        footer-text-variant="progas"
+      >
+        <template #modal-title>
+          {{ titleSalaryListModal }}
+        </template>
+        <div>
+          <b-table :items="salaryDetailsList" :fields="fieldsDetails" id="table"> </b-table>
+        </div>
+        <template #modal-footer>
+          <div class="w-100">
+            <p class="float-left">Razem: {{ salaryDetailsSum }} zł.</p>
+            <b-button variant="progas" class="float-right" @click="hideSalaryListModal">
+              Zamknij
+            </b-button>
+          </div>
+        </template>
+      </b-modal>
     </b-container>
   </div>
 </template>
@@ -190,12 +259,16 @@ import axios from "axios";
 import { errorMixin } from "@/mixins/error";
 import { employeeMixin } from "@/mixins/employee";
 import { mapGetters } from "vuex";
+import { loanMixin } from "@/mixins/loan";
+import { advanceMixin } from "@/mixins/advance";
+import { additionMixin } from "@/mixins/additions";
 import jwt_decode from "jwt-decode";
 export default {
   name: "CalculateSalary",
-  mixins: [errorMixin, employeeMixin],
+  mixins: [errorMixin, employeeMixin, loanMixin, advanceMixin, additionMixin],
   data() {
     return {
+      titleSalaryListModal: "Lista",
       busyIcon: false,
       btnDisabled: false,
       loadnig: false,
@@ -203,7 +276,7 @@ export default {
       options: [],
       salaryDate: moment(),
       errors: [],
-      selected: null,
+      selectedEmployee: null,
       months: [
         { value: "01", text: "styczeń" },
         { value: "02", text: "luty" },
@@ -229,16 +302,6 @@ export default {
       ],
       years: [2020, 2021, 2022, 2023, 2024],
       salary: {
-        advancesSum: "...",
-        additionsSum: "...",
-        loanInstallmentSum: "...",
-        forRegularRate: "...",
-        forOvertime50: "...",
-        forOvertime100: "...",
-        forDayOff: "...",
-        forIllness80: "...",
-        forIllness100: "...",
-        forAll: "...",
         dayOffWorkTimePay: "...",
         dayOffWorkTimeFree: "...",
         illnessWorkTime80: "...",
@@ -247,9 +310,47 @@ export default {
         workOvertimeWorkTime50: "...",
         workOvertimeWorkTime100: "...",
         workTimeAll: "...",
+
+        forRegularRate: "...",
+        forOvertime50: "...",
+        forOvertime100: "...",
+        forDayOff: "...",
+        forIllness80: "...",
+        forIllness100: "...",
+        forAll: "...",
+        hoursToWork: "...",
+        daysOffLeft: "...",
+        loansToPay: "...",
+        advancesSum: "...",
+        additionsSum: "...",
+        loanInstallmentSum: "...",
+        rateRegular: "...",
+        rateOvertime: "...",
+        paycheckAmount: "...",
       },
       month: moment().format("MM"),
       year: moment().format("YYYY"),
+      fieldsDetails: [
+        {
+          key: "date",
+          label: "Data",
+        },
+        {
+          key: "amount",
+          label: "Kwota",
+        },
+        {
+          key: "otherInfo",
+          label: "Info",
+        },
+      ],
+      salaryDetailsSum: 0,
+      salaryDetail: {
+        amount: "",
+        date: "",
+        otherInfo: "",
+      },
+      salaryDetailsList: [],
     };
   },
   created() {
@@ -262,9 +363,13 @@ export default {
     hasReadAll() {
       try {
         let token2 = jwt_decode(this.getToken);
-        return token2.authorities.includes("HR_SALARIES_READ_ALL") || token2.authorities.includes("ROLE_ADMIN");
+        return (
+          token2.authorities.includes("HR_SALARIES_READ_ALL") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
       } catch (error) {
         return false;
+        // return true;
       }
     },
     hasRead() {
@@ -277,11 +382,79 @@ export default {
     },
   },
   methods: {
+    async showSalaryListModal(target) {
+      const date = this.year + "-" + this.month + "-01";
+      console.log("START - showSalaryListModal(" + target + ")");
+      this.salaryDetailsList = [];
+      if (target == "loan") {
+        this.titleSalaryListModal = "Lista pożyczek";
+        let sum = 0;
+        await this.getLoanInstallmentsAllByEmployeeAndDateFromDB(this.selectedEmployee, date).then(
+          (response) => {
+            // console.log(JSON.stringify(response.data));
+            response.data.forEach((element) => {
+              sum = sum + parseFloat(element.amount.replace(",", "."));
+              let detail = {
+                amount: element.amount,
+                date: element.date,
+                otherInfo: element.loanName,
+              };
+              this.salaryDetailsList.push(detail);
+            });
+          }
+        );
+        this.salaryDetailsSum = sum.toFixed(2);
+        this.$refs["salaryListModal"].show();
+      } else if (target == "advance") {
+        this.titleSalaryListModal = "Lista zaliczek";
+        let sum = 0;
+        await this.getAdvancesByEmployeeAndDateFromDB(this.selectedEmployee, date).then(
+          (response) => {
+            // console.log(JSON.stringify(response.data));
+            response.data.forEach((element) => {
+              sum = sum + parseFloat(element.amount.replace(",", "."));
+              let detail = {
+                amount: element.amount,
+                date: element.date,
+                otherInfo: element.otherInfo,
+              };
+              this.salaryDetailsList.push(detail);
+            });
+          }
+        );
+        this.salaryDetailsSum = sum.toFixed(2);
+        this.$refs["salaryListModal"].show();
+      } else if (target == "addition") {
+        this.titleSalaryListModal = "Lista dodatków";
+        let sum = 0;
+        await this.getAdditionsByIdEmployeeAndDateFromDB(this.selectedEmployee, date).then(
+          (response) => {
+            // console.log(JSON.stringify(response.data));
+            response.data.forEach((element) => {
+              sum = sum + parseFloat(element.amount.replace(",", "."));
+              let detail = {
+                amount: element.amount,
+                date: element.date,
+                otherInfo: element.additionType + " -> " + element.otherInfo,
+              };
+              this.salaryDetailsList.push(detail);
+            });
+          }
+        );
+        this.salaryDetailsSum = sum.toFixed(2);
+        this.$refs["salaryListModal"].show();
+      }
+    },
+
+    hideSalaryListModal() {
+      this.$refs["salaryListModal"].hide();
+    },
+
     //
-    //Oblicza wypłate
+    //Calculate salary
     //
     calculateSalary() {
-      if (this.selected == null) {
+      if (this.selectedEmployee == null) {
         // this.displaySmallMessage("warning", "Musisz wybrać pracownika!") ;
         this.displayLargeMessage("warning", "Musisz wybrać pracownika!");
       } else {
@@ -309,7 +482,7 @@ export default {
       let url =
         this.urlEmpl +
         "/api/employee/salary/" +
-        this.selected +
+        this.selectedEmployee +
         "?date=" +
         this.year +
         "-" +
@@ -361,9 +534,28 @@ export default {
   padding-top: 25px;
 }
 
+.btn-view {
+  align-self: flex-start;
+  padding: 0px;
+}
+
 .value {
   font-weight: bold;
   /*font-size: 20px;*/
   color: darkgrey;
+}
+
+#table {
+  color: rgba(255, 245, 0, 0.8);
+}
+
+.view-button {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.view-button:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 </style>

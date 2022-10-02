@@ -3,6 +3,29 @@
     <b-container fluid="" id="container">
       <h1>Wpisywanie zaliczek</h1>
       <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
+      <div>
+        <b-button
+          class="mr-2"
+          variant="outline-progas"
+          href="/hr/AddAdditions"
+          :disabled="!hasAccessHrAddition"
+          >Dodatków</b-button
+        >
+        <b-button
+          class="mr-2"
+          variant="outline-progas"
+          href="/hr/AddWorkTime"
+          :disabled="!hasAccessAddWorktime"
+          >Godzin</b-button
+        >
+        <b-button
+          variant="outline-progas"
+          href="/hr/AddLoanInstallment"
+          :disabled="!hasAccessReadLoans"
+          >Pożyczek</b-button
+        >
+      </div>
+      <hr style="border: 0px; background: rgba(255, 245, 0, 0.8); height: 1px" />
       <b-row align-h="center">
         <b-col>
           <b-form class="" @submit.prevent="addAdvance">
@@ -68,7 +91,6 @@
               </b-form-group>
             </div>
 
-          
             <!-- OTHER INFO -->
             <b-form-group class="max-width" label="Dodatkowe informacje:" label-for="input-info">
               <b-form-input
@@ -174,11 +196,10 @@
           </div>
         </b-col>
       </b-row>
-          <!-- Info modal -->
-    <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-      <pre>{{ infoModal.content }}</pre>
-    </b-modal>
-    
+      <!-- Info modal -->
+      <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+        <pre>{{ infoModal.content }}</pre>
+      </b-modal>
     </b-container>
   </div>
 </template>
@@ -215,7 +236,7 @@ export default {
       ],
       busyIcon: false,
       btnDisabled: false,
-   
+
       isBusy: false,
       isEdit: false,
 
@@ -237,7 +258,7 @@ export default {
 
       advancesSum: 0,
 
-       infoModal: {
+      infoModal: {
         id: "info-modal",
         title: "",
         content: "",
@@ -301,6 +322,43 @@ export default {
         // return true;
       }
     },
+    hasAccessHrAddition() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_ADDITION: " + token2.authorities.includes('ROLE_HR_ADDITION'))
+        return (
+          token2.authorities.includes("ROLE_HR_ADDITION") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
+    hasAccessAddWorktime() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_WORKTIME: " + token2.authorities.includes('ROLE_HR_WORKTIME'))
+        return (
+          token2.authorities.includes("ROLE_HR_WORKTIME") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
+    hasAccessReadLoans() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_EMPLOYEE: " + token2.authorities.includes('ROLE_HR_EMPLOYEE'))
+        return (
+          token2.authorities.includes("HR_LOAN_READ_ALL") ||
+          token2.authorities.includes("HR_LOAN_READ") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
     validationAmount() {
       return (
         this.salaryAdvance.amount.length > 0 &&
@@ -335,7 +393,7 @@ export default {
     },
 
     onDateChange() {
-       this.changeIconStatus(false, false, false);
+      this.changeIconStatus(false, false, false);
       if (this.selectedEmployee != null) {
         this.advanceDate = moment(this.advanceDateString);
         let newMonth = moment(this.advanceDateString).format("MM");
@@ -361,7 +419,7 @@ export default {
         this.salaryAdvance.date = this.advanceDateString;
         // console.log(JSON.stringify(this.salaryAdvance));
         if (this.isEdit) {
-            this.editAdvanceDB()
+          this.editAdvanceDB()
             .then((response) => {
               this.displaySmallMessage("success", "Zaktualizowano zaliczkę.");
               this.getAdvancesFromDB(this.selectedEmployee, this.advanceDateString);
@@ -411,39 +469,40 @@ export default {
       this.savedIcon = save;
     },
 
-    //  
+    //
     //edit advance
     //
     editAdvance(item, index, button) {
       console.log("editAdvance(): " + item.id);
       // console.log(JSON.stringify(item));
       this.employeeDisabled = true;
-      this.isEdit=true;
+      this.isEdit = true;
       this.btnSaveTitle = "Zapisz";
       this.advanceDateString = item.date;
       this.salaryAdvance.amount = item.amount;
       this.salaryAdvance.otherInfo = item.otherInfo;
-      this.salaryAdvance.id=item.id;
+      this.salaryAdvance.id = item.id;
     },
 
     //
     //delete advance
     //
     deleteAdvance(item, index, button) {
-      this.infoModal.title = `Row index: ${index}`;
-      // this.infoModal.content = JSON.stringify(item, null, 2);
       this.$bvModal
-        .msgBoxConfirm(`Czy chcesz usunąć zaliczkę:\n z dnia ${item.date} na kwotę ${item.amount} zł?`, {
-          title: "Potwierdzenie",
-          size: "sm",
-          buttonSize: "sm",
-          okVariant: "danger",
-          okTitle: "TAK",
-          cancelTitle: "NIE",
-          footerClass: "p-2",
-          hideHeaderClose: true,
-          centered: true,
-        })
+        .msgBoxConfirm(
+          `Czy chcesz usunąć zaliczkę:\n z dnia ${item.date} na kwotę ${item.amount} zł?`,
+          {
+            title: "Potwierdzenie",
+            size: "sm",
+            buttonSize: "sm",
+            okVariant: "danger",
+            okTitle: "TAK",
+            cancelTitle: "NIE",
+            footerClass: "p-2",
+            hideHeaderClose: true,
+            centered: true,
+          }
+        )
         .then((value) => {
           if (value) {
             this.deleteAdvanceDB(item.id).then((response) => {
@@ -457,7 +516,6 @@ export default {
         });
     },
 
- 
     cancelAdvance() {
       console.log("cancelAdvance()");
       this.employeeDisabled = false;
@@ -470,7 +528,7 @@ export default {
       this.salaryAdvance.amount = "";
       this.salaryAdvance.id = null;
     },
-     resetInfoModal() {
+    resetInfoModal() {
       this.infoModal.title = "";
       this.infoModal.content = "";
     },
