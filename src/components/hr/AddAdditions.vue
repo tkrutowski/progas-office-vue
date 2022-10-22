@@ -355,8 +355,8 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-        return false;
-        // return true;
+        // return false;
+        return true;
       }
     },
     hasRead() {
@@ -376,8 +376,8 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-        return false;
-        // return true;
+        // return false;
+        return true;
       }
     },
     hasAccessAdditionDelete() {
@@ -389,8 +389,8 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-        return false;
-        // return true;
+        // return false;
+        return true;
       }
     },
     hasAccessAddWorktime() {
@@ -402,7 +402,8 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-        return false;
+        // return false;
+        return true;
       }
     },
     hasAccessHrAdvance() {

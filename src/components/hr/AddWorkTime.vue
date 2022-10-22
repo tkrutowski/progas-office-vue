@@ -35,6 +35,7 @@
                   <b-form-select
                     v-model="selectedEmployee"
                     :options="optionsEmployee"
+                    :disabled="employeeDisabled"
                     class="mb-5"
                     id="employeeSelect"
                     @change="onEmployeeChange"
@@ -63,19 +64,20 @@
 
             <!--                    Data-->
             <div>
-              <label for="date" class="max-width"
-                >Wybierz datę:
-                <b-form-datepicker
-                  class="mb-5"
-                  id="date"
+              <b-form-group
+                class="max-width mr-2 text-center"
+                label="Wybierz datę:"
+                label-for="input-date"
+              >
+                <b-form-input
+                  id="input-date"
                   v-model="workTimeDateString"
-                  locale="pl"
-                  placeholder="Wybierz datę"
-                  @context="onContext"
-                  style="width: 100%"
-                >
-                </b-form-datepicker>
-              </label>
+                  type="date"
+                  @change="onDateChange"
+                  :disabled="dateDisabled"
+                  required
+                ></b-form-input>
+              </b-form-group>
             </div>
 
             <!--                     PRACA                       -->
@@ -142,12 +144,6 @@
                       class="mb-3"
                       id="dayOffTypeSelect"
                     >
-                      <!-- This slot appears above the options from 'options' prop -->
-                      <!-- <template #first>
-                      <b-form-select-option :value="null" disabled
-                        >-- Wybierz rodzaj urlopu --
-                      </b-form-select-option>
-                    </template> -->
                     </b-form-select>
                   </label>
                 </div>
@@ -176,20 +172,25 @@
                       class="mb-3"
                       id="illnessTypeSelect"
                     >
-                      <!-- This slot appears above the options from 'options' prop -->
-                      <!-- <template #first>
-                      <b-form-select-option :value="null" disabled>
-                        -- Wybierz rodzaj zasiłku --
-                      </b-form-select-option>
-                    </template> -->
                     </b-form-select>
                   </label>
                 </div>
               </b-col>
             </b-row>
 
-            <b-button class="mt-3" style="width: 120px" type="submin" variant="progas"
-              >Dodaj
+            <!-- BTN CANCEL -->
+            <b-button
+              class="mt-3 mr-2"
+              style="width: 120px"
+              type="reset"
+              variant="progas"
+              @click="cancelWorkTime"
+              v-if="employeeDisabled"
+              >Anuluj
+            </b-button>
+
+            <b-button class="mt-3" style="width: 120px" type="submin" variant="progas-save"
+              >{{ btnSaveTitle }}
 
               <b-icon
                 v-if="savedIcon"
@@ -234,6 +235,32 @@
                   <strong>Loading...</strong>
                 </div>
               </template>
+              <!-- ----------------------------------AKCJA --------------------------------- -->
+              <template #cell(action)="row">
+                <b-button-group>
+                  <!-- EDIT -->
+                  <b-button
+                    v-if="hasAccessWorkTimeWrite"
+                    size="sm"
+                    @click="editWorkTime(row.item, row.index, $event.target)"
+                    class="mr-2"
+                    variant="progas"
+                    title="Edycja wpisu."
+                  >
+                    Edit
+                  </b-button>
+                  <!-- DELETE -->
+                  <b-button
+                    v-if="hasAccessWorkTimeDelete"
+                    size="sm"
+                    @click="deleteWorkTime(row.item, row.index, $event.target)"
+                    class="mr-2 bg-danger"
+                    title="Usuń wpis."
+                  >
+                    <b-icon icon="trash" aria-hidden="true"></b-icon>
+                  </b-button>
+                </b-button-group>
+              </template>
             </b-table>
           </div>
         </b-col>
@@ -247,11 +274,12 @@ import moment from "moment";
 import axios from "axios";
 import { errorMixin } from "@/mixins/error";
 import { employeeMixin } from "@/mixins/employee";
+import { worktimeMixin } from "@/mixins/worktime";
 import { mapGetters } from "vuex";
 import jwt_decode from "jwt-decode";
 export default {
   name: "AddWorkTime",
-  mixins: [errorMixin, employeeMixin],
+  mixins: [errorMixin, employeeMixin, worktimeMixin],
   data() {
     return {
       fields: [
@@ -283,20 +311,23 @@ export default {
           key: "workTime100",
           label: "Ilość godzin 100%",
         },
+        {
+          key: "action",
+          label: "Akcja",
+        },
       ],
       busyIcon: false,
       btnDisabled: false,
+
+      employeeDisabled: false,
+      dateDisabled: false,
+      btnSaveTitle: "Dodaj",
 
       isBusy: false,
 
       busyIcon: false,
       savedIcon: false,
       errorIcon: false,
-
-      workTimeList: [],
-      employees: [],
-      dayOffTypes: [],
-      illnessTypes: [],
 
       workTimeDateString: "",
       workTimeDate: moment(),
@@ -306,30 +337,12 @@ export default {
       isWork: true,
       isDayOff: false,
       isIllness: false,
-      optionDayOff: [],
-      optionsEmployee: [],
-      optionIllness: [],
+      workTypeToDelete: "",
 
       selectedEmployee: null,
       selectedDayOffType: "",
       selectedIllnessType: "",
 
-      work: {
-        idEmployee: "",
-        date: "",
-        startTime: "",
-        stopTime: "",
-      },
-      illness: {
-        idEmployee: "",
-        date: "",
-        idIllnessType: "",
-      },
-      dayOff: {
-        idEmployee: "",
-        date: "",
-        idDayOffType: "",
-      },
     };
   },
   created() {
@@ -339,6 +352,7 @@ export default {
     moment.locale("pl");
     this.workTimeDateString = this.workTimeDate.format("YYYY-MM-DD");
     this.isWork = true;
+    this.rbWorkChecked = true;
     this.selectedEmployee = null;
     this.selectedDayOffType = 2;
     this.selectedIllnessType = 1;
@@ -363,6 +377,42 @@ export default {
         return token2.authorities.includes("HR_WORKTIME_READ");
       } catch (error) {
         return false;
+      }
+    },
+    hasAccessWorkTimeWrite() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: HR_WORKTIME_WRITE_ALL: " + token2.authorities.includes('HR_WORKTIME_WRITE_ALL'))
+        return (
+          token2.authorities.includes("HR_WORKTIME_WRITE_ALL") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+        // return true;
+      }
+    },
+    hasAccessWorkTimeDelete() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: HR_WORKTIME_DELETE: " + token2.authorities.includes('HR_WORKTIME_DELETE'))
+        return token2.authorities.includes("HR_WORKTIME_DELETE");
+      } catch (error) {
+        return false;
+        // return true;
+      }
+    },
+    hasAccessWorkTimeDeleteALL() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: HR_WORKTIME_DELETE_ALL: " + token2.authorities.includes('HR_WORKTIME_DELETE_ALL'))
+        return (
+          token2.authorities.includes("HR_WORKTIME_DELETE_ALL") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+        // return true;
       }
     },
     hasAccessHrAddition() {
@@ -406,23 +456,18 @@ export default {
   },
   methods: {
     rowClass(item, type) {
-      // if (!item || type !== 'row') return
-      if (item.isHoliday === true) return "table-dark";
-      // if (item.isHoliday === true) return "worktime1"
-      // if (item.isHoliday === true) return {
-      //     classes: 'worktime-table',
-      //     css: {"color": "blue"}
-      // }
+      if (item.isHoliday === true) return "table-holiday";
     },
 
     onEmployeeChange() {
       console.log("onEmployeeChange() - start");
       console.log("selectedEmployee: " + this.selectedEmployee);
       if (this.selectedEmployee != null) {
-        this.getWorkTimeAllFromDB();
+        this.getWorkTimeAllFromDB(this.selectedEmployee, this.workTimeDate.format("YYYY-MM-DD"));
       }
     },
     rbWork_click() {
+      console.log("rbWork_click");
       this.isWork = true;
       this.isIllness = false;
       this.isDayOff = false;
@@ -437,11 +482,14 @@ export default {
       this.isWork = false;
       this.isDayOff = false;
     },
-    onContext(ctx) {
-      this.workTimeDateString = ctx.selectedYMD;
-      this.workTimeDate = moment(this.workTimeDateString);
-      if (this.selectedEmployee != null) {
-        this.getWorkTimeAllFromDB();
+
+    onDateChange() {
+      // this.workTimeDateString = ctx.selectedYMD;
+      if (!this.isEdit) {
+        this.workTimeDate = moment(this.workTimeDateString);
+        if (this.selectedEmployee != null) {
+          this.getWorkTimeAllFromDB(this.selectedEmployee, this.workTimeDate.format("YYYY-MM-DD"));
+        }
       }
     },
 
@@ -449,15 +497,59 @@ export default {
       this.busyIcon = true;
       this.savedIcon = false;
       this.errorIcon = false;
-      if (this.isWork) {
-        this.addWorkToDB();
+      if (this.isEdit) {
+        if (this.isWork) {
+          this.deleteWorkTimeDB(
+            this.selectedEmployee,
+            this.workTimeDateString,
+            this.workTypeToDelete
+          ).then((response) => {
+            this.workTimeDate = moment(this.workTimeDateString);
+            this.addWorkToDB();
+            // console.log(JSON.stringify(this.work));
+          });
+        }
+        if (this.isIllness) {
+          this.deleteWorkTimeDB(
+            this.selectedEmployee,
+            this.workTimeDateString,
+            this.workTypeToDelete
+          ).then((response) => {
+            this.workTimeDate = moment(this.workTimeDateString);
+            this.addIllnessToDB();
+            // console.log(JSON.stringify(this.work));
+          });
+        }
+
+        if (this.isDayOff) {
+          this.deleteWorkTimeDB(
+            this.selectedEmployee,
+            this.workTimeDateString,
+            this.workTypeToDelete
+          ).then((response) => {
+            this.workTimeDate = moment(this.workTimeDateString);
+            this.addDayOffToDB();
+            // console.log(JSON.stringify(this.work));
+          });
+        }
+
+        this.cancelWorkTime();
+      } else {
+        if (this.isWork) {
+          this.addWorkToDB();
+        }
+        if (this.isIllness) {
+          this.addIllnessToDB();
+        }
+
+        if (this.isDayOff) {
+          this.addDayOffToDB();
+        }
+
+        this.addCalendarDay();
       }
-      if (this.isIllness) this.addIllnessToDB();
-
-      if (this.isDayOff) this.addDayOffToDB();
-
-      this.addCalendarDay();
     },
+
     addCalendarDay() {
       console.log("addCalendarDay()");
       console.log("przed dodaniem dnia: " + this.workTimeDate.format("YYYY-MM-DD"));
@@ -470,183 +562,93 @@ export default {
       this.workTimeDateString = this.workTimeDate.format("YYYY-MM-DD");
     },
 
-    //---------------------------------------------------- DB READ ---------------------------------------------------------
     //
-    //pobranie rodzajów dni wolnych
+    //edit worktime
     //
-    getDayOffTypesFromDb() {
-      console.log("getDayOffTypesFromDb() - start");
-      const header = {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          Authorization: "Bearer " + this.$store.getters.getToken,
-        },
-      };
-      axios
-        .get(this.urlEmpl + `/api/employee/worktime/dayofftype`, header)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          this.dayOffTypes = response.data;
-          console.log("getDayOffTypesFromDb() - Ilosc dayOffTypes[]: " + this.dayOffTypes.length);
-          if (this.dayOffTypes.length > 0) {
-            this.convertToOptionsDayOff();
+    editWorkTime(item) {
+      console.log("editWorkTimeAddition(): " + item.date);
+      // console.log(JSON.stringify(item));
+      if (item.workType != null) {
+        this.employeeDisabled = true;
+        this.dateDisabled = true;
+        this.isEdit = true;
+        this.btnSaveTitle = "Zapisz";
+        this.workTimeDateString = moment(item.date, "DD-MM-YYYY").format("YYYY-MM-DD");
+        if (item.workType == "WORK") {
+          console.log("edit work");
+          const rbWork = document.getElementById("rbWork");
+          rbWork.checked = true;
+          this.rbWork_click();
+          this.timeFrom = moment(item.startTime, "HH:mm").format("HH:mm");
+          this.timeTo = item.stopTime;
+          this.workTypeToDelete = "WORK";
+        } else if (item.workType == "ILLNESS") {
+          console.log("edit illness");
+          const rbIllness = document.getElementById("rbIllness");
+          rbIllness.checked = true;
+          this.rbIllness_click();
+          this.selectedIllnessType = item.idIllnessType;
+          this.workTypeToDelete = "ILLNESS";
+        } else if (item.workType == "DAY_OFF") {
+          console.log("edit dayOff");
+          const rbDayOff = document.getElementById("rbDayOff");
+          rbDayOff.checked = true;
+          this.rbDayOff_click();
+          this.selectedDayOffType = item.idDayOffType;
+          this.workTypeToDelete = "DAY_OFF";
+        }
+
+      }
+    },
+
+    cancelWorkTime() {
+      console.log("cancelWorkTime()");
+      this.employeeDisabled = false;
+      this.dateDisabled = false;
+      this.btnSaveTitle = "Dodaj";
+      this.isEdit = false;
+      // this.resetForm();
+    },
+
+    //
+    //delete worktime
+    //
+    deleteWorkTime(item) {
+      this.$bvModal
+        .msgBoxConfirm(`Czy chcesz usunąć wpis:\n z dnia ${item.date}?`, {
+          title: "Potwierdzenie",
+          size: "sm",
+          buttonSize: "sm",
+          okVariant: "danger",
+          okTitle: "TAK",
+          cancelTitle: "NIE",
+          footerClass: "p-2",
+          hideHeaderClose: true,
+          centered: true,
+        })
+        .then((value) => {
+          if (value) {
+            this.deleteWorkTimeDB(
+              item.idEmployee,
+              moment(item.date, "DD-MM-YYYY").format("YYYY-MM-DD"),
+              item.workType
+            ).then((response) => {
+              this.displaySmallMessage("success", "Usunięto wpis.");
+              this.getWorkTimeAllFromDB(
+                this.selectedEmployee,
+                this.workTimeDate.format("YYYY-MM-DD")
+              );
+            });
           }
         })
-        .catch((e) => {
-          this.validateError(e);
+        .catch((err) => {
+          // An error occurred
         });
     },
-    //
-    //pobranie rodzajów dni chorobowych
-    //
-    getIllnessTypesFromDb() {
-      console.log("getIllnessTypesFromDb() - start");
-      const header = {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          Authorization: "Bearer " + this.$store.getters.getToken,
-        },
-      };
-      axios
-        .get(this.urlEmpl + `/api/employee/worktime/illnesstype`, header)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          this.illnessTypes = response.data;
-          console.log(
-            "getIllnessTypesFromDb() - Ilosc illnessTypes[]: " + this.illnessTypes.length
-          );
-          if (this.illnessTypes.length > 0) {
-            this.convertToOptionsIllness();
-          }
-        })
-        .catch((e) => {
-          this.validateError(e);
-        });
-    },
-    //
-    //get worktime
-    //
-    getWorkTimeAllFromDB() {
-      console.log("getWorkTimeAllFromDB() - start");
-      this.isBusy = true;
-      // console.log("selected employee: " + this.selectedEmployee);
-      const header = {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          Authorization: "Bearer " + this.$store.getters.getToken,
-        },
-      };
-      let url =
-        this.urlEmpl +
-        "/api/employee/worktime/" +
-        this.selectedEmployee +
-        "?date=" +
-        this.workTimeDate.format("YYYY-MM-DD");
-      axios
-        .get(url, header)
-        .then((response) => {
-          this.workTimeList = response.data;
-          this.isBusy = false;
-        })
-        .catch((e) => {
-          this.validateError(e);
-        });
-    },
-    //---------------------------------------------------- DB WRITE ---------------------------------------------------------
-    //
-    //save worktime in DB
-    //
-    addWorkToDB() {
-      console.log("addWorkToDB() - start");
-      console.log("add praca: " + this.timeFrom + " - " + this.timeTo);
-      this.work.idEmployee = this.selectedEmployee;
-      this.work.date = this.workTimeDate.format("YYYY-MM-DD");
-      this.work.startTime = this.timeFrom;
-      this.work.stopTime = this.timeTo;
-      //  console.log(JSON.stringify(this.work));
-      const header = {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          Authorization: "Bearer " + this.$store.getters.getToken,
-        },
-      };
-      axios
-        .post(this.urlEmpl + "/api/employee/worktime?workType=WORK", this.work, header)
-        .then((response) => {
-          this.displaySmallMessage("success", "Dodano godziny pracy.");
-          this.getWorkTimeAllFromDB();
-          this.busyIcon = false;
-          this.savedIcon = true;
-          this.errorIcon = false;
-        })
-        .catch((e) => {
-          this.busyIcon = false;
-          this.savedIcon = false;
-          this.errorIcon = true;
-          this.validateError(e);
-        });
-    },
-    addIllnessToDB() {
-      console.log("addWorkToDB() - start");
-      console.log("add illness: " + this.workTimeDate.format("YYYY-MM-DD"));
-      this.illness.idEmployee = this.selectedEmployee;
-      this.illness.date = this.workTimeDate.format("YYYY-MM-DD");
-      this.illness.idIllnessType = this.selectedIllnessType;
-      const header = {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          Authorization: "Bearer " + this.$store.getters.getToken,
-        },
-      };
-      //  console.log(JSON.stringify(this.illness));
-      axios
-        .post(this.urlEmpl + "/api/employee/worktime?workType=ILLNESS", this.illness, header)
-        .then((response) => {
-          this.displaySmallMessage("success", "Dodano godziny chorobowe.");
-          this.getWorkTimeAllFromDB();
-          this.busyIcon = false;
-          this.savedIcon = true;
-          this.errorIcon = false;
-        })
-        .catch((e) => {
-          this.busyIcon = false;
-          this.savedIcon = false;
-          this.errorIcon = true;
-          this.validateError(e);
-        });
-    },
-    addDayOffToDB() {
-      console.log("addDayOffToDB() - start");
-      console.log("add dayOff: " + this.workTimeDate.format("YYYY-MM-DD"));
-      this.dayOff.idEmployee = this.selectedEmployee;
-      this.dayOff.date = this.workTimeDate.format("YYYY-MM-DD");
-      this.dayOff.idDayOffType = this.selectedDayOffType;
-      //  console.log(JSON.stringify(this.dayOff));
-      const header = {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          Authorization: "Bearer " + this.$store.getters.getToken,
-        },
-      };
-      axios
-        .post(this.urlEmpl + "/api/employee/worktime?workType=DAY_OFF", this.dayOff, header)
-        .then((response) => {
-          this.displaySmallMessage("success", "Dodano godziny urlopowe.");
-          this.getWorkTimeAllFromDB();
-          this.busyIcon = false;
-          this.savedIcon = true;
-          this.errorIcon = false;
-        })
-        .catch((e) => {
-          this.busyIcon = false;
-          this.savedIcon = false;
-          this.errorIcon = true;
-          this.validateError(e);
-        });
-    },
+
     //---------------------------------------  CONVERT TO OPTION ----------------------------------------------------
     convertToOptionsEmployee() {
-      console.log("convert to options...");
+      console.log("convertToOptionsEmployee...");
       this.employees.forEach((e) => {
         let opt = {
           value: e.id,
@@ -657,7 +659,7 @@ export default {
       });
     },
     convertToOptionsDayOff() {
-      console.log("convert to options...");
+      console.log("convertToOptionsDayOff...");
       this.dayOffTypes.forEach((e) => {
         let opt = {
           value: e.id,
@@ -668,7 +670,7 @@ export default {
       });
     },
     convertToOptionsIllness() {
-      console.log("convert to options...");
+      console.log("convertToOptionsIllness...");
       this.illnessTypes.forEach((e) => {
         let opt = {
           value: e.id,

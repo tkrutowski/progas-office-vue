@@ -36,8 +36,10 @@ background-color: rgba(229, 200, 0, 0.883)!important;
 }
 
 .btn-progas-save {
-    background-color: rgb(247, 47, 47) !important;
- color: #2c3e50 ;
+    /* background-color: rgb(247, 47, 47) !important; */
+    
+   background-color: rgba(143, 0, 0, 0.91)!important;
+    color: white !important ;
  border-color: rgb(108, 117, 125) !important;
  /* font-weight: bold; */
 }
@@ -70,7 +72,11 @@ background-color: rgba(255, 245, 0, 0.8) !important;
  box-shadow: none  !important;
 }
 
-
+.table-holiday {
+    color: white !important ;
+   background-color: rgba(143, 0, 0, 0.91)!important;
+}
+   
 .text-left{
     text-align: left;
 }

@@ -283,8 +283,8 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-        return false;
-        // return true;
+        // return false;
+        return true;
       }
     },
     hasRead() {
@@ -305,8 +305,8 @@ export default {
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
-        return false;
-        // return true;
+        // return false;
+        return true;
       }
     },
     hasAccessAdvanceDelete() {
@@ -474,7 +474,7 @@ export default {
     //
     editAdvance(item, index, button) {
       console.log("editAdvance(): " + item.id);
-      // console.log(JSON.stringify(item));
+      console.log(JSON.stringify(item));
       this.employeeDisabled = true;
       this.isEdit = true;
       this.btnSaveTitle = "Zapisz";
