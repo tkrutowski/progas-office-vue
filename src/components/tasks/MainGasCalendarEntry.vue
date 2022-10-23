@@ -55,7 +55,8 @@
         title="Informacje"
         @show="copyToInfo"
         @ok="assignValueInfo"
-        ok-variant="progas"
+        ok-variant="btn-progas-save"
+        cancel-variant="progas"
       >
         <b-textarea id="input-info" v-model="tempInfo" rows="6" locale="pl"></b-textarea>
       </b-modal>
@@ -67,14 +68,15 @@
         title="Powiadomienie geodety"
         @show="resetIfNullSurveyor"
         @ok="assignValueSurveyor"
-        ok-variant="progas"
+        ok-variant="btn-progas-save"
+        cancel-variant="progas"
       >
         <p class="my-6">Wybierz datę powiadomienia geodety</p>
         <div>
           <b-calendar v-model="tempDate" locale="pl" block></b-calendar>
         </div>
         <div class="modalWindow">
-          <b-button variant="danger" @click="clearModalSurveyor">Wyczyść</b-button>
+          <b-button variant="progas" @click="clearModalSurveyor">Wyczyść</b-button>
         </div>
       </b-modal>
     </div>

@@ -129,7 +129,7 @@
           </b-form-group>
         </div>
 
-        <b-button class="pl-5 pr-3" variant="progas" :disabled="btnSaveDisabled" type="submit"
+        <b-button class="pl-5 pr-3" variant="btn-progas-save" :disabled="btnSaveDisabled" type="submit"
           >Zapisz
           <!-- <b-icon class="pl-2"  scale="1.8" icon="arrow-bar-up" variant="success"  aria-hidden="true"></b-icon> -->
           <b-icon
