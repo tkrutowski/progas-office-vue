@@ -385,6 +385,7 @@ export default {
         // console.log("token: HR_WORKTIME_WRITE_ALL: " + token2.authorities.includes('HR_WORKTIME_WRITE_ALL'))
         return (
           token2.authorities.includes("HR_WORKTIME_WRITE_ALL") ||
+          token2.authorities.includes("HR_WORKTIME_WRITE") ||
           token2.authorities.includes("ROLE_ADMIN")
         );
       } catch (error) {
@@ -396,25 +397,15 @@ export default {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: HR_WORKTIME_DELETE: " + token2.authorities.includes('HR_WORKTIME_DELETE'))
-        return token2.authorities.includes("HR_WORKTIME_DELETE");
+        return token2.authorities.includes("HR_WORKTIME_DELETE") ||
+        token2.authorities.includes("HR_WORKTIME_DELETE_ALL") ||
+        token2.authorities.includes("ROLE_ADMIN");
       } catch (error) {
         return false;
         // return true;
       }
     },
-    hasAccessWorkTimeDeleteALL() {
-      try {
-        let token2 = jwt_decode(this.getToken);
-        // console.log("token: HR_WORKTIME_DELETE_ALL: " + token2.authorities.includes('HR_WORKTIME_DELETE_ALL'))
-        return (
-          token2.authorities.includes("HR_WORKTIME_DELETE_ALL") ||
-          token2.authorities.includes("ROLE_ADMIN")
-        );
-      } catch (error) {
-        return false;
-        // return true;
-      }
-    },
+  
     hasAccessHrAddition() {
       try {
         let token2 = jwt_decode(this.getToken);
