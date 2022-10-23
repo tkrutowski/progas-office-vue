@@ -28,7 +28,7 @@
 
             <template #footer>
 
-              <b-button class="mr-2 text-dark" :disabled="selectedRole > 0 ? false : true" variant="btn-progas-save" @click="deleteRoleFromUser">Usuń
+              <b-button class="mr-2 text-dark" :disabled="selectedRole > 0 ? false : true" variant="progas-save" @click="deleteRoleFromUser">Usuń
                 role</b-button>
               <b-button class="button-my" :disabled="selectedUserID > 0 ? false : true" variant="progas"
                 @click="showRoleModal">Dodaj role</b-button>
@@ -74,7 +74,7 @@
             <div class="mt-3"></div>
 
             <template #footer>
-              <b-button variant="btn-progas-save" :disabled="selectedRole > 0 ? false : true" @click="updatePrivilegeToUserRole">
+              <b-button variant="progas-save" :disabled="selectedRole > 0 ? false : true" @click="updatePrivilegeToUserRole">
                 Zapisz zmiany</b-button>
             </template>
           </b-card>

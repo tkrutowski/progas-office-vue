@@ -254,7 +254,7 @@
           </b-form-group>
         </div>
 
-        <b-button class="pl-5 pr-3" variant="btn-progas-save" :disabled="empSaveDisabled" type="submit"
+        <b-button class="pl-5 pr-3" variant="progas-save" :disabled="empSaveDisabled" type="submit"
           >Zapisz
           <!-- <b-icon class="pl-2"  scale="1.8" icon="arrow-bar-up" variant="success"  aria-hidden="true"></b-icon> -->
           <b-icon
@@ -350,7 +350,7 @@
           </b-form-group>
         </div>
 
-        <b-button class="pl-5 pr-3" variant="btn-progas-save" :disabled="rateRegSaveDisabled" type="submit">
+        <b-button class="pl-5 pr-3" variant="progas-save" :disabled="rateRegSaveDisabled" type="submit">
           Zapisz
           <b-icon
             v-if="rateRegSaveIcon"
@@ -430,7 +430,7 @@
           </b-form-group>
         </div>
 
-        <b-button class="pl-5 pr-3" variant="btn-progas-save" :disabled="rateOverSaveDisabled" type="submit"
+        <b-button class="pl-5 pr-3" variant="progas-save" :disabled="rateOverSaveDisabled" type="submit"
           >Zapisz
           <b-icon
             v-if="rateOverSaveIcon"

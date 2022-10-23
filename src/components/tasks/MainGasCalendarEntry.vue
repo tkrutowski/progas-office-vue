@@ -55,7 +55,7 @@
         title="Informacje"
         @show="copyToInfo"
         @ok="assignValueInfo"
-        ok-variant="btn-progas-save"
+        ok-variant="progas-save"
         cancel-variant="progas"
       >
         <b-textarea id="input-info" v-model="tempInfo" rows="6" locale="pl"></b-textarea>
@@ -68,7 +68,7 @@
         title="Powiadomienie geodety"
         @show="resetIfNullSurveyor"
         @ok="assignValueSurveyor"
-        ok-variant="btn-progas-save"
+        ok-variant="progas-save"
         cancel-variant="progas"
       >
         <p class="my-6">Wybierz datę powiadomienia geodety</p>

@@ -116,7 +116,7 @@
             </b-button>
 
             <!-- BTN SAVE -->
-            <b-button class="mt-3" style="width: 120px" type="submin" variant="btn-progas-save"
+            <b-button class="mt-3" style="width: 120px" type="submin" variant="progas-save"
               >{{ btnSaveTitle }}
 
               <b-icon
