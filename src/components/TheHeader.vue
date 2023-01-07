@@ -12,12 +12,18 @@
           <b-nav-item-dropdown text="Pracownicy" right>
             <b-dropdown-item href="/hr/employee/all" :disabled="!hasAccessReadEmployees">Lista pracowników</b-dropdown-item>
             <b-dropdown-item href="/hr/loan/all" :disabled="!hasAccessReadLoans">Lista pożyczek</b-dropdown-item>
+            <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item href="/hr/AddWorkTime" :disabled="!hasAccessAddWorktime">Wpisywanie godzin</b-dropdown-item>
             <b-dropdown-item href="/hr/AddAdditions" :disabled="!hasAccessHrAddition">Wpisywanie dodatków</b-dropdown-item>
             <b-dropdown-item href="/hr/AddAdvances" :disabled="!hasAccessHrAdvance">Wpisywanie zaliczek</b-dropdown-item>
             <b-dropdown-item href="/hr/AddLoanInstallment" :disabled="!hasAccessReadLoans"> Wpisywanie pożyczek</b-dropdown-item>
+            <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item href="/hr/CalculateSalary" :disabled="!hasAccessCalculateSalary"
               >Oblicznie wypłat</b-dropdown-item>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item href="/hr/employee/worktime/print" :disabled="!hasAccessHrPrint">Wydruki</b-dropdown-item>
+          
+       
             <!-- <b-dropdown-item href="/hr/employee/all">Lista pracowników</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/loan/all">Lista pożyczek</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddWorkTime">Wpisywanie godzin</b-dropdown-item> -->
@@ -25,6 +31,7 @@
             <!-- <b-dropdown-item href="/hr/AddAdvances" >Wpisywanie zaliczek</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/AddLoanInstallment" > Wpisywanie pożyczek</b-dropdown-item> -->
             <!-- <b-dropdown-item href="/hr/CalculateSalary">Oblicznie wypłat</b-dropdown-item> -->
+            <!-- <b-dropdown-item href="/hr/employee/worktime/print" >Wydruki</b-dropdown-item> -->
           </b-nav-item-dropdown>
 
           <b-nav-item href="#" disabled>Klienci</b-nav-item>
@@ -91,13 +98,6 @@ export default {
   name: "TheHeader",
   data() {
     return {
-      isHrActive: false,
-      isCustomerActive: false,
-      isFinanceActive: false,
-      isTaskActive: false,
-      isVehiclesActive: false,
-      isSettingActive: false,
-
       isAuthenticated: null,
       userName: "",
       userFirstName: "",
@@ -200,19 +200,23 @@ export default {
         return false;
       }
     },
+    hasAccessHrPrint() {
+      try {
+        let token2 = jwt_decode(this.getToken);
+        // console.log("token: ROLE_HR_ADVANCE: " + token2.authorities.includes('ROLE_HR_ADVANCE'))
+        return (
+          token2.authorities.includes("ROLE_HR_PRINT") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
+      } catch (error) {
+        return false;
+      }
+    },
   },
   created() {
     //  this.isAuthenticated = this.$store.getters.getAuthenticationState;
   },
   methods: {
-    changeHrActive() {
-      this.isHrActive = true;
-      this.isCustomerActive = false;
-      this.isFinanceActive = false;
-      this.isTaskActive = false;
-      this.isVehiclesActive = false;
-      this.isSettingActive = false;
-    },
     logout() {
       this.$store.commit("updateToken", "");
       this.$store.commit("updateAuthenticateState", false);

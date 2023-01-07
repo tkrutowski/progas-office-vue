@@ -237,6 +237,7 @@
         <template #modal-title>
           {{ titleSalaryListModal }}
         </template>
+        
         <div>
           <b-table :items="salaryDetailsList" :fields="fieldsDetails" id="table"> </b-table>
         </div>

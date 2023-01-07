@@ -118,14 +118,10 @@ export const worktimeMixin = {
         .then((response) => {
           this.displaySmallMessage("success", "Dodano godziny pracy.");
           this.getWorkTimeAllFromDB(this.selectedEmployee, this.workTimeDate.format("YYYY-MM-DD"));
-          this.busyIcon = false;
-          this.savedIcon = true;
-          this.errorIcon = false;
+          this.changeStatusIcon(false, false, true, false);
         })
         .catch((e) => {
-          this.busyIcon = false;
-          this.savedIcon = false;
-          this.errorIcon = true;
+          this.changeStatusIcon(false, false, false, true);
           this.validateError(e);
         });
     },
@@ -180,14 +176,10 @@ export const worktimeMixin = {
         .then((response) => {
           this.displaySmallMessage("success", "Dodano godziny urlopowe.");
           this.getWorkTimeAllFromDB(this.selectedEmployee, this.workTimeDate.format("YYYY-MM-DD"));
-          this.busyIcon = false;
-          this.savedIcon = true;
-          this.errorIcon = false;
+          this.changeStatusIcon(false, false, true, false);
         })
         .catch((e) => {
-          this.busyIcon = false;
-          this.savedIcon = false;
-          this.errorIcon = true;
+          this.changeStatusIcon(false, false, false, true);
           this.validateError(e);
         });
     },
@@ -243,17 +235,14 @@ export const worktimeMixin = {
         .then((response) => {
           this.displaySmallMessage("success", "Dodano godziny chorobowe.");
           this.getWorkTimeAllFromDB(this.selectedEmployee, this.workTimeDate.format("YYYY-MM-DD"));
-          this.busyIcon = false;
-          this.savedIcon = true;
-          this.errorIcon = false;
+          this.changeStatusIcon(false, false, true, false);
           console.log("END - addWorkToDB()");
         })
         .catch((e) => {
-          this.busyIcon = false;
-          this.savedIcon = false;
-          this.errorIcon = true;
+          this.changeStatusIcon(false, false, false, true);
           this.validateError(e);
         });
     },
+   
   },
 };

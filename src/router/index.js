@@ -18,6 +18,8 @@ import UserView from '@/views/UserView.vue';
 import ErrorView from '@/views/ErrorView.vue'
 import HrEmployeeView from '../views/HrEmployeeView.vue';
 import HrLoanView from '../views/HrLoanView.vue';
+
+import HrPrintView  from '../views/HrPrintPDFView.vue';
 Vue.use(VueRouter);
 
 const routes = [
@@ -56,11 +58,17 @@ const routes = [
   component: HrAdvancesView,
   props: true
 },
-  {
+{
     path: '/hr/employee/all',
     name: 'TheEmployees',
     component: HrEmployeesView,
     props: true
+},
+{
+  path: '/hr/employee/worktime/print',
+  name: 'TheHrPrintPDF',
+  component: HrPrintView,
+  props: true
 },
 {
   path: '/hr/employee',

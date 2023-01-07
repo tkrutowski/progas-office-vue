@@ -115,6 +115,29 @@ export const employeeMixin = {
         });
     },
 
+        //
+    //Get HIRED/FIRED/ALL employees
+    async getEmployeesPrintFromDb(empStatus) {
+      console.log("START - getEmployeesPrintFromDb(" + empStatus + ")");
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
+      return axios
+      .get(this.urlEmpl + `/api/employee/query/print?status=` + empStatus, header)
+      .then((response) => {
+        // JSON responses are automatically parsed.
+        console.log("getEmployeesPrintFromDb() - Ilosc employees[]: " + response.data.length);
+        console.log("END - getEmployeesPrintFromDb(" + empStatus + ")");
+          return response;
+        })
+        .catch((e) => {
+          this.validateError(e);
+        });
+    },
+
     //
     //Get employeeType
     getEmployeeTypeFromDb() {
