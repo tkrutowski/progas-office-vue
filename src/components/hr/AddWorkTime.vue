@@ -189,12 +189,20 @@
               >Anuluj
             </b-button>
 
-            <b-button class="mt-3" style="width: 120px" type="submin" variant="progas-save"
+            <b-button class="mt-3" style="width: 120px" type="submit" variant="progas-save"
               >{{ btnSaveTitle }}
 
               <b-icon
+                v-if="startIcon"
+                class="pl-2 ml-2"
+                scale="1.6"
+                icon="upload"
+                variant="success"
+                aria-hidden="true"
+              ></b-icon>
+              <b-icon
                 v-if="savedIcon"
-                class="pl-2"
+                class="pl-2 ml-2"
                 scale="2.6"
                 icon="check"
                 variant="success"
@@ -202,7 +210,7 @@
               ></b-icon>
               <b-icon
                 v-if="errorIcon"
-                class="pl-2"
+                class="pl-2 ml-2"
                 scale="1.6"
                 icon="x-circle"
                 variant="danger"
@@ -210,6 +218,7 @@
               ></b-icon>
               <b-icon
                 v-if="busyIcon"
+                class="pl-2 ml-2"
                 icon="arrow-clockwise"
                 animation="spin-pulse"
                 font-scale="1"
@@ -316,7 +325,7 @@ export default {
           label: "Akcja",
         },
       ],
-      busyIcon: false,
+
       btnDisabled: false,
 
       employeeDisabled: false,
@@ -325,6 +334,7 @@ export default {
 
       isBusy: false,
 
+      startIcon: true,
       busyIcon: false,
       savedIcon: false,
       errorIcon: false,
@@ -342,7 +352,6 @@ export default {
       selectedEmployee: null,
       selectedDayOffType: "",
       selectedIllnessType: "",
-
     };
   },
   created() {
@@ -397,15 +406,17 @@ export default {
       try {
         let token2 = jwt_decode(this.getToken);
         // console.log("token: HR_WORKTIME_DELETE: " + token2.authorities.includes('HR_WORKTIME_DELETE'))
-        return token2.authorities.includes("HR_WORKTIME_DELETE") ||
-        token2.authorities.includes("HR_WORKTIME_DELETE_ALL") ||
-        token2.authorities.includes("ROLE_ADMIN");
+        return (
+          token2.authorities.includes("HR_WORKTIME_DELETE") ||
+          token2.authorities.includes("HR_WORKTIME_DELETE_ALL") ||
+          token2.authorities.includes("ROLE_ADMIN")
+        );
       } catch (error) {
         return false;
         // return true;
       }
     },
-  
+
     hasAccessHrAddition() {
       try {
         let token2 = jwt_decode(this.getToken);
@@ -484,10 +495,15 @@ export default {
       }
     },
 
+    changeStatusIcon(start, busy, save, error) {
+      this.busyIcon = busy;
+      this.errorIcon = error;
+      this.savedIcon = save;
+      this.startIcon = start;
+    },
+
     addWorkTime() {
-      this.busyIcon = true;
-      this.savedIcon = false;
-      this.errorIcon = false;
+      this.changeStatusIcon(false, true, false, false);
       if (this.isEdit) {
         if (this.isWork) {
           this.deleteWorkTimeDB(
@@ -539,6 +555,7 @@ export default {
 
         this.addCalendarDay();
       }
+      setTimeout(() => this.changeStatusIcon(true, false, false, false), 5000);
     },
 
     addCalendarDay() {
@@ -588,7 +605,6 @@ export default {
           this.selectedDayOffType = item.idDayOffType;
           this.workTypeToDelete = "DAY_OFF";
         }
-
       }
     },
 
