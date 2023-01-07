@@ -73,10 +73,10 @@
             </template>
           </template>
         </b-table>
-        <p>
+        <!-- <p>
           Selected Rows:<br />
           {{ selectedEpmloyee }}
-        </p>
+        </p> -->
       </b-col>
     </b-row>
     <b-row class="mt-5 center">
@@ -316,12 +316,12 @@ export default {
       this.changeStatusIcon(false, true, false, false);
       this.btnDisabled = true;
       // console.log("selected employee: " + this.selectedEmployee);
-      // const header = {
-      //   headers: {
-      //     "Content-type": "application/json; charset=UTF-8",
-      //     Authorization: "Bearer " + this.$store.getters.getToken,
-      //   },
-      // };
+      const header = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + this.$store.getters.getToken,
+        },
+      };
       let postConfig = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
