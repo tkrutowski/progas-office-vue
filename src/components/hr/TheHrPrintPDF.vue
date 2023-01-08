@@ -348,7 +348,7 @@ export default {
         "-01&print=" +
         printWhat;
       console.log("URL - " + url);
-      return axios
+       axios
         .get(url, postConfig)
         .then((response) => {
           console.log("END - getPdfFromDB()");

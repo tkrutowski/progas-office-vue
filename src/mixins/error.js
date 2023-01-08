@@ -42,8 +42,10 @@ export const errorMixin = {
               name: "Error",
                  params: { error: 503},
             });
-            }
-            else{
+            }else if(e.response.status == 403){
+              this.displayLargeMessage("danger", "Nie masz dostępu do tego zasobu.");
+           }
+           else{
               let msgError =
               "error: " + e.response.status + ";    " + e.response.data.message;
               this.displayLargeMessage("danger", msgError);
